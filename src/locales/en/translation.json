@@ -1,0 +1,177 @@
+{
+  "nav": { "home": "Home", "about": "About", "services": "Services", "contact": "Contact" },
+  "sections": { "services": "Services", "about": "About", "contact": "Contact","gallery": "Gallery" },
+ "hero": {
+  "slides": [
+    {
+    "title": "ASMS - Smart Management Platform for Residents",
+    "subtitle": "Automate workflows, save time, and boost operational efficiency.",
+    "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761756589/1761756460281_oyzou6.png"
+  },
+  {
+    "title": "Self-Storage – Household Items",
+    "subtitle": "Store clothing, furniture, and household goods neatly and securely.",
+    "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khotuquandogiadinh_wn7xcp.jpg"
+  },
+  {
+    "title": "Self-Storage – Long-Term Luggage",
+    "subtitle": "Keep your suitcases and travel gear safe during long trips, studies, or business assignments.",
+    "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khotuquandonoithat_rh3kxy.jpg"
+  },
+  {
+    "title": "Self-Storage – Office Supplies",
+    "subtitle": "Store unused office furniture, materials, and printed items conveniently.",
+    "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khotuquanvanphong_g5ml0j.jpg"
+  },
+  {
+    "title": "Shared Storage – Rent by Box",
+    "subtitle": "Flexible, affordable storage solutions with value-added services like transport, inventory management, and delivery.",
+    "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khochung_ham9v0.jpg"
+  }
+  ]
+}
+,
+  "cta": { "getStarted": "Get started", "contactUs": "Contact us", "send": "Send", "backHome": "Back home" ,"getQuote": "Get Quote", "readMore": "Read More"},
+ "services": {
+  "title": "ASMS Services",
+  "lead": "Explore management models tailored for your business.",
+  "items": {
+    "shared": {
+      "tag": "Convenient & Cost-saving",
+      "title": "SHARED STORAGE RENTAL",
+      "f1": "Stored in a modern warehouse system",
+      "f2": "Professional packing & delivery service",
+      "f3": "Flexible pick-up and return on demand"
+    },
+    "private": {
+      "tag": "24/7 Access",
+      "title": "PRIVATE STORAGE RENTAL",
+      "f1": "Access your storage 24/7",
+      "f2": "Your personal unit, protected by us",
+      "f3": "Located in the city center"
+    }
+  }
+},
+"compare": {
+  "title": "Compare Storage Options",
+  "subtitle": "Explore ASMS storage models to find the best solution for your business needs.",
+  "columns": {
+    "shared": "Shared Storage",
+    "private": "Private Storage"
+  },
+   "features": {
+    "f1": "Two-way pickup and delivery",
+    "f2": "Choose between room temperature or air-conditioned storage",
+    "f3": "24/7 security camera system",
+    "f4": "Pay only for the space you use",
+    "f5": "Private key access",
+    "f6": "Only ASMS staff have access"
+  }
+},
+  
+  "reviews": {
+    "title": "Professional self-storage and shared warehouse rental services",
+    "subtitle": "Feedback from customers who have used ASMS's hosting and management services.",
+    "items": [
+      {
+        "name": "Adam Smith",
+        "role": "Startup Founder",
+        "text": "ASMS made warehouse management for my e-commerce business incredibly easy. The shared storage system is secure, well organized, and the staff always help with delivery and pickup on time."
+      },
+      {
+        "name": "Sofia Caralino",
+        "role": "Freelance Designer",
+        "text": "I use ASMS’s self-storage for my art materials. The space is clean, safe, and accessible anytime. I love that I can unlock my unit and check the inventory right from the mobile app."
+      },
+      {
+        "name": "Marfie Motcast",
+        "role": "Office Manager",
+        "text": "We switched our company archives to ASMS’s shared warehouse. It saves us rent and gives us peace of mind knowing our documents are monitored 24/7."
+      },
+      {
+        "name": "Lan Nguyen",
+        "role": "Apartment Resident",
+        "text": "I stored my unused furniture in ASMS’s self-storage room during renovation. The whole process was fast, and I could manage it all online. Really convenient and affordable."
+      },
+      {
+        "name": "James Lee",
+        "role": "Event Organizer",
+        "text": "ASMS helped us store event equipment between shows. The warehouse is spacious, staff are friendly, and they even assisted with labeling and pickup logistics."
+      },
+      {
+        "name": "Minh Tran",
+        "role": "Logistics Partner",
+        "text": "We integrated our inventory system with ASMS and it worked flawlessly. Their shared storage flexibility helps our clients expand without worrying about space limits."
+      },
+      {
+        "name": "Emma Johnson",
+        "role": "Frequent Traveler",
+        "text": "ASMS’s self-storage is perfect for storing my luggage while I’m abroad. The security cameras and 24/7 access make me feel completely at ease."
+      }
+    ]
+  },
+
+ 
+  "sub-features": {
+  "title": "Explore ASMS Services",
+  "subtitle": "ASMS offers the perfect solution for smarter space management and storage.",
+  "tour": {
+    "title": "Explore the Warehouse via 3D Tour",
+    "desc": "We designed a virtual tour so you can clearly visualize ASMS’s self-storage facilities.",
+    "btn": "Virtual Tour"
+  },
+  "car": {
+    "title": "Free Vehicle to Visit the Warehouse",
+    "desc": "Want to see the ASMS warehouse in person? Contact us to arrange a free visit shuttle.",
+    "btn": "Request a Ride"
+  },
+  "support": {
+    "title": "Consultation & Timely Support",
+    "desc": "Our professional support team is always ready to assist you whenever you need.",
+    "btn": "Contact Us"
+  }
+},
+"gallery": {
+  "title": "ASMS gallery",
+  "lead": "We’re passionate about creating more space in the lives of the people of Ho Chi Minh City.",
+  "note": "Scroll to rotate and explore the entire."
+},
+  "about": {
+    "title": "About ASMS",
+    "lead": "ASMS was created to help businesses transform digitally.",
+    "p1": "Built by an experienced team in management software.",
+    "p2": "We focus on usability, security, and flexibility."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "lead": "We reply within 24 hours.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "sent": "Sent! Thank you.",
+    "info": "Contact Information"
+  },
+  "footer": {
+    "tagline": "Smart Storage for Modern Living",
+    "getQuote": "Get a Free Quote",
+    "servicesTitle": "Storage Services",
+    "servicesList": [
+      "Business Storage",
+      "Document Storage",
+      "Self Storage",
+      "Bike Storage",
+      "Cold Storage"
+    ],
+    "supportTitle": "Support",
+    "supportList": [
+      "Terms & Conditions",
+      "Privacy Policy",
+      "FAQs",
+      "Storage Locations"
+    ],
+    "myasmsList": ["Home", "Contact Us", "Blog", "Social Wall"],
+    "description": "The first professional self and door-to-door storage service in Ho Chi Minh City (Saigon). Highly secure and affordable storage offering to store items without hassle. Managed with international standards, providing pickup, delivery, and complimentary storage boxes.",
+    "rights": "All rights reserved."
+  },
+  "notFound": { "text": "The page you are looking for does not exist." }
+}

@@ -1,0 +1,99 @@
+{
+  "hero": {
+    "title": "Dịch Vụ Cho Thuê Kho Để Đồ",
+    "subtitle": "ASMS - Giải pháp tiên phong cho thuê kho lưu trữ thông minh, giúp bạn tiết kiệm không gian sống và tối ưu chi phí."
+  },
+  "overview": {
+    "self": {
+      "title": "Cho Thuê Kho Tự Quản",
+      "desc": "Giải pháp lưu trữ riêng tư, linh hoạt cho cá nhân và hộ gia đình.",
+      "features": [
+        "Truy cập 24/7",
+        "Không gian riêng biệt an toàn",
+        "Giám sát camera liên tục"
+      ],
+      "btn": "Thuê Kho Tự Quản"
+    },
+    "shared": {
+      "title": "Cho Thuê Kho Dịch Vụ",
+      "desc": "Kho lưu trữ linh hoạt, được hỗ trợ bởi đội ngũ vận hành chuyên nghiệp.",
+      "features": [
+        "Dịch vụ bốc xếp, vận chuyển",
+        "Đóng gói, dán nhãn hàng hóa",
+        "Tiết kiệm chi phí tối đa"
+      ],
+      "btn": "Thuê Kho Dịch Vụ"
+    }
+  },
+  "steps": {
+    "title": "Thuê kho ngay chỉ với 3 bước",
+    "step": "Bước",
+    "step1": {
+      "title": "Đăng ký thông tin",
+      "desc": "Gửi yêu cầu thuê kho hoặc điền form trực tuyến để nhận tư vấn chi tiết."
+    },
+    "step2": {
+      "title": "Chọn loại kho phù hợp",
+      "desc": "Chọn kho tự quản hoặc kho dịch vụ theo nhu cầu sử dụng và vị trí thuận tiện."
+    },
+    "step3": {
+      "title": "Giao nhận và lưu trữ",
+      "desc": "ASMS hỗ trợ vận chuyển, giao nhận tận nơi và đảm bảo an toàn tuyệt đối cho hàng hóa."
+    }
+  },
+  "categories": {
+    "title": "Tôi có thể lưu trữ những vật dụng gì?",
+    "subtitle": "ASMS cung cấp nhiều loại hình kho khác nhau, phù hợp cho cá nhân và doanh nghiệp.",
+    "furniture": "Nội thất & thiết bị gia đình",
+    "documents": "Hồ sơ & ấn phẩm văn phòng",
+    "personal": "Vật dụng cá nhân & hành lý"
+  },
+  "facility": {
+    "title": "Tham quan kho qua mô hình 3D",
+    "desc": "Khám phá không gian kho tự quản của ASMS ngay trên trình duyệt. Bạn có thể xoay, phóng to hoặc xem chi tiết từng khu vực lưu trữ.",
+    "btn": "Xem toàn màn hình"
+  },
+  "faq": {
+    "title": "Những câu hỏi thường gặp về ASMS",
+    "subtitle": "Giải đáp những thắc mắc phổ biến về dịch vụ và chính sách của ASMS",
+    "button": "Gửi Câu Hỏi",
+    "items": [
+      {
+        "q": "ASMS cung cấp các dịch vụ lưu trữ nào?",
+        "a": "ASMS cung cấp hai loại hình lưu trữ: kho tự quản với quyền truy cập 24/7 và kho lưu trữ trọn gói. Kho tự quản phù hợp với khách hàng cần ra vào thường xuyên, trong khi kho trọn gói giúp tiết kiệm chi phí hơn cho các vật dụng lớn và khách hàng không cần truy cập thường xuyên."
+      },
+      {
+        "q": "Các cơ sở của ASMS nằm ở đâu và làm thế nào để truy cập đồ đạc?",
+        "a": "Các cơ sở kho của ASMS nằm tại khu căn hộ và trung tâm thành phố. Khách hàng kho tự quản có thể truy cập 24/7 bằng mã cá nhân hoặc thẻ từ. Với kho trọn gói, việc truy cập được hỗ trợ bởi nhân viên để đảm bảo an ninh."
+      },
+      {
+        "q": "ASMS có những loại kho nào?",
+        "a": "ASMS cung cấp kho có điều hòa và không điều hòa. Kho có điều hòa duy trì nhiệt độ 23–25°C, giúp bảo vệ vật dụng nhạy cảm như gỗ, vải, và thiết bị điện tử."
+      },
+      {
+        "q": "ASMS bảo vệ tài sản của tôi như thế nào?",
+        "a": "ASMS trang bị hệ thống camera 24/7, cảm biến chuyển động, mã PIN cá nhân, khóa vân tay và bảo vệ chuyên trách. Mỗi kho đều có khóa riêng, đảm bảo an toàn tối đa."
+      },
+      {
+        "q": "ASMS có cung cấp dịch vụ vận chuyển không?",
+        "a": "Có, chúng tôi cung cấp dịch vụ chuyển nhà trọn gói, bao gồm khảo sát, đóng gói, vận chuyển và sắp xếp lại trong kho. Bạn cũng có thể yêu cầu lấy hoặc trả đồ tận nơi."
+      },
+      {
+        "q": "Có vật dụng nào bị cấm lưu trữ tại ASMS không?",
+        "a": "Không được lưu trữ vũ khí, chất cấm, chất lỏng dễ cháy, thực phẩm, sinh vật sống hoặc vật có mùi mạnh để đảm bảo an toàn và vệ sinh."
+      },
+      {
+        "q": "ASMS có những tiện ích nào đi kèm?",
+        "a": "ASMS cung cấp khu làm việc, WiFi, cà phê, nước uống, nhà vệ sinh, và vật liệu đóng gói. Ngoài ra, khách hàng có thể mua thùng carton, bubble wrap và khóa bảo vệ."
+      },
+      {
+        "q": "Phương thức thanh toán và đặt cọc như thế nào?",
+        "a": "ASMS chấp nhận tiền mặt, chuyển khoản, thẻ tín dụng và ví điện tử. Thanh toán được yêu cầu hàng tháng, có xuất hóa đơn VAT, và đặt cọc được hoàn lại khi kết thúc hợp đồng."
+      },
+      {
+        "q": "ASMS có các gói bảo hiểm cho đồ lưu trữ không?",
+        "a": "Chúng tôi cung cấp các gói bảo vệ linh hoạt: Cơ bản (miễn phí), Bạc, Vàng và Bạch kim – với hạn mức bồi thường từ 500,000 VND đến 100,000,000 VND tùy gói."
+      }
+    ]
+  }
+}

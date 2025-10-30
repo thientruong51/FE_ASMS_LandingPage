@@ -1,0 +1,177 @@
+{
+  "nav": { "home": "Trang chủ", "about": "Giới thiệu", "services": "Dịch vụ", "contact": "Liên hệ" },
+  "sections": { "services": "Dịch vụ", "about": "Giới thiệu", "contact": "Liên hệ","gallery": "Thư viện" },
+  "hero": {
+  "slides": [
+    {
+      "title": "ASMS - Nền tảng quản lý thông minh cho cư dân",
+      "subtitle": "Tự động hoá quy trình, tiết kiệm thời gian và tăng hiệu quả vận hành.",
+      "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761756589/1761756460281_oyzou6.png"
+    },
+    {
+      "title": "Kho tự quản - Đồ dùng gia đình",
+      "subtitle": "Quần áo, đồ đạc, nội thất gia đình - cất giữ gọn gàng, an toàn.",
+      "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khotuquandogiadinh_wn7xcp.jpg"
+    },
+    {
+      "title": "Kho tự quản - Hành lý dài ngày",
+      "subtitle": "Lưu trữ vali, hành lý gọn nhẹ cho những chuyến du lịch, du học hay công tác dài ngày.",
+      "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khotuquandonoithat_rh3kxy.jpg"
+    },
+    {
+      "title": "Kho tự quản - Ấn phẩm văn phòng",
+      "subtitle": "Lưu trữ đồ dùng, nội thất, ấn phẩm văn phòng chưa dùng đến.",
+      "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khotuquanvanphong_g5ml0j.jpg"
+    },
+    {
+      "title": "Kho chung - Thuê không gian theo thùng",
+      "subtitle": "Giải pháp kho lưu trữ, thuê kho để đồ linh hoạt, tiện lợi, giá cả phải chăng, cùng với các dịch vụ gia tăng như vận chuyển, quản lý tồn kho, giao nhận.",
+      "image": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761759147/Khochung_ham9v0.jpg"
+    }
+  ]
+}
+,
+  "cta": { "getStarted": "Bắt đầu", "contactUs": "Liên hệ", "send": "Gửi", "backHome": "Về trang chủ" ,"getQuote": "Nhận Báo Giá","readMore": "Đọc thêm"},
+ "services": {
+  "title": "Dịch vụ của ASMS",
+  "lead": "Khám phá các mô hình quản lý phù hợp với doanh nghiệp của bạn.",
+  "items": {
+    "shared": {
+      "tag": "Tiện lợi & tiết kiệm",
+      "title": "THUÊ KHO KỆ CHUNG",
+      "f1": "Được lưu trữ trong hệ thống kho hiện đại",
+      "f2": "Dịch vụ đóng gói & vận chuyển chuyên nghiệp",
+      "f3": "Giao trả hàng hóa theo nhu cầu"
+    },
+    "private": {
+      "tag": "Truy cập 24/7",
+      "title": "THUÊ KHO TỰ QUẢN",
+      "f1": "Truy cập vào kho 24/7",
+      "f2": "Tủ riêng của bạn, được bảo vệ bởi chúng tôi",
+      "f3": "Kho tự quản tại trung tâm thành phố"
+    }
+  }
+},
+"compare": {
+  "title": "So sánh hai hình thức kho",
+  "subtitle": "Khám phá các mô hình lưu trữ tại ASMS để tìm ra giải pháp phù hợp nhất cho nhu cầu của bạn.",
+  "columns": {
+    "shared": "Kho Kệ Chung",
+    "private": "Kho Tự Quản"
+  },
+   
+
+  "features": {
+    "f1": "Vận chuyển hai chiều tận nơi",
+    "f2": "Lựa chọn kho nhiệt độ phòng và kho có máy lạnh",
+    "f3": "Hệ thống camera bảo mật 24/7",
+    "f4": "Chỉ trả cho không gian bạn sử dụng",
+    "f5": "Có chìa khoá riêng",
+    "f6": "Chỉ nhân viên ASMS có quyền truy cập"
+  }
+},
+  "reviews": {
+  "title": "Dịch vụ cho thuê kho tự quản & kho chung chuyên nghiệp",
+  "subtitle": "Cảm nhận của khách hàng đã sử dụng dịch vụ lưu trữ và quản lý của ASMS.",
+  "items": [
+    {
+      "name": "Adam Smith",
+      "role": "Nhà khởi nghiệp startup",
+      "text": "ASMS giúp việc quản lý kho cho cửa hàng thương mại điện tử của tôi trở nên cực kỳ dễ dàng. Hệ thống kho kệ chung an toàn, sắp xếp gọn gàng và đội ngũ luôn hỗ trợ giao nhận đúng hẹn."
+    },
+    {
+      "name": "Sofia Caralino",
+      "role": "Nhà thiết kế tự do",
+      "text": "Tôi sử dụng dịch vụ kho tự quản của ASMS để cất giữ vật liệu thiết kế. Không gian sạch sẽ, an toàn và có thể ra vào bất cứ lúc nào. Tôi rất thích việc mở khóa và kiểm tra đồ ngay trên ứng dụng điện thoại."
+    },
+    {
+      "name": "Marfie Motcast",
+      "role": "Quản lý văn phòng",
+      "text": "Công ty tôi đã chuyển toàn bộ hồ sơ lưu trữ sang kho chung của ASMS. Vừa tiết kiệm chi phí thuê mặt bằng vừa yên tâm vì có hệ thống camera giám sát 24/7."
+    },
+    {
+      "name": "Lan Nguyễn",
+      "role": "Cư dân chung cư",
+      "text": "Tôi gửi đồ nội thất không dùng đến vào kho tự quản của ASMS trong thời gian sửa nhà. Mọi quy trình đều nhanh gọn và tôi có thể quản lý online. Rất tiện lợi và giá hợp lý."
+    },
+    {
+      "name": "James Lee",
+      "role": "Nhà tổ chức sự kiện",
+      "text": "ASMS hỗ trợ chúng tôi lưu trữ thiết bị tổ chức sự kiện giữa các show. Kho rộng rãi, nhân viên thân thiện và còn giúp gắn nhãn, sắp xếp hàng hóa rất chuyên nghiệp."
+    },
+    {
+      "name": "Minh Trần",
+      "role": "Đối tác logistics",
+      "text": "Chúng tôi tích hợp hệ thống quản lý hàng tồn của mình với ASMS và hoạt động rất ổn định. Dịch vụ kho kệ chung linh hoạt giúp khách hàng của chúng tôi mở rộng quy mô mà không lo thiếu chỗ."
+    },
+    {
+      "name": "Emma Johnson",
+      "role": "Người thường xuyên đi công tác",
+      "text": "Dịch vụ kho tự quản của ASMS rất phù hợp để tôi gửi hành lý trong thời gian đi nước ngoài. Hệ thống camera an ninh và truy cập 24/7 khiến tôi hoàn toàn yên tâm."
+    }
+  ]
+},
+  "sub-features": {
+  "title": "Khám phá các dịch vụ của ASMS",
+  "subtitle": "ASMS là giải pháp lý tưởng giúp bạn lưu trữ và quản lý không gian sống thông minh hơn.",
+  "tour": {
+    "title": "Khám phá kho qua tour 3D",
+    "desc": "Chúng tôi thiết kế một tour tham quan ảo để bạn có thể hình dung rõ nhất cơ sở vật chất tại kho tự quản của ASMS.",
+    "btn": "Tour thực tế ảo"
+  },
+  "car": {
+    "title": "Xe miễn phí đến thăm kho",
+    "desc": "Bạn muốn trực tiếp tham quan kho của ASMS? Liên hệ với chúng tôi để được sắp xếp xe đưa đón miễn phí.",
+    "btn": "Yêu cầu phương tiện"
+  },
+  "support": {
+    "title": "Tư vấn và hỗ trợ kịp thời",
+    "desc": "Đội ngũ tư vấn và chăm sóc khách hàng chuyên nghiệp của ASMS luôn sẵn sàng hỗ trợ bạn bất cứ khi nào cần.",
+    "btn": "Liên hệ"
+  }
+},
+"gallery": {
+  "title": "Hình ảnh về ASMS",
+  "lead": "ASMS cùng bạn giải phóng không gian và nâng cao chất lượng cuộc sống.",
+  "note": "Bạn có thể cuộn để xoay và khám phá toàn bộ hệ thống."
+},
+
+  "about": {
+    "title": "Về ASMS",
+    "lead": "ASMS được phát triển để giúp doanh nghiệp chuyển đổi số hiệu quả.",
+    "p1": "ASMS được xây dựng bởi đội ngũ có kinh nghiệm trong lĩnh vực phần mềm quản lý.",
+    "p2": "Chúng tôi hướng đến sản phẩm dễ dùng, bảo mật và linh hoạt."
+  },
+  "contact": {
+    "title": "Liên hệ với chúng tôi",
+    "lead": "Chúng tôi phản hồi trong vòng 24h.",
+    "name": "Họ và tên",
+    "email": "Email",
+    "message": "Nội dung",
+    "sent": "Đã gửi! Cảm ơn bạn.",
+    "info": "Thông tin liên hệ"
+  },
+  "footer": {
+    "tagline": "Giải pháp lưu trữ thông minh cho cuộc sống hiện đại",
+    "getQuote": "Nhận báo giá miễn phí",
+    "servicesTitle": "Dịch vụ lưu trữ",
+    "servicesList": [
+      "Lưu trữ doanh nghiệp",
+      "Lưu trữ tài liệu",
+      "Lưu trữ cá nhân",
+      "Lưu trữ xe máy",
+      "Kho lạnh"
+    ],
+    "supportTitle": "Hỗ trợ",
+    "supportList": [
+      "Điều khoản & Điều kiện",
+      "Chính sách bảo mật",
+      "Câu hỏi thường gặp",
+      "Địa điểm kho"
+    ],
+    "myasmsList": ["Trang chủ", "Liên hệ", "Blog", "Mạng xã hội"],
+    "description": "Dịch vụ lưu trữ chuyên nghiệp đầu tiên tại TP. Hồ Chí Minh. An toàn, tiện lợi và tiết kiệm, giúp bạn lưu trữ đồ đạc mà không cần lo lắng. Được quản lý theo tiêu chuẩn quốc tế, hỗ trợ nhận - giao hàng tận nơi và tặng kèm thùng lưu trữ miễn phí.",
+    "rights": "Đã đăng ký bản quyền."
+  },
+  "notFound": { "text": "Trang bạn tìm không tồn tại." }
+}

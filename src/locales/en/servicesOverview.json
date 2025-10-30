@@ -1,0 +1,99 @@
+{
+  "hero": {
+    "title": "Storage Rental Services",
+    "subtitle": "ASMS - The leading smart storage solution that saves your space and optimizes costs."
+  },
+  "overview": {
+    "self": {
+      "title": "Self-Storage",
+      "desc": "Private, secure, and flexible storage for individuals and families.",
+      "features": [
+        "24/7 access",
+        "Personal, secure unit",
+        "Continuous camera monitoring"
+      ],
+      "btn": "Rent Self-Storage"
+    },
+    "shared": {
+      "title": "Managed Storage",
+      "desc": "Flexible warehouse storage supported by a professional logistics team.",
+      "features": [
+        "Loading and transportation service",
+        "Packing and labeling support",
+        "Cost-effective storage solution"
+      ],
+      "btn": "Rent Managed Storage"
+    }
+  },
+  "steps": {
+    "title": "Rent Storage in Just 3 Steps",
+    "step": "Step",
+    "step1": {
+      "title": "Register your information",
+      "desc": "Submit your storage request or fill out the online form to get detailed consultation."
+    },
+    "step2": {
+      "title": "Choose your storage type",
+      "desc": "Select between self-storage or managed storage based on your needs and location."
+    },
+    "step3": {
+      "title": "Pickup & store",
+      "desc": "ASMS handles transportation, delivery, and ensures the highest level of security."
+    }
+  },
+   "categories": {
+    "title": "What can I store?",
+    "subtitle": "ASMS offers various storage types for individuals and businesses.",
+    "furniture": "Furniture & home appliances",
+    "documents": "Documents & office materials",
+    "personal": "Personal items & luggage"
+  },
+  "facility": {
+    "title": "Explore our warehouse in 3D",
+    "desc": "Experience ASMS self-storage space directly in your browser. Rotate, zoom, and explore every storage area in detail.",
+    "btn": "View Fullscreen"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions about ASMS",
+    "subtitle": "Find answers to common questions about our services and policies.",
+    "button": "Send Question",
+    "items": [
+      {
+        "q": "What types of storage services does ASMS offer?",
+        "a": "ASMS offers two main options: self-storage with 24/7 access and full-service storage. Self-storage is ideal for frequent access, while full-service storage is more cost-effective for large items or long-term needs."
+      },
+      {
+        "q": "Where are ASMS facilities located and how do I access my items?",
+        "a": "Our storage sites are located within apartment complexes and central areas. Self-storage users can access their units 24/7 via smart card or personal code. Full-service customers are accompanied by ASMS staff for added security."
+      },
+      {
+        "q": "What types of storage units are available?",
+        "a": "We offer both air-conditioned (AC) and non-AC units. AC units maintain 23–25°C, protecting sensitive items such as wood, textiles, and electronics from humidity and mold."
+      },
+      {
+        "q": "How does ASMS keep my belongings secure?",
+        "a": "All facilities are monitored 24/7 with motion sensors, personal PIN access, fingerprint verification, and private locks. Only authorized staff may access restricted areas."
+      },
+      {
+        "q": "Does ASMS provide moving and transportation services?",
+        "a": "Yes. We offer full moving services including site inspection, packing, transport, and setup. Pickup and delivery options are also available upon request."
+      },
+      {
+        "q": "What items are prohibited from storage?",
+        "a": "Weapons, illegal substances, flammable liquids, perishable food, live animals, and strong-odor items are prohibited for safety and hygiene reasons."
+      },
+      {
+        "q": "What amenities are available at ASMS facilities?",
+        "a": "We offer shared workspaces, free Wi-Fi, coffee, beverages, restrooms, and packing materials. You can also purchase cartons, bubble wrap, and locks on-site."
+      },
+      {
+        "q": "What are the accepted payment methods and deposit terms?",
+        "a": "ASMS accepts cash, bank transfer, credit card, and e-wallets. Payments are made monthly in advance. VAT invoices are available and deposits are refundable upon contract end."
+      },
+      {
+        "q": "Does ASMS offer insurance plans for stored items?",
+        "a": "We offer flexible protection plans: Basic (free), Silver, Gold, and Platinum, covering from 500,000 VND up to 100,000,000 VND depending on the plan."
+      }
+    ]
+  }
+}

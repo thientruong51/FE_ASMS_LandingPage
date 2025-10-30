@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "services": "Dịch vụ",
+    "partner": "Hợp tác",
+    "contact": "Liên hệ",
+    "rentOnline": "Thuê kho online"
+  },
+  "servicesDropdown": {
+    "type": "Các loại hình thuê kho",
+    "selfStorage": "Thuê kho tự quản",
+    "sharedStorage": "Thuê kho kệ chung",
+    "wineStorage": "Kho rượu tự quản",
+    "size": "Kích thước kho",
+    "calculator": "Tính toán kích cỡ kho bằng AI",
+    "process": "Quy Trình",
+    "location": "Địa điểm kho lưu trữ"
+  }
+}

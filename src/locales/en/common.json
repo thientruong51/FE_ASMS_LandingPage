@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "partner": "Partnership",
+    "contact": "Contact",
+    "rentOnline": "Rent Storage Online"
+  },
+  "servicesDropdown": {
+    "type": "Storage types",
+    "selfStorage": "Self-storage",
+    "sharedStorage": "Shared warehouse",
+    "wineStorage": "Wine storage",
+    "size": "Storage sizes",
+    "calculator": "AI size calculator",
+    "process": "Process",
+    "location": "Storage locations"
+  }
+}

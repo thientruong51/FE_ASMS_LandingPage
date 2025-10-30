@@ -1,0 +1,21 @@
+{
+  "title": "Liên hệ với chúng tôi",
+  "lead": "Chúng tôi phản hồi trong vòng 24h.",
+  "form": {
+    "name": "Họ và tên",
+    "email": "Email",
+    "message": "Nội dung",
+    "send": "Gửi",
+    "sent": "Đã gửi! Cảm ơn bạn."
+  },
+  "info": {
+    "title": "Thông tin liên hệ",
+    "address": "TP. Hồ Chí Minh, Việt Nam",
+    "hotline": "028 7771 0118",
+    "email": "support@asms.vn",
+    "hours": "Thứ 2 - Thứ 7: 8h00 - 18h00"
+  },
+  "cta": {
+    "backHome": "Về trang chủ"
+  }
+}

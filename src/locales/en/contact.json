@@ -1,0 +1,21 @@
+{
+  "title": "Contact Us",
+  "lead": "We usually respond within 24 hours.",
+  "form": {
+    "name": "Full name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send",
+    "sent": "Message sent! Thank you."
+  },
+  "info": {
+    "title": "Contact Information",
+    "address": "Ho Chi Minh City, Vietnam",
+    "hotline": "+84 28 7771 0118",
+    "email": "support@asms.vn",
+    "hours": "Mon - Sat: 8:00 AM - 6:00 PM"
+  },
+  "cta": {
+    "backHome": "Back to Home"
+  }
+}

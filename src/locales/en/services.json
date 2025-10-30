@@ -1,0 +1,37 @@
+{
+  "title": "ASMS Storage Services",
+  "lead": "Discover the storage model that best suits your needs.",
+  "types": {
+    "shared": {
+      "title": "Shared Warehouse",
+      "desc": "A flexible and cost-effective solution for businesses and individuals with short-term storage needs.",
+      "features": [
+        "Two-way delivery service",
+        "Professional storage with on-site staff",
+        "Flexible access on demand"
+      ]
+    },
+    "private": {
+      "title": "Self-Storage Units",
+      "desc": "Personal, private spaces with full access control — you’re the only one with the key.",
+      "features": [
+        "24/7 access with personal code",
+        "24/7 security cameras",
+        "Various unit sizes available"
+      ]
+    },
+    "wine": {
+      "title": "Wine Storage",
+      "desc": "Temperature and humidity-controlled rooms for premium wine collections.",
+      "features": [
+        "Stable temperature 12–15°C",
+        "Multi-layer security protection",
+        "Flexible access on request"
+      ]
+    }
+  },
+  "cta": {
+    "quote": "Get a free quote",
+    "contact": "Contact us"
+  }
+}

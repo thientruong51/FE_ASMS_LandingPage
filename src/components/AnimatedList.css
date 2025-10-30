@@ -1,0 +1,39 @@
+
+.item {
+  padding: 16px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.item.selected {
+  background-color: #BFE3C6;
+}
+
+.item-text {
+  color: #3CBD96;
+  margin: 0;
+}
+
+.top-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, #BFE3C6, transparent);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.bottom-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to top, #BFE3C6, transparent);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}

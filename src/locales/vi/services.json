@@ -1,0 +1,37 @@
+{
+  "title": "Dịch vụ của ASMS",
+  "lead": "Khám phá các mô hình quản lý kho phù hợp với nhu cầu của bạn.",
+  "types": {
+    "shared": {
+      "title": "Kho Kệ Chung",
+      "desc": "Giải pháp linh hoạt, tiết kiệm cho doanh nghiệp và cá nhân cần lưu trữ hàng hóa ngắn hạn.",
+      "features": [
+        "Vận chuyển hai chiều tận nơi",
+        "Bảo quản chuyên nghiệp, có nhân viên hỗ trợ",
+        "Truy cập linh hoạt theo yêu cầu"
+      ]
+    },
+    "private": {
+      "title": "Kho Tự Quản",
+      "desc": "Không gian riêng biệt, an toàn tuyệt đối – bạn là người duy nhất có chìa khóa.",
+      "features": [
+        "Truy cập 24/7 bằng mã cá nhân",
+        "Hệ thống camera an ninh 24/7",
+        "Kích thước kho đa dạng"
+      ]
+    },
+    "wine": {
+      "title": "Kho Rượu Tự Quản",
+      "desc": "Môi trường nhiệt độ và độ ẩm được kiểm soát đặc biệt dành cho bộ sưu tập rượu cao cấp.",
+      "features": [
+        "Nhiệt độ ổn định 12–15°C",
+        "Bảo vệ nhiều lớp và an ninh tuyệt đối",
+        "Truy cập linh hoạt theo yêu cầu"
+      ]
+    }
+  },
+  "cta": {
+    "quote": "Nhận báo giá miễn phí",
+    "contact": "Liên hệ ngay"
+  }
+}
