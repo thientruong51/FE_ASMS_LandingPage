@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Container,
     Stack,
     Typography,
@@ -125,23 +124,7 @@ export default function Faq() {
                         ))}
                 </Stack>
 
-                {/* ===== BUTTON ===== */}
-                <Box textAlign="center" mt={6}>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: "#3CBD96",
-                            color: "white",
-                            borderRadius: "999px",
-                            fontWeight: 600,
-                            textTransform: "none",
-                            px: 3,
-                            "&:hover": { backgroundColor: "#35a982" },
-                        }}
-                    >
-                        {t("faq.button")}
-                    </Button>
-                </Box>
+               
             </Container>
         </Box>
     );

@@ -12,10 +12,11 @@ import {
   useScrollTrigger,
   ClickAwayListener,
 } from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PhoneIcon from "@mui/icons-material/Phone";
 import AnimatedList from "./AnimatedList";
 
@@ -23,10 +24,19 @@ export default function Header() {
   const { t, i18n } = useTranslation("common");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openService, setOpenService] = useState(false);
-  const currentLang = i18n.language || "vi";
   const navigate = useNavigate();
-
+  const location = useLocation();
   const trigger = useScrollTrigger({ threshold: 10 });
+
+  // 🟢 Lấy ngôn ngữ từ localStorage khi load
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
+  const currentLang = i18n.language || "vi";
 
   // Ngôn ngữ
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
@@ -34,6 +44,7 @@ export default function Header() {
   const handleMenuClose = () => setAnchorEl(null);
   const handleLanguageChange = (lng: string) => {
     i18n.changeLanguage(lng);
+    localStorage.setItem("lang", lng); 
     setAnchorEl(null);
   };
 
@@ -46,9 +57,8 @@ export default function Header() {
     { label: t("servicesDropdown.type"), path: "/services/types" },
     { label: t("servicesDropdown.selfStorage"), path: "/services/self-storage" },
     { label: t("servicesDropdown.sharedStorage"), path: "/services/shared-storage" },
-    { label: t("servicesDropdown.size"), path: "/services/size" },
+    { label: t("servicesDropdown.size"), path: "/services/size-guide" },
     { label: t("servicesDropdown.process"), path: "/services/process" },
-    { label: t("servicesDropdown.location"), path: "/services/locations" },
   ];
 
   const navItems = [
@@ -59,7 +69,7 @@ export default function Header() {
     { label: t("nav.contact"), to: "/contact" },
   ];
 
-  const handleSelectService = (item: string, index: number) => {
+  const handleSelectService = (_item: string, index: number) => {
     const target = serviceItems[index];
     if (target) {
       navigate(target.path);
@@ -147,19 +157,36 @@ export default function Header() {
                 <Box
                   key={item.to}
                   onMouseEnter={handleServiceEnter}
-                  sx={{ position: "relative" }}
+                  sx={{ position: "relative", display: "flex", alignItems: "center" }}
                 >
-                  <Typography
-                    sx={{
-                      color: "#125A44",
-                      fontWeight: 600,
-                      fontSize: 15,
-                      cursor: "pointer",
-                      "&:hover": { color: "#3CBD96" },
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={0.5}>
+                    <Typography
+                      sx={{
+                        color:
+                          location.pathname.startsWith(item.to) || openService
+                            ? "#3CBD96"
+                            : "#125A44",
+                        fontWeight: 600,
+                        fontSize: 15,
+                        cursor: "pointer",
+                        transition: "color 0.3s",
+                        "&:hover": { color: "#3CBD96" },
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                    <KeyboardArrowDownIcon
+                      sx={{
+                        fontSize: 20,
+                        color:
+                          location.pathname.startsWith(item.to) || openService
+                            ? "#3CBD96"
+                            : "#125A44",
+                        transition: "color 0.3s",
+                        transform: openService ? "rotate(180deg)" : "rotate(0deg)", 
+                      }}
+                    />
+                  </Stack>
 
                   {openService && (
                     <ClickAwayListener onClickAway={handleServiceLeave}>
@@ -170,7 +197,7 @@ export default function Header() {
                         sx={{
                           position: "absolute",
                           left: 0,
-                          mt: 1,
+                          mt: 42,
                           boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
                           backgroundColor: "#fff",
                           minWidth: 250,
@@ -195,10 +222,11 @@ export default function Header() {
                   component={RouterLink}
                   to={item.to}
                   sx={{
-                    color: "#125A44",
+                    color: location.pathname === item.to ? "#3CBD96" : "#125A44",
                     textDecoration: "none",
                     fontWeight: 600,
                     fontSize: 15,
+                    transition: "color 0.3s",
                     "&:hover": { color: "#3CBD96" },
                   }}
                 >

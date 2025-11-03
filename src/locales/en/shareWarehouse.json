@@ -1,0 +1,136 @@
+{
+  "heroIntro": {
+    "title": "Flexible Service Warehouse Solutions for Individuals & Businesses",
+    "desc": "Our full-service warehouse is designed for customers who do not need frequent access to their belongings. With ASMS, you simply send your items — we handle pickup, storage, and delivery safely and conveniently."
+  },
+  "hero": {
+    "title": "ASMS Full-Service Warehouse",
+    "desc": "We provide comprehensive pickup, storage, and delivery — ideal for individuals, households, and small businesses.",
+    "sectionTitle": "Why choose our service warehouse?",
+    "sectionDesc": "The service warehouse model saves you time, optimizes costs, and ensures absolute safety for your belongings.",
+    "bullets": [
+      "Door-to-door pickup & delivery",
+      "Professional logistics team",
+      "Temperature-controlled facilities",
+      "Easy management and access",
+      "Affordable and convenient"
+    ],
+    "cta": "Contact us now"
+  },
+  "features": {
+    "title": "Our All-in-One Services",
+    "desc": "ASMS offers comprehensive features so you can store your goods with total peace of mind.",
+    "items": [
+      {
+        "title": "Free Pickup & Delivery",
+        "desc": "Our team collects or delivers your items upon request."
+      },
+      {
+        "title": "Packing Materials Provided",
+        "desc": "Boxes, tapes, and protection materials delivered to your door."
+      },
+      {
+        "title": "Professional Warehouse Management",
+        "desc": "Experienced staff manage and organize your storage efficiently."
+      },
+      {
+        "title": "Clean & Secure Facilities",
+        "desc": "Modern warehouses with temperature and humidity control."
+      }
+    ]
+  },
+  "safety": {
+    "title": "Complete Security & Protection",
+    "items": [
+      "24/7 CCTV Surveillance",
+      "Smart Alarm System",
+      "Fingerprint Access (Staff Only)",
+      "Temperature & Humidity Control"
+    ]
+  },
+  "steps": {
+    "title": "How to Use Our Service Warehouse",
+    "desc": "Just a few easy steps to send, store, and manage your belongings with ASMS.",
+    "items": [
+      {
+        "step": "Step 1",
+        "title": "Contact Us",
+        "desc": "Call or message us to receive consultation on the right storage plan."
+      },
+      {
+        "step": "Step 2",
+        "title": "Pickup & Transport",
+        "desc": "Our team collects your items and delivers them to the warehouse safely."
+      },
+      {
+        "step": "Step 3",
+        "title": "Secure Storage",
+        "desc": "Your items are stored in monitored, climate-controlled conditions."
+      },
+      {
+        "step": "Step 4",
+        "title": "Track & Retrieve Anytime",
+        "desc": "Easily request retrieval or renew your plan through our system."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Smart & Convenient Service Warehouse",
+    "desc": "A full-service storage solution that saves time, costs, and effort while ensuring absolute safety for your belongings.",
+    "items": [
+      {
+        "title": "Save Time",
+        "desc": "Our ASMS team handles transportation and storage for you."
+      },
+      {
+        "title": "Flexible & Easy",
+        "desc": "Just a few clicks to send, retrieve, or extend your service."
+      },
+      {
+        "title": "Professional Management",
+        "desc": "Our system helps you track items, schedules, and costs effortlessly."
+      },
+      {
+        "title": "Cost-Effective",
+        "desc": "Pay only for what you use — no need for private warehouses or staff."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "desc": "Answers to common questions about ASMS full-service warehouse.",
+    "items": [
+      {
+        "q": "What’s the difference between service and self-storage?",
+        "a": "ASMS manages and operates the entire service warehouse for you — ideal for customers who don’t need regular access. Self-storage lets customers access and organize their units 24/7."
+      },
+      {
+        "q": "How can I retrieve my items?",
+        "a": "Simply contact ASMS via phone, email, or app, and our team will deliver them to your address."
+      },
+      {
+        "q": "How many warehouses does ASMS have?",
+        "a": "We currently operate three main locations: An Phu, Thu Duc, and Dong Nai."
+      },
+      {
+        "q": "Are my items insured?",
+        "a": "ASMS offers free basic protection and optional upgrades for greater coverage."
+      },
+      {
+        "q": "Are there restrictions on stored items?",
+        "a": "You can store most goods except hazardous materials, perishables, or items with strong odors."
+      },
+      {
+        "q": "Does ASMS offer promotions?",
+        "a": "Yes! We offer special discounts for loyal customers, referrals, and long-term storage."
+      }
+    ]
+  },
+  "common": {
+    "contact": "Contact us"
+  },
+  "facility": {
+  "title": "3D Service Warehouse Simulation",
+  "desc": "Explore ASMS’s service warehouse in 3D – visualize the layout, organization, and management of your storage space."
+}
+}

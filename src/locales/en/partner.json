@@ -1,0 +1,117 @@
+{
+  "hero": {
+    "title1": "Manage Space Efficiently,",
+    "title2": "Grow Revenue with ASMS",
+    "cta": "Estimate Revenue"
+  },
+  "why": {
+    "title": "Why Partner with ASMS?",
+    "items": [
+      {
+        "num": "1",
+        "title": "Monetize Idle Space",
+        "desc": "Turn unused building areas into sustainable income for your management/owner team."
+      },
+      {
+        "num": "2",
+        "title": "3D Management",
+        "desc": "Monitor and operate storage visually with ASMS's interactive 3D interface."
+      },
+      {
+        "num": "3",
+        "title": "Low Financial Risk",
+        "desc": "Transparent partnership model optimized for operating efficiency."
+      },
+      {
+        "num": "4",
+        "title": "Lean Operations",
+        "desc": "Playbooks, training, and access-control integration to keep it hassle-free."
+      }
+    ]
+  },
+  "projects": {
+    "title": "Our Local Projects",
+    "viewDetails": "View Project Details"
+  },
+  "process": {
+    "title": "How It Works",
+    "steps": [
+      {
+        "title": "Consultation & Survey",
+        "desc": "Analyze your space, resident needs, and suitable monetization options."
+      },
+      {
+        "title": "Solution Proposal",
+        "desc": "Layout design, locker configuration, revenue estimate, and rollout plan."
+      },
+      {
+        "title": "Deployment & Integration",
+        "desc": "Install modular lockers, integrate access control, CCTV, and the ASMS software."
+      },
+      {
+        "title": "Operate & Share Revenue",
+        "desc": "Transparent operations and periodic reporting; revenue sharing as agreed."
+      }
+    ]
+  },
+  "estimate": {
+    "title": "How Much Could You Earn Each Month?",
+    "desc": "Use the ASMS calculator to estimate potential revenue from idle spaces.",
+    "fields": {
+      "firstName": "First Name *",
+      "lastName": "Last Name *",
+      "email": "Email *",
+      "phone": "Phone Number *",
+      "address": "Address *",
+      "district": "District *",
+      "area": "Estimated Area (m²) *",
+      "note": "Additional information (optional)"
+    },
+    "cta": "Estimate Revenue"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "q": "How does ASMS handle security and access control?",
+        "a": "We implement multi-layered security:\n\n- **Personal authentication:** Unique access codes; optional fingerprint/card.\n- **24/7 monitoring:** CCTV and electronic access control track all entries/exits.\n- **Payment compliance:** Access can be revoked automatically if terms are violated."
+      },
+      {
+        "q": "What items are suitable for storage?",
+        "a": "Residents/SMEs can store a wide range of items:\n\n- Boxes/containers, clothes and fabrics\n- Seasonal sports gear (golf, etc.)\n- Files, documents, marketing materials\n- Small furniture and other personal/business belongings"
+      },
+      {
+        "q": "Do we need on-site staff?",
+        "a": "Not necessarily. ASMS helps keep operations lean:\n\n- Periodic inspections with checklists.\n- Safety–cleanliness–stability guaranteed.\n- Reduced staffing costs via digital tools and clear SOPs."
+      },
+      {
+        "q": "What are the access hours?",
+        "a": "- Depends on building policy.\n- Common schedule: **6:00–22:00** daily.\n- Hours and permissions are configured in ASMS by building management."
+      },
+      {
+        "q": "What partnership model does ASMS offer?",
+        "a": "ASMS proposes a **transparent revenue-sharing model** instead of fixed rent:\n\n- **No upfront capital risk** for management/owners.\n- **Shared growth** as resident demand increases.\n- **Passive income** with streamlined operations."
+      },
+      {
+        "q": "Does installation affect building structure?",
+        "a": "No. Our modular lockers are:\n\n- Quick to assemble, lightweight, flexible.\n- No mandatory drilling.\n- No impact on existing structure."
+      },
+      {
+        "q": "How are investment and OPEX allocated?",
+        "a": "Flexible by agreement. ASMS can cover:\n\n- Design, installation, equipment.\n- Software & access-control infrastructure.\n- Support with staffing, accounting, reporting."
+      },
+      {
+        "q": "How does revenue sharing work?",
+        "a": "A transparent, long-term model:\n\n- **Payback phase:** Preferential split for management/owner.\n- **Post-payback:** Split as agreed (e.g., 50/50).\n- Periodic reporting and payouts via ASMS."
+      },
+      {
+        "q": "Which channels does ASMS use to reach residents?",
+        "a": "We collaborate with building management via:\n\n- **Digital:** Website, SEO, search ads.\n- **On-site:** Lobby/elevator posters, internal communication.\n- **Email/SMS:** Reminders and package offers.\n- **Community:** Events and activities in the building."
+      },
+      {
+        "q": "Who are ASMS’s core user segments?",
+        "a": "Three key groups:\n\n1. **Residents:** Seasonal/moving storage needs.\n2. **SMEs:** Inventory/documents/equipment storage.\n3. **In-building community:** Prefer convenient storage where they live."
+      }
+    ]
+  }
+}

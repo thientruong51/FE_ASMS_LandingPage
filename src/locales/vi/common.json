@@ -10,7 +10,7 @@
   "servicesDropdown": {
     "type": "Các loại hình thuê kho",
     "selfStorage": "Thuê kho tự quản",
-    "sharedStorage": "Thuê kho kệ chung",
+    "sharedStorage": "Thuê kho dịch vụ trọn gói",
     "wineStorage": "Kho rượu tự quản",
     "size": "Kích thước kho",
     "calculator": "Tính toán kích cỡ kho bằng AI",

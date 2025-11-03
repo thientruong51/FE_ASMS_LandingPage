@@ -9,6 +9,12 @@ import viServices from "./locales/vi/services.json";
 import viContact from "./locales/vi/contact.json";
 import viNotFound from "./locales/vi/notFound.json";
 import viServicesOverview from "./locales/vi/servicesOverview.json";
+import viselfStorage from "./locales/vi/selfStorage.json";
+import vishareWarehouse from "./locales/vi/shareWarehouse.json";
+import vistorageSize from "./locales/vi/storageSize.json";
+import viprocess from "./locales/vi/process.json";
+import vipartner from "./locales/vi/partner.json";
+
 // English
 import enLanding from "./locales/en/translation.json";
 import enCommon from "./locales/en/common.json";
@@ -17,6 +23,12 @@ import enServices from "./locales/en/services.json";
 import enContact from "./locales/en/contact.json";
 import enNotFound from "./locales/en/notFound.json";
 import enServicesOverview from "./locales/en/servicesOverview.json";
+import enselfStorage from "./locales/en/selfStorage.json";
+import enshareWarehouse from "./locales/en/shareWarehouse.json";
+import enstorageSize from "./locales/en/storageSize.json";
+import enprocess from "./locales/en/process.json";
+import enpartner from "./locales/en/partner.json";
+
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -27,7 +39,13 @@ i18n.use(initReactI18next).init({
       services: viServices,
       contact: viContact,
       notFound: viNotFound,
-      servicesOverview:viServicesOverview
+      servicesOverview:viServicesOverview,
+      selfStorage:viselfStorage,
+      shareWarehouse:vishareWarehouse,
+      storageSize:vistorageSize,
+      process:viprocess,
+      partner:vipartner
+
     },
     en: {
       translation: enLanding,
@@ -36,7 +54,12 @@ i18n.use(initReactI18next).init({
       services: enServices,
       contact: enContact,
       notFound: enNotFound,
-      servicesOverview:enServicesOverview
+      servicesOverview:enServicesOverview,
+      selfStorage:enselfStorage,
+      shareWarehouse:enshareWarehouse,
+      storageSize:enstorageSize,
+      process:enprocess,
+      partner:enpartner
 
     },
   },

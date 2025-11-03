@@ -5,6 +5,11 @@ import Services from "../pages/Services";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 import ServicesOverview from "../pages/ServicesOverview";
+import SelfStoragePage from "../pages/SelfStorage";
+import ShareWarehousePage from "../pages/ShareWarehouse";
+import StorageSize from "../pages/StorageSize";
+import ProcessPage from "../pages/Process";
+import PartnerPage from "../pages/Partner";
 
 export default function AppRoutes() {
   return (
@@ -15,6 +20,12 @@ export default function AppRoutes() {
       <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/services/types" element={<ServicesOverview  />} />
+      <Route path="/services/self-storage" element={<SelfStoragePage  />} />
+      <Route path="/services/shared-storage" element={<ShareWarehousePage  />} />
+      <Route path="/services/size-guide" element={<StorageSize  />} />
+      <Route path="/services/process" element={<ProcessPage />} />
+      <Route path="/partner" element={<PartnerPage />} />
+
     </Routes>
   );
 }

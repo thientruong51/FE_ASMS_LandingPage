@@ -8,26 +8,29 @@ import {
   Typography,
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ThreeDRotationIcon from "@mui/icons-material/ThreeDRotation";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { useTranslation } from "react-i18next";
 
 const features = [
   {
     id: 1,
-    icon: "📦",
+    icon: <ThreeDRotationIcon sx={{ fontSize: 42, color: "#3CBD96" }} />,
     titleKey: "sub-features.tour.title",
     descKey: "sub-features.tour.desc",
     btnKey: "sub-features.tour.btn",
   },
   {
     id: 2,
-    icon: "🚗",
+    icon: <LocalShippingIcon sx={{ fontSize: 42, color: "#3CBD96" }} />,
     titleKey: "sub-features.car.title",
     descKey: "sub-features.car.desc",
     btnKey: "sub-features.car.btn",
   },
   {
     id: 3,
-    icon: "💬",
+    icon: <SupportAgentIcon sx={{ fontSize: 42, color: "#3CBD96" }} />,
     titleKey: "sub-features.support.title",
     descKey: "sub-features.support.desc",
     btnKey: "sub-features.support.btn",
@@ -99,8 +102,6 @@ export default function Features() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 42,
-                    color: "#3CBD96",
                     boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
                   }}
                 >
