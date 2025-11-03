@@ -1,0 +1,136 @@
+{
+  "heroIntro": {
+    "title": "Giải pháp kho dịch vụ linh hoạt cho cá nhân & doanh nghiệp",
+    "desc": "Kho dịch vụ trọn gói được thiết kế cho những khách hàng không có nhu cầu truy xuất đồ đạc thường xuyên. Với ASMS, bạn chỉ cần gửi đồ — đội ngũ của chúng tôi sẽ thay bạn nhận, lưu trữ và giao trả tận nơi, an toàn và tiện lợi."
+  },
+  "hero": {
+    "title": "Kho dịch vụ trọn gói của ASMS",
+    "desc": "Chúng tôi cung cấp dịch vụ nhận, lưu trữ và giao trả hàng hóa toàn diện – phù hợp cho cá nhân, hộ kinh doanh và doanh nghiệp nhỏ.",
+    "sectionTitle": "Vì sao nên chọn kho dịch vụ?",
+    "sectionDesc": "Mô hình kho dịch vụ giúp bạn tiết kiệm thời gian, tối ưu chi phí và đảm bảo an toàn tuyệt đối cho tài sản của mình.",
+    "bullets": [
+      "Nhận & giao hàng tận nơi",
+      "Đội ngũ vận chuyển chuyên nghiệp",
+      "Kho lưu trữ kiểm soát nhiệt độ",
+      "Quản lý & truy xuất dễ dàng",
+      "Chi phí hợp lý, tiện lợi"
+    ],
+    "cta": "Đặt dịch vụ ngay"
+  },
+  "features": {
+    "title": "Dịch vụ trọn gói của chúng tôi",
+    "desc": "ASMS mang đến các tiện ích toàn diện để bạn hoàn toàn yên tâm trong suốt quá trình lưu trữ.",
+    "items": [
+      {
+        "title": "Nhận & giao hàng miễn phí",
+        "desc": "Đội ngũ ASMS đến tận nơi để nhận hoặc trả hàng theo yêu cầu của bạn."
+      },
+      {
+        "title": "Cung cấp vật liệu đóng gói",
+        "desc": "Thùng lưu trữ, băng keo và vật liệu bảo vệ được giao tận nơi."
+      },
+      {
+        "title": "Quản lý kho chuyên nghiệp",
+        "desc": "Đội ngũ nhân viên giàu kinh nghiệm giúp kiểm soát và sắp xếp kho khoa học."
+      },
+      {
+        "title": "Kho an toàn, sạch sẽ",
+        "desc": "Cơ sở vật chất hiện đại, có kiểm soát nhiệt độ và độ ẩm."
+      }
+    ]
+  },
+  "safety": {
+    "title": "An toàn và bảo mật tuyệt đối",
+    "items": [
+      "Camera giám sát 24/7",
+      "Hệ thống báo động thông minh",
+      "Kiểm soát ra vào bằng vân tay",
+      "Khu vực kho có kiểm soát nhiệt độ & độ ẩm"
+    ]
+  },
+  "steps": {
+    "title": "Quy trình sử dụng kho dịch vụ",
+    "desc": "Chỉ với vài bước đơn giản, bạn đã có thể gửi đồ và theo dõi tình trạng lưu trữ của mình dễ dàng cùng ASMS.",
+    "items": [
+      {
+        "step": "Bước 1",
+        "title": "Liên hệ với chúng tôi",
+        "desc": "Gọi điện hoặc nhắn tin để được tư vấn loại kho phù hợp."
+      },
+      {
+        "step": "Bước 2",
+        "title": "Nhận & vận chuyển hàng hóa",
+        "desc": "Đội ngũ của ASMS hỗ trợ nhận đồ tận nơi và chuyển đến kho."
+      },
+      {
+        "step": "Bước 3",
+        "title": "Lưu trữ an toàn",
+        "desc": "Đồ đạc của bạn được sắp xếp trong kho có kiểm soát an ninh & nhiệt độ."
+      },
+      {
+        "step": "Bước 4",
+        "title": "Theo dõi & truy xuất linh hoạt",
+        "desc": "Dễ dàng yêu cầu lấy đồ hoặc gia hạn hợp đồng chỉ bằng vài thao tác."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Dịch vụ kho thông minh, tiện lợi cùng ASMS",
+    "desc": "Giải pháp kho trọn gói giúp bạn tiết kiệm thời gian, chi phí và công sức, đồng thời đảm bảo an toàn tuyệt đối cho tài sản của mình.",
+    "items": [
+      {
+        "title": "Tiết kiệm thời gian",
+        "desc": "Đội ngũ ASMS thay bạn xử lý toàn bộ khâu vận chuyển và lưu trữ."
+      },
+      {
+        "title": "Linh hoạt và dễ sử dụng",
+        "desc": "Chỉ cần vài thao tác để gửi đồ, nhận đồ hoặc gia hạn dịch vụ."
+      },
+      {
+        "title": "Quản lý chuyên nghiệp",
+        "desc": "Ứng dụng quản lý giúp theo dõi hàng hóa, lịch trình và chi phí dễ dàng."
+      },
+      {
+        "title": "Chi phí hợp lý",
+        "desc": "Trả phí đúng nhu cầu, không cần đầu tư kho riêng hay nhân sự quản lý."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Câu hỏi thường gặp",
+    "desc": "Giải đáp những thắc mắc phổ biến về dịch vụ kho trọn gói của ASMS.",
+    "items": [
+      {
+        "q": "Kho dịch vụ khác gì so với kho tự quản?",
+        "a": "Kho dịch vụ được ASMS quản lý và vận hành toàn diện, phù hợp với khách hàng không cần truy xuất thường xuyên. Kho tự quản cho phép khách hàng truy cập và tự sắp xếp đồ đạc 24/7."
+      },
+      {
+        "q": "Tôi có thể truy xuất hàng hóa như thế nào?",
+        "a": "Bạn chỉ cần liên hệ ASMS qua điện thoại, email hoặc ứng dụng, đội ngũ sẽ hỗ trợ giao hàng tận nơi."
+      },
+      {
+        "q": "ASMS có bao nhiêu kho?",
+        "a": "Hiện tại chúng tôi có 3 địa điểm chính: An Phú, Thủ Đức và Đồng Nai."
+      },
+      {
+        "q": "Đồ đạc của tôi có được bảo hiểm không?",
+        "a": "ASMS cung cấp gói bảo vệ cơ bản miễn phí và các lựa chọn nâng cấp để bảo vệ tài sản tốt hơn."
+      },
+      {
+        "q": "Có giới hạn loại hàng hóa lưu trữ không?",
+        "a": "Bạn có thể lưu trữ đa dạng vật dụng, trừ hàng nguy hiểm, thực phẩm dễ hỏng hoặc đồ có mùi mạnh."
+      },
+      {
+        "q": "ASMS có ưu đãi gì không?",
+        "a": "Chúng tôi có các ưu đãi hấp dẫn cho khách hàng thân thiết, giới thiệu bạn bè hoặc lưu trữ dài hạn."
+      }
+    ]
+  },
+  "common": {
+    "contact": "Liên hệ ngay"
+  },
+  "facility": {
+  "title": "Mô phỏng không gian kho dịch vụ 3D",
+  "desc": "Khám phá mô hình kho dịch vụ của ASMS dưới dạng 3D – giúp bạn hình dung trực quan cách sắp xếp, bố trí và quản lý không gian lưu trữ."
+}
+}

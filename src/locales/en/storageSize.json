@@ -1,0 +1,44 @@
+{
+  "title": "Storage Room Sizes & Pricing",
+  "desc": "Choose the storage size that fits your needs. All rooms are secure and clean, with optional air conditioning for better preservation.",
+  "toggle": {
+    "noAC": "Without Air Conditioning",
+    "ac": "With Air Conditioning"
+  },
+  "priceTable": {
+    "title": "Room Pricing ({{mode}})"
+  },
+  "price": {
+    "acTitle": "Storage room pricing",
+    "noAcTitle": "Storage room pricing",
+    "withAc": "With Air Conditioned",
+    "noAc": "No Air Conditioned",
+    "colRoom": "Room type",
+    "colArea": "Area (m²)",
+    "colBase": "Base price",
+    "colDiscount": "Discount (%)",
+    "colMonth": "Monthly price",
+    "colWeek": "Weekly price",
+    "rooms": {
+      "smallName": "Small Room",
+      "mediumName": "Medium Room",
+      "largeName": "Large Room"
+    }
+  },
+  "rooms": {
+    "small": {
+      "name": "Small Room",
+      "tag": "BASIC"
+    },
+    "medium": {
+      "name": "Medium Room",
+      "tag": "BUSINESS"
+    },
+    "large": {
+      "name": "Large Room",
+      "tag": "PREMIUM"
+    },
+    "areaLabel": "Area",
+    "priceLabel": "month"
+  }
+}

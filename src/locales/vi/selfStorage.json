@@ -1,0 +1,148 @@
+{
+    "heroIntro": {
+  "title": "Kho tự quản",
+  "desc": "Là đơn vị tiên phong đưa mô hình kho tự quản vào Việt Nam từ năm 2025, ASMS cung cấp dịch vụ kho mini hiện đại với nhiều kích thước linh hoạt, cho phép truy cập 24/7 – lý tưởng cho cá nhân và doanh nghiệp cần lưu trữ thường xuyên."
+},
+
+  "hero": {
+    "title": "Kho tự quản ASMS",
+    "desc": "ASMS mang đến dịch vụ kho tự quản hiện đại – nơi bạn có thể dễ dàng lưu trữ đồ đạc, hàng hóa, hồ sơ hay vật dụng cá nhân trong không gian an toàn, riêng tư và linh hoạt.",
+    "sectionTitle": "Thuê kho tự quản \"Kho tự xếp\" của bạn",
+    "sectionDesc": "Chọn kho với kích thước phù hợp, lưu trữ đồ đạc của bạn trong không gian an toàn và có thể truy cập 24/7.",
+    "bullets": [
+      "Truy cập kho của bạn 24/7 mọi lúc, mọi nơi",
+      "Bảo mật với khóa riêng và hệ thống giám sát an ninh",
+      "Tùy chọn kho có điều hòa hoặc không điều hòa",
+      "Hỗ trợ đóng gói và vận chuyển tận nơi"
+    ],
+    "cta": "Tìm hiểu về kích thước kho"
+  },
+
+  "whyChoose": {
+    "title": "Tại sao nên chọn kho tự quản tại ASMS?",
+    "desc": "Hệ thống kho tự quản hiện đại, hoạt động 24/7, thiết kế riêng biệt cho khách hàng cá nhân và doanh nghiệp nhỏ cần giải pháp lưu trữ linh hoạt và an toàn.",
+    "items": [
+      {
+        "title": "Không gian an toàn, sạch sẽ",
+        "desc": "Kho được bảo vệ bằng camera giám sát và cảm biến chuyển động, đảm bảo an toàn tuyệt đối."
+      },
+      {
+        "title": "Vị trí thuận tiện tại TP.HCM",
+        "desc": "Kho ASMS đặt tại khu vực An Phú – Thủ Đức, thuận lợi di chuyển tới các quận trung tâm."
+      },
+      {
+        "title": "Truy cập linh hoạt 24/7",
+        "desc": "Tự do ra vào kho của bạn bất kỳ lúc nào, với mã khóa cá nhân và hệ thống thẻ từ an toàn."
+      },
+      {
+        "title": "Hỗ trợ tận tâm, giàu kinh nghiệm",
+        "desc": "Đội ngũ ASMS luôn sẵn sàng hỗ trợ bạn trong suốt quá trình thuê và sử dụng kho."
+      }
+    ]
+  },
+
+  "features": {
+    "title": "Dịch vụ tiện ích và an toàn",
+    "desc": "ASMS cung cấp đầy đủ các tiện ích cần thiết để việc lưu trữ của bạn trở nên dễ dàng, an toàn và linh hoạt hơn.",
+    "items": [
+      {
+        "title": "Camera giám sát 24/7",
+        "desc": "Mọi khu vực trong kho đều được giám sát liên tục, đảm bảo tài sản của bạn luôn an toàn."
+      },
+      {
+        "title": "Khóa bảo mật riêng",
+        "desc": "Mỗi phòng kho đều có khóa riêng biệt do khách hàng tự giữ, đảm bảo tính riêng tư tuyệt đối."
+      },
+      {
+        "title": "Truy cập linh hoạt",
+        "desc": "Bạn có thể ra vào kho bất cứ thời điểm nào với thẻ từ hoặc mã khóa cá nhân."
+      },
+      {
+        "title": "Hỗ trợ vận chuyển",
+        "desc": "ASMS hỗ trợ vận chuyển và bốc xếp giúp bạn tiết kiệm thời gian và công sức."
+      },
+      {
+        "title": "Thanh toán linh hoạt",
+        "desc": "Hỗ trợ thanh toán online, chuyển khoản hoặc trực tiếp, phù hợp với mọi nhu cầu."
+      },
+      {
+        "title": "Dịch vụ chuyên nghiệp",
+        "desc": "Đội ngũ hỗ trợ tận tâm, luôn sẵn sàng tư vấn và giải đáp mọi thắc mắc của bạn."
+      }
+    ]
+  },
+
+  "sizeGuide": {
+    "title": "Tìm kích thước kho phù hợp",
+    "desc": "ASMS cung cấp nhiều kích thước kho để đáp ứng mọi nhu cầu – từ lưu trữ đồ cá nhân, hồ sơ cho đến hàng hóa doanh nghiệp.",
+    "units": [
+      {
+        "title": "Kho Nhỏ (Small)",
+        "size": "1.8m (D) × 3.3m (R) × 2.5m (C) | 14.85 m³",
+        "desc": "Phù hợp để lưu trữ đồ cá nhân, hồ sơ hoặc vật dụng nhỏ. Có 1 dãy kệ áp tường và lối đi 0.7m."
+      },
+      {
+        "title": "Kho Trung Bình (Medium)",
+        "size": "3.2m (D) × 3.3m (R) × 2.5m (C) | 26.4 m³",
+        "desc": "Phù hợp cho hộ gia đình nhỏ hoặc doanh nghiệp cần không gian lưu trữ trung bình. Có 2 dãy kệ đối xứng, lối đi 1m."
+      },
+      {
+        "title": "Kho Lớn (Large)",
+        "size": "3.2m (D) × 4.8m (R) × 2.5m (C) | 38.4 m³",
+        "desc": "Không gian lớn cho doanh nghiệp hoặc hộ gia đình nhiều đồ. Có 2 dãy dài, lối đi 1m."
+      }
+    ]
+  },
+
+  "location": {
+    "title": "Kho tự quản ASMS tại TP. Thủ Đức",
+    "desc": "Kho tự quản của ASMS đặt tại khu An Phú, Thủ Đức — chỉ 10 phút tới trung tâm Quận 1 và sân bay Tân Sơn Nhất, thuận tiện di chuyển tới các khu vực khác.",
+    "address": "375 Võ Nguyên Giáp, phường An Phú, TP. Thủ Đức, TP.HCM",
+    "phone": "Hotline: 0909 888 999",
+    "hours": "Giờ làm việc: Thứ 2 – Thứ 7 (9:00 – 18:00)",
+    "cta": "Xem vị trí trên bản đồ"
+  },
+
+  "faq": {
+    "title": "Câu hỏi thường gặp về dịch vụ kho tự quản",
+    "desc": "Giải đáp nhanh các thắc mắc về dịch vụ và chính sách thuê kho ASMS.",
+    "items": [
+      {
+        "q": "Kích thước kho tự quản mà ASMS cung cấp là gì?",
+        "a": "Chúng tôi cung cấp 3 loại kho: Small (14.85 m³), Medium (26.4 m³) và Large (38.4 m³). Tất cả đều được thiết kế hiện đại, phù hợp với nhu cầu lưu trữ khác nhau."
+      },
+      {
+        "q": "Kho tự quản của ASMS ở đâu và có cho phép truy cập 24/7 không?",
+        "a": "Kho của chúng tôi nằm tại 375 Võ Nguyên Giáp, phường An Phú, TP. Thủ Đức, TP.HCM. Bạn có thể truy cập kho 24/7 bằng mã khóa hoặc thẻ từ cá nhân."
+      },
+      {
+        "q": "ASMS có những biện pháp bảo mật nào?",
+        "a": "Hệ thống camera giám sát 24/7, cảm biến chuyển động, khóa riêng cho từng phòng, cùng hệ thống cảnh báo an ninh hiện đại giúp bảo vệ tài sản của bạn."
+      },
+      {
+        "q": "ASMS có kho được trang bị điều hòa không?",
+        "a": "Có, ASMS cung cấp tùy chọn kho có điều hòa (duy trì 23–25°C) và kho tiêu chuẩn. Kho có điều hòa phù hợp cho các vật liệu dễ hư hỏng như gỗ, vải hoặc nệm."
+      },
+      {
+        "q": "Tôi có cần đặt cọc khi thuê kho không?",
+        "a": "Có. Khách hàng cần đặt cọc tương ứng với kích thước kho và thời gian thuê. Số tiền cọc sẽ được hoàn lại khi kết thúc hợp đồng."
+      },
+      {
+        "q": "Có vật dụng nào tôi không thể lưu trữ không?",
+        "a": "Vì lý do an toàn, không được lưu trữ: vũ khí, vật liệu dễ cháy nổ, hàng hóa cấm, sinh vật sống, thực phẩm hoặc các vật có mùi mạnh."
+      },
+      {
+        "q": "ASMS có cung cấp tiện ích bổ sung nào không?",
+        "a": "ASMS có khu vực làm việc, wifi miễn phí, cùng hỗ trợ đóng gói và bốc xếp để bạn có trải nghiệm tốt nhất khi sử dụng kho."
+      },
+      {
+        "q": "ASMS có bán vật liệu đóng gói không?",
+        "a": "Có, chúng tôi cung cấp thùng carton, băng keo, túi chống ẩm và các dụng cụ hỗ trợ đóng gói khác."
+      },
+      {
+        "q": "Làm thế nào để biết tôi cần bao nhiêu không gian?",
+        "a": "Bạn có thể ước lượng: 1m³ chứa khoảng 6 thùng tiêu chuẩn. Hãy chọn kho lớn hơn 1–2m³ so với nhu cầu thực tế để việc sắp xếp thuận tiện hơn. Liên hệ ASMS để được tư vấn kích thước phù hợp!"
+      }
+    ]
+  }
+}

@@ -1,21 +1,25 @@
 {
   "title": "Contact Us",
-  "lead": "We usually respond within 24 hours.",
+  "lead": "Do you have questions about self-storage, shared storage, or moving services? Our team is always ready to help. Feel free to reach out via email, phone, or WhatsApp!",
+  "location": {
+    "title": "Location",
+    "desc": "375 Vo Nguyen Giap, An Phu Ward, Thu Duc City, Ho Chi Minh City, Vietnam"
+  },
+  "hotline": { "title": "Hotline" },
+  "email": { "title": "Email" },
+  "hours": {
+    "title": "Working Hours",
+    "desc": "Monday - Saturday: 9AM – 6PM\nWe can also support remote customers on Sunday."
+  },
   "form": {
-    "name": "Full name",
+    "title": "Our team is always ready to answer your questions!",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "email": "Email",
+    "phone": "Phone Number",
     "message": "Message",
-    "send": "Send",
-    "sent": "Message sent! Thank you."
-  },
-  "info": {
-    "title": "Contact Information",
-    "address": "Ho Chi Minh City, Vietnam",
-    "hotline": "+84 28 7771 0118",
-    "email": "support@asms.vn",
-    "hours": "Mon - Sat: 8:00 AM - 6:00 PM"
-  },
-  "cta": {
-    "backHome": "Back to Home"
+    "submit": "Send Message",
+    "sent": "Thank you! We’ll get back to you as soon as possible.",
+    "note": "ASMS usually responds within 2 hours."
   }
 }

@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "title": "Quy trình thuê kho",
+    "subtitle": "Khám phá hướng dẫn toàn diện về dịch vụ cho thuê kho tự quản, thuê kho để đồ và các dịch vụ khác của chúng tôi."
+  },
+  "steps": {
+    "title": "Dọn dẹp cuộc sống của bạn trong 3 bước đơn giản",
+    "subtitle": "Biến đổi không gian sống của bạn. Thuê kho để đồ dễ dàng với ASMS!",
+    "step": "BƯỚC",
+    "cta": "Liên hệ",
+    "items": [
+      {
+        "title": "Đặt dịch vụ thuê kho",
+        "desc": "Bạn có thể đặt trực tuyến hoặc liên hệ với chúng tôi qua email, hotline hoặc tin nhắn để trao đổi yêu cầu và nhận báo giá.",
+        "img": "/images/process-step1.jpg"
+      },
+      {
+        "title": "Giao nhận hàng hóa",
+        "desc": "Đến hẹn, chúng tôi sẽ tới lấy hàng và giao đến địa điểm kho sạch sẽ, an toàn. Bạn có thể ghé thăm kho của chúng tôi bất cứ lúc nào.",
+        "img": "/images/process-step2.jpg"
+      },
+      {
+        "title": "Trả hàng bất cứ lúc nào",
+        "desc": "ASMS sẽ giao trả hàng bất cứ khi nào bạn cần. Nếu sử dụng kho tự quản, bạn được quyền truy cập kho 24/7 không giới hạn.",
+        "img": "/images/process-step3.jpg"
+      }
+    ]
+  },
+  "size": {
+    "title": "Bạn đang băn khoăn về kích thước kho phù hợp?",
+    "subtitle": "Xem hướng dẫn chi tiết để tìm ra kích thước kho phù hợp nhất với nhu cầu của bạn!",
+    "cta": "Kích thước kho",
+    "review": {
+      "text": "“Mình sử dụng dịch vụ của ASMS vài tháng khi sửa nhà. Nhân viên đến đóng gói, vận chuyển và trả lại đồ rất thuận tiện. Các bạn thân thiện, nhiệt tình và giá cả hợp lý.”",
+      "author": "Hạnh Hồ",
+      "cta": "Xem thêm"
+    }
+  },
+  "why": {
+    "title": "Điều gì khiến ASMS đặc biệt?",
+    "items": [
+      {
+        "title": "Đội ngũ quản lý từ Việt Nam",
+        "desc": "ASMS được điều hành bởi các nhà quản lý có kinh nghiệm và hiểu tâm rõ lí khách hàng, mang lại tiêu chuẩn dịch vụ cao cấp."
+      },
+      {
+        "title": "Chúng tôi quan tâm đến nhu cầu của bạn",
+        "desc": "Mục tiêu của chúng tôi là mang đến giải pháp tối ưu để mở rộng không gian sống và làm việc của bạn."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Bạn có thắc mắc cần giải đáp?",
+    "subtitle": "Liên hệ với ASMS để được hỗ trợ nhanh chóng qua email, hotline hoặc tin nhắn.",
+    "cta": "Liên hệ"
+  },
+  "review": {
+  "title": "Khách hàng nói gì về ASMS?",
+  "text": "Mình sử dụng dịch vụ của ASMS vài tháng khi sửa nhà. Nhân viên đóng gói, vận chuyển và trả lại đồ rất thuận tiện, thân thiện và chuyên nghiệp.",
+  "author": "Hạnh Hồ",
+  "cta": "Xem thêm đánh giá"
+}
+
+}

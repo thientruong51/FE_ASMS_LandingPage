@@ -1,0 +1,147 @@
+{
+    "heroIntro": {
+  "title": "Self Storage",
+  "desc": "Pioneering the self-storage model in Vietnam since 2025, ASMS offers modern mini storage units with flexible sizes and 24/7 access — ideal for individuals and businesses needing regular storage."
+},
+  "hero": {
+    "title": "ASMS Self Storage",
+    "desc": "ASMS offers a modern self-storage service where you can easily store personal belongings, goods, or documents in a safe, private, and flexible space.",
+    "sectionTitle": "Rent your own \"Do-It-Yourself\" storage",
+    "sectionDesc": "Choose the right unit size and store your items securely with 24/7 access and full privacy.",
+    "bullets": [
+      "Access your storage 24/7 anytime, anywhere",
+      "Protected with private locks and surveillance system",
+      "Optional air-conditioned or standard units",
+      "Packing and transport assistance available"
+    ],
+    "cta": "Learn more"
+  },
+
+  "whyChoose": {
+    "title": "Why choose ASMS Self Storage?",
+    "desc": "Our modern 24/7 storage system is designed for both individuals and small businesses seeking flexible and secure storage solutions.",
+    "items": [
+      {
+        "title": "Clean and secure space",
+        "desc": "All units are monitored by cameras and motion sensors to ensure maximum safety."
+      },
+      {
+        "title": "Convenient location in Ho Chi Minh City",
+        "desc": "Located in An Phu – Thu Duc, easily accessible from major districts and main roads."
+      },
+      {
+        "title": "24/7 flexible access",
+        "desc": "Enter your storage unit anytime with your own key or access card."
+      },
+      {
+        "title": "Professional and dedicated support",
+        "desc": "Our team is always ready to assist you during your storage journey."
+      }
+    ]
+  },
+
+  "features": {
+    "title": "Safety & Convenience Features",
+    "desc": "ASMS provides all the essential facilities to make your storage experience simple, secure, and flexible.",
+    "items": [
+      {
+        "title": "24/7 Surveillance Cameras",
+        "desc": "Every area of our warehouse is monitored around the clock for your peace of mind."
+      },
+      {
+        "title": "Private Lock System",
+        "desc": "Each unit has its own lock controlled solely by you for full privacy."
+      },
+      {
+        "title": "Flexible Access",
+        "desc": "Access your unit anytime with your private code or key card."
+      },
+      {
+        "title": "Transport Assistance",
+        "desc": "We provide moving and loading support to help you save time and effort."
+      },
+      {
+        "title": "Flexible Payment Options",
+        "desc": "Pay online, by transfer, or in person — whatever suits you best."
+      },
+      {
+        "title": "Professional Service",
+        "desc": "Our support team is always ready to advise and assist with any questions."
+      }
+    ]
+  },
+
+  "sizeGuide": {
+    "title": "Find the right unit size for you",
+    "desc": "ASMS offers a range of storage unit sizes to suit your needs — from personal use to business inventory storage.",
+    "units": [
+      {
+        "title": "Small Unit",
+        "size": "1.8m (L) × 3.3m (W) × 2.5m (H) | 14.85 m³",
+        "desc": "Ideal for storing personal items, documents, or small belongings. Includes one shelf row and 0.7m walkway."
+      },
+      {
+        "title": "Medium Unit",
+        "size": "3.2m (L) × 3.3m (W) × 2.5m (H) | 26.4 m³",
+        "desc": "Perfect for families or small businesses needing mid-size storage. Includes two opposite shelf rows and 1m walkway."
+      },
+      {
+        "title": "Large Unit",
+        "size": "3.2m (L) × 4.8m (W) × 2.5m (H) | 38.4 m³",
+        "desc": "Spacious unit suitable for large households or business storage. Includes two long rows with 1m walkway."
+      }
+    ]
+  },
+
+  "location": {
+    "title": "ASMS Self Storage in Thu Duc City",
+    "desc": "Located in An Phu, Thu Duc — just 10 minutes to District 1 and Tan Son Nhat Airport, easily connected to all major areas in Ho Chi Minh City.",
+    "address": "375 Vo Nguyen Giap, An Phu Ward, Thu Duc City, Ho Chi Minh City",
+    "phone": "Hotline: (+84) 909 888 999",
+    "hours": "Business hours: Monday – Saturday (9:00 AM – 6:00 PM)",
+    "cta": "View on Google Maps"
+  },
+
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "desc": "Quick answers about ASMS storage services and policies.",
+    "items": [
+      {
+        "q": "What storage unit sizes does ASMS provide?",
+        "a": "We offer three unit sizes: Small (14.85 m³), Medium (26.4 m³), and Large (38.4 m³). All are designed with modern layouts to suit different storage needs."
+      },
+      {
+        "q": "Where is ASMS located and is 24/7 access available?",
+        "a": "Our facility is at 375 Vo Nguyen Giap, An Phu, Thu Duc City. You can access your storage unit 24/7 using your personal key or access card."
+      },
+      {
+        "q": "What security measures does ASMS have?",
+        "a": "Our facility is equipped with 24/7 surveillance, motion sensors, private locks for each unit, and modern alarm systems to keep your belongings secure."
+      },
+      {
+        "q": "Does ASMS offer air-conditioned units?",
+        "a": "Yes. ASMS provides both standard and air-conditioned units (kept between 23–25°C). The air-conditioned ones are ideal for items like wood, fabric, and mattresses."
+      },
+      {
+        "q": "Do I need to pay a deposit?",
+        "a": "Yes. A refundable deposit is required, depending on the unit size and rental duration."
+      },
+      {
+        "q": "Are there any restricted items?",
+        "a": "For safety reasons, you may not store weapons, explosives, illegal goods, live animals, food, or items with strong odors."
+      },
+      {
+        "q": "Does ASMS provide extra facilities?",
+        "a": "Yes. We offer a co-working area, free Wi-Fi, and assistance with packing and loading for your convenience."
+      },
+      {
+        "q": "Does ASMS sell packing materials?",
+        "a": "Yes, we provide packing boxes, tape, moisture absorbers, and other supplies to make storage easier."
+      },
+      {
+        "q": "How do I estimate how much space I need?",
+        "a": "As a rule of thumb, 1m³ holds about 6 standard boxes. Choose a unit slightly larger (1–2m³ extra) than your estimate for easier organizing. Contact ASMS for personalized advice!"
+      }
+    ]
+  }
+}

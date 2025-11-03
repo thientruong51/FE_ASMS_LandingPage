@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "title": "Storage Rental Process",
+    "subtitle": "Explore our complete guide to self-storage, full-service storage, and other ASMS services."
+  },
+  "steps": {
+    "title": "Simplify your life in 3 easy steps",
+    "subtitle": "Transform your living space. Renting storage is easy with ASMS!",
+    "step": "STEP",
+    "cta": "Contact Us",
+    "items": [
+      {
+        "title": "Book your storage unit",
+        "desc": "You can book online or contact us via email, hotline, or message to discuss your needs and get a quote.",
+        "img": "/images/process-step1.jpg"
+      },
+      {
+        "title": "We pick up your items",
+        "desc": "On schedule, we collect your belongings and deliver them to our clean, safe facility. You can visit your storage anytime.",
+        "img": "/images/process-step2.jpg"
+      },
+      {
+        "title": "Retrieve anytime you want",
+        "desc": "ASMS will return your items whenever you need. With self-storage, you have 24/7 unlimited access.",
+        "img": "/images/process-step3.jpg"
+      }
+    ]
+  },
+  "size": {
+    "title": "Unsure about the right storage size?",
+    "subtitle": "Check our detailed guide to find the most suitable size for your needs!",
+    "cta": "View Sizes",
+    "review": {
+      "text": "“I used ASMS storage while renovating my house. The team packed, transported, and returned everything easily. Great service and friendly staff!”",
+      "author": "Hanh Ho",
+      "cta": "Read more"
+    }
+  },
+  "why": {
+    "title": "What makes ASMS special?",
+    "items": [
+      {
+        "title": "Managed by Vietnamese",
+        "desc": "ASMS is operated by experienced managers experienced and customer oriented managers, ensuring world-class service quality."
+      },
+      {
+        "title": "We care about your needs",
+        "desc": "Our goal is to deliver optimized solutions to expand your living and working space."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Have any questions?",
+    "subtitle": "Reach out to ASMS for quick support via email, hotline, or message.",
+    "cta": "Contact Us"
+  },
+  "review": {
+  "title": "What our customers say",
+  "text": "I used ASMS storage while renovating my house. The staff packed, delivered and returned my items conveniently — very friendly and professional!",
+  "author": "Hanh Ho",
+  "cta": "See more reviews"
+}
+
+}

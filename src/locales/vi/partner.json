@@ -1,0 +1,117 @@
+{
+  "hero": {
+    "title1": "Quản Lý Không Gian Hiệu Quả,",
+    "title2": "Tăng Doanh Thu Cùng ASMS",
+    "cta": "Ước Tính Doanh Thu"
+  },
+  "why": {
+    "title": "Tại Sao Hợp Tác Với ASMS?",
+    "items": [
+      {
+        "num": "1",
+        "title": "Tăng Giá Trị Không Gian",
+        "desc": "Khai thác diện tích trống trong tòa nhà để tạo nguồn thu bền vững cho BQL/Chủ đầu tư."
+      },
+      {
+        "num": "2",
+        "title": "Công Nghệ Quản Lý 3D",
+        "desc": "Quan sát – thao tác – quản lý kho trực quan ngay trên nền tảng 3D của ASMS."
+      },
+      {
+        "num": "3",
+        "title": "Không Rủi Ro Tài Chính",
+        "desc": "ASMS đề xuất mô hình hợp tác minh bạch, tối ưu chi phí vận hành."
+      },
+      {
+        "num": "4",
+        "title": "Vận Hành Gọn Nhẹ",
+        "desc": "ASMS đồng hành thiết lập quy trình, đào tạo và tích hợp kiểm soát truy cập."
+      }
+    ]
+  },
+  "projects": {
+    "title": "Các Dự Án Địa Phương Của Chúng Tôi",
+    "viewDetails": "Xem Chi Tiết Dự Án"
+  },
+  "process": {
+    "title": "Quy Trình Hoạt Động",
+    "steps": [
+      {
+        "title": "Tư Vấn & Khảo Sát",
+        "desc": "Phân tích không gian, nhu cầu cư dân và phương án khai thác phù hợp."
+      },
+      {
+        "title": "Đề Xuất Mô Hình",
+        "desc": "Thiết kế layout, cấu hình tủ kho, ước tính doanh thu & lộ trình triển khai."
+      },
+      {
+        "title": "Triển Khai & Tích Hợp",
+        "desc": "Lắp đặt mô-đun kho, tích hợp kiểm soát truy cập, camera, phần mềm ASMS."
+      },
+      {
+        "title": "Vận Hành & Chia Sẻ Doanh Thu",
+        "desc": "Vận hành minh bạch, báo cáo định kỳ cho BQL; chia sẻ doanh thu theo thỏa thuận."
+      }
+    ]
+  },
+  "estimate": {
+    "title": "Bạn Có Thể Kiếm Được Bao Nhiêu Mỗi Tháng?",
+    "desc": "Sử dụng công cụ của ASMS để ước tính nhanh doanh thu tiềm năng từ không gian trống.",
+    "fields": {
+      "firstName": "Tên *",
+      "lastName": "Họ *",
+      "email": "Email *",
+      "phone": "Số điện thoại *",
+      "address": "Địa chỉ *",
+      "district": "Quận *",
+      "area": "Diện tích ước tính (m²) *",
+      "note": "Thông tin bổ sung (nếu có)"
+    },
+    "cta": "Tính Toán Doanh Thu"
+  },
+  "faq": {
+    "title": "Câu Hỏi Thường Gặp",
+    "items": [
+      {
+        "q": "ASMS quản lý an ninh và kiểm soát ra vào như thế nào?",
+        "a": "Chúng tôi áp dụng hệ thống an ninh nhiều lớp:\n\n- **Xác thực cá nhân:** Mã truy cập riêng, có thể dùng vân tay/thẻ từ.\n- **Giám sát 24/7:** Camera & kiểm soát truy cập điện tử giám sát mọi lượt ra/vào.\n- **Tuân thủ thanh toán:** Tự động thu hồi quyền truy cập khi vi phạm điều khoản thanh toán/quy định."
+      },
+      {
+        "q": "Những loại tài sản nào phù hợp để lưu trữ?",
+        "a": "Cư dân/doanh nghiệp có thể lưu trữ đa dạng vật dụng:\n\n- Hộp/Thùng chứa, quần áo, vải vóc\n- Dụng cụ thể thao (gậy golf, đồ mùa vụ)\n- Hồ sơ chứng từ, tài liệu marketing\n- Nội thất nhỏ, vật dụng cá nhân/doanh nghiệp khác"
+      },
+      {
+        "q": "Có cần nhân sự trực tại chỗ không?",
+        "a": "Không bắt buộc. ASMS giúp BQL tối ưu vận hành:\n\n- Kiểm tra định kỳ theo checklist.\n- Đảm bảo an toàn – sạch sẽ – ổn định.\n- Giảm chi phí nhân sự nhờ quy trình và công cụ số."
+      },
+      {
+        "q": "Thời gian truy cập kho ra sao?",
+        "a": "- Tùy theo chính sách từng tòa nhà.\n- Thông dụng: **6:00–22:00** hàng ngày.\n- BQL cấu hình khung giờ trên phần mềm ASMS và cấp quyền cho cư dân."
+      },
+      {
+        "q": "Mô hình hợp tác của ASMS với tòa nhà là gì?",
+        "a": "ASMS đề xuất mô hình **chia sẻ doanh thu minh bạch** thay vì thuê mặt bằng cố định:\n\n- **Không rủi ro vốn:** BQL/Chủ đầu tư không cần chi trước.\n- **Cùng tăng trưởng:** Doanh thu tăng theo nhu cầu cư dân.\n- **Thu nhập thụ động:** Vận hành gọn nhẹ, minh bạch."
+      },
+      {
+        "q": "Lắp đặt có ảnh hưởng kết cấu tòa nhà không?",
+        "a": "Không. Hệ thống tủ kho mô-đun:\n\n- Lắp ráp nhanh, gọn nhẹ, linh hoạt.\n- Không khoan đục bắt buộc.\n- Không ảnh hưởng kết cấu hiện hữu."
+      },
+      {
+        "q": "Chi phí đầu tư & vận hành phân bổ thế nào?",
+        "a": "Linh hoạt theo thỏa thuận. ASMS có thể phụ trách:\n\n- Thiết kế, lắp đặt, trang thiết bị.\n- Hạ tầng phần mềm, kiểm soát truy cập.\n- Hỗ trợ nhân sự, kế toán, báo cáo vận hành."
+      },
+      {
+        "q": "Chia sẻ doanh thu được tính ra sao?",
+        "a": "Mô hình minh bạch, hướng tới lợi ích dài hạn:\n\n- **Giai đoạn hoàn vốn:** Tỷ lệ ưu tiên cho BQL/Chủ đầu tư.\n- **Sau hoàn vốn:** Chia theo tỷ lệ đã thống nhất (ví dụ 50/50).\n- Báo cáo & thanh toán định kỳ trên ASMS."
+      },
+      {
+        "q": "ASMS tiếp cận cư dân và khách hàng bằng kênh nào?",
+        "a": "Chúng tôi phối hợp cùng BQL/Chủ đầu tư qua:\n\n- **Digital:** Website, SEO, quảng cáo tìm kiếm.\n- **On-site:** Thông tin tại sảnh/thang máy, truyền thông nội bộ.\n- **Email/SMS:** Nhắc nhở & giới thiệu gói lưu trữ.\n- **Cộng đồng:** Sự kiện/hoạt động tại chung cư."
+      },
+      {
+        "q": "ASMS phục vụ nhóm khách hàng nào?",
+        "a": "Ba nhóm cốt lõi:\n\n1. **Cư dân:** Cần không gian cho đồ theo mùa/chuyển nhà.\n2. **Doanh nghiệp nhỏ:** Lưu trữ hàng hóa, tài liệu, thiết bị.\n3. **Cộng đồng trong tòa nhà:** Ưa chuộng tiện ích lưu trữ ngay tại nơi ở."
+      }
+    ]
+  }
+}

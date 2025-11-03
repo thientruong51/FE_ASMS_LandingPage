@@ -1,0 +1,47 @@
+{
+  "title": "Kích thước và Giá thuê phòng",
+  "desc": "Chọn loại phòng phù hợp với nhu cầu lưu trữ của bạn. Tất cả các phòng đều an toàn, sạch sẽ và có thể chọn thêm máy lạnh để bảo quản tốt hơn.",
+  "toggle": {
+    "noAC": "Không có máy lạnh",
+    "ac": "Có máy lạnh"
+  },
+  "priceTable": {
+    "title": "Bảng giá phòng {{mode}}"
+  },
+  
+  "price": {
+    "acTitle": "Bảng giá thuê phòng",
+    "noAcTitle": "Bảng giá thuê phòng",
+    "withAc": "Có máy lạnh",
+    "noAc": "Không có máy lạnh",
+    "colRoom": "Phòng",
+    "colArea": "Diện tích (m²)",
+    "colBase": "Đơn giá cơ sở",
+    "colDiscount": "Chiết khấu (%)",
+    "colMonth": "Giá / tháng",
+    "colWeek": "Giá / tuần",
+    "rooms": {
+      "smallName": "Phòng Nhỏ",
+      "mediumName": "Phòng Vừa",
+      "largeName": "Phòng Lớn"
+    }
+  },
+  "rooms": {
+    "small": {
+      "name": "Phòng Nhỏ",
+      "tag": "BASIC"
+    },
+    "medium": {
+      "name": "Phòng Vừa",
+      "tag": "BUSINESS"
+    },
+    "large": {
+      "name": "Phòng Lớn",
+      "tag": "PREMIUM"
+    },
+    "areaLabel": "Diện tích",
+    "priceLabel": "tháng"
+  }
+
+
+}

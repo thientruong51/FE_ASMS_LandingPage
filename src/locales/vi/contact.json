@@ -1,21 +1,25 @@
 {
-  "title": "Liên hệ với chúng tôi",
-  "lead": "Chúng tôi phản hồi trong vòng 24h.",
+  "title": "Liên hệ",
+  "lead": "Bạn có câu hỏi về thuê kho tự quản, kho chung, chuyển nhà? Hãy liên hệ với chúng tôi qua email, điện thoại hoặc Zalo!",
+  "location": {
+    "title": "Địa chỉ",
+    "desc": "375 Võ Nguyên Giáp, An Phú, Quận 2, TP. Hồ Chí Minh, Việt Nam"
+  },
+  "hotline": { "title": "Hotline" },
+  "email": { "title": "Email" },
+  "hours": {
+    "title": "Giờ làm việc",
+    "desc": "Thứ Hai - Thứ Bảy: 9AM – 6PM\nHỗ trợ từ xa vào Chủ Nhật."
+  },
   "form": {
-    "name": "Họ và tên",
+    "title": "Đội ngũ của chúng tôi luôn sẵn sàng hỗ trợ bạn!",
+    "firstName": "Họ",
+    "lastName": "Tên",
     "email": "Email",
-    "message": "Nội dung",
-    "send": "Gửi",
-    "sent": "Đã gửi! Cảm ơn bạn."
-  },
-  "info": {
-    "title": "Thông tin liên hệ",
-    "address": "TP. Hồ Chí Minh, Việt Nam",
-    "hotline": "028 7771 0118",
-    "email": "support@asms.vn",
-    "hours": "Thứ 2 - Thứ 7: 8h00 - 18h00"
-  },
-  "cta": {
-    "backHome": "Về trang chủ"
+    "phone": "Số điện thoại",
+    "message": "Tin nhắn",
+    "submit": "Gửi",
+    "sent": "Cảm ơn! Chúng tôi sẽ phản hồi sớm nhất.",
+    "note": "ASMS thường phản hồi trong vòng 2 tiếng."
   }
 }
