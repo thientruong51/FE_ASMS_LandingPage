@@ -1,8 +1,14 @@
 {
-  "title": "About ASMS",
-  "lead": "ASMS was developed to help businesses digitalize effectively.",
-  "content": [
-    "ASMS was built by a team experienced in management software.",
-    "We focus on user-friendly, secure, and flexible solutions."
-  ]
+  "intro": {
+    "title": "About ASMS",
+    "desc": "ASMS was founded by a team of Vietnamese and international professionals with over 20 years of experience in corporate services, real estate, and tourism management. We established ASMS to meet the growing demand for secure, convenient, and cost-effective self-storage solutions for individuals and businesses in Ho Chi Minh City. Our team, together with an integrated online platform, provides all the necessary tools and features to ensure seamless support for customers and their stored goods. \nThe ASMS warehouse and office are located at the border of District 2 and District 9, just 10 minutes from the Thao Dien residential area, with convenient access to other parts of the city. With over 250 storage units (including standard and climate-controlled rooms), our facility includes large loading zones for trucks and spacious freight elevators for efficient handling."
+  },
+  "safe": {
+    "title": "Safety, Ease of Use & Prime Location",
+    "desc": "ASMS warehouses are located in a central area, just 10 minutes from Thao Dien. Equipped with 24/7 CCTV surveillance and professional security services, our facilities ensure that your belongings are stored safely and securely at all times."
+  },
+  "why": {
+    "title": "Why Choose ASMS Storage Services?",
+    "desc": "ASMS’s business philosophy is to provide customers with secure, convenient, and cost-efficient self-storage services. We offer a variety of unit sizes, simple rental and payment processes, and operate as an extended space for your home or office. Contact us today to schedule a visit and find the most suitable storage solution for your needs."
+  }
 }

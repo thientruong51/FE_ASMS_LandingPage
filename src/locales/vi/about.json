@@ -1,8 +1,15 @@
 {
-  "title": "Về ASMS",
-  "lead": "ASMS được phát triển để giúp doanh nghiệp chuyển đổi số hiệu quả.",
-  "content": [
-    "ASMS được xây dựng bởi đội ngũ có kinh nghiệm trong lĩnh vực phần mềm quản lý.",
-    "Chúng tôi hướng đến sản phẩm dễ dùng, bảo mật và linh hoạt."
-  ]
+  
+  "intro": {
+    "title": "Về ASMS",
+    "desc": "ASMS được sáng lập bởi đội ngũ nguời Việt Nam và nguời nuớc ngoài có hơn 20 năm kinh nghiệm quản lý trong ngành dịch vụ doanh nghiệp, bất động sản và du lịch. Chúng tôi đồng lòng sáng lập ASMS để đáp ứng nhu cầu thuê kho tự quản an toàn, tiện lợi và giá cả phù hợp cho cá nhân hoặc doanh nghiệp tại Thành Phố Hồ Chí Minh. Đội ngũ ASMS cùng với nền tảng trang website tích hợp tất cả cái tiện ích cần thiết để hỗ trợ khách hàng & hàng hoá lưu kho một cách liển mạch nhất. \nKho và văn phòng ASMS nằm tại ranh giới giữa quận 2 và quận 9, chỉ 10 phút lái xe từ khu dân cư Thảo Điền quận 2 và giao thông tiện lợi đến các quận khác trong thành phố. Với hơn 250 gian kho (kho thuờng và kho mát), Kho của chúng tôi có khu vực dỡ hàng lớn cho xe tải vận chuyền hàng ra vào kho, thang máy hàng kích thuớc lớn."
+  },
+  "safe": {
+    "title": "An Toàn, Dễ Dàng Sử Dụng và Vị Trí Thuận Lợi",
+    "desc": "Kho ASMS được đặt tại vị trí trung tâm, chỉ cách khu Thảo Điền 10 phút lái xe. Với hệ thống camera CCTV giám sát 24/7, cùng dịch vụ bảo vệ chuyên nghiệp, khách hàng hoàn toàn yên tâm khi gửi tài sản tại kho của chúng tôi."
+  },
+  "why": {
+    "title": "Vì Sao Nên Chọn Dịch Vụ Lưu Trữ Của ASMS?",
+    "desc": "Phuơng châm kinh doanh của ASMS là cung cấp cho khách hàng dịch vụ thuê kho tự quản an toàn, tiện lợi và tiết kiệm chi phí. Chúng tôi cung cấp các loại kho kích thuớc khác nhau, quy trình thuê kho & trả kho đơn giản, thanh toán dễ dàng, và chúng tôi vận hành như một không gian nới rộng của văn phòng hoặc nhà bạn. Mời bạn liên hệ với chúng tôi để đi thăm quan thực tế và chọn đặt thuê gian kho phù hợp nhất cho bạn."
+  }
 }

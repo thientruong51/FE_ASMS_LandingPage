@@ -62,10 +62,10 @@ export default function Header() {
   ];
 
   const navItems = [
-    { label: t("nav.services"), to: "/services", isDropdown: true },
-    { label: t("nav.partner"), to: "/partner" },
     { label: t("nav.about"), to: "/about" },
-    { label: "Blog", to: "/blog" },
+    { label: t("nav.services"), to: "/services", isDropdown: true },
+    { label: t("nav.3D"), to: "/3d-tour" },
+    { label: t("nav.partner"), to: "/partner" },
     { label: t("nav.contact"), to: "/contact" },
   ];
 

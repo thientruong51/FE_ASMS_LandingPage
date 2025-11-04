@@ -40,5 +40,9 @@
     },
     "areaLabel": "Area",
     "priceLabel": "month"
+  },
+  "common": {
+    "next": "Next",
+    "back": "Back"
   }
 }

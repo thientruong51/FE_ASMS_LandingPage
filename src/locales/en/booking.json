@@ -1,0 +1,97 @@
+{
+  "steps": ["Select Service", "Select Storage", "Personal Info", "Summary", "Completed"],
+  "common": {
+    "next": "Next",
+    "back": "Back"
+  },
+
+  "step1": {
+    "title": "Choose Your Storage Style",
+    "desc": "There are 2 types of storage, pick the one that best fits your needs.",
+    "self": {
+      "title": "Self Storage",
+      "desc": "For those who like flexibility and privacy.",
+      "points": [
+        "Access your items 24/7 at any time",
+        "Work comfortably at the facility",
+        "Full privacy with your own key"
+      ],
+      "img": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762270959/unnamed_4_wphzib.jpg"
+    },
+    "full": {
+      "title": "Full Service",
+      "desc": "Sit back and relax – we handle everything for you.",
+      "points": [
+        "Modern warehouse with professional staff",
+        "Packing and delivery service included",
+        "Just call us when you need your items back"
+      ],
+      "img": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762184559/unnamed_3_bbwuwu.jpg"
+    },
+    "back": "Change Size",
+    "next": "Continue"
+  },
+
+  "step2_room": {
+    "title": "Choose Your Self Storage Unit",
+    "desc": "Preview the warehouse in 3D and pick the one that suits you best.",
+    "toggle": {
+      "ac": "Air-conditioned",
+      "noAC": "Non-AC"
+    },
+    "rooms": {
+      "small": { "name": "Small (BASIC)" },
+      "medium": { "name": "Medium (BUSINESS)" },
+      "large": { "name": "Large (PREMIUM)" },
+      "areaLabel": "Area",
+      "priceLabel": "month"
+    },
+    "price": {
+      "acTitle": "Air-conditioned Units Pricing",
+      "noAcTitle": "Non-AC Units Pricing",
+      "colRoom": "Room Type",
+      "colArea": "Area",
+      "colBase": "Base Price",
+      "colDiscount": "Discount",
+      "colMonth": "Price / Month",
+      "colWeek": "Price / Week"
+    }
+  },
+
+  "step2_box": {
+    "title": "Select Your Box Size",
+    "desc": "We have four types of boxes. Choose one that fits your storage needs best.",
+    "next": "Continue",
+    "back": "Back"
+  },
+
+  "step3_info": {
+    "title": "Personal Information",
+    "fields": {
+      "name": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email (optional)",
+      "note": "Additional Notes"
+    }
+  },
+
+  "step4_summary": {
+    "title": "Final Quote",
+    "confirm": "Confirm Booking"
+  },
+
+  "step5_success": {
+    "title": "Your Request Has Been Received!",
+    "desc": "Thank you for booking with ASMS. Our storage specialist will review and contact you within 24 hours.",
+    "backHome": "Back to Home"
+  },
+
+  "summary": {
+    "service": "Service Type",
+    "room": "Storage Room",
+    "box": "Box Type",
+    "name": "Name",
+    "phone": "Phone Number",
+    "total": "Total"
+  }
+}
