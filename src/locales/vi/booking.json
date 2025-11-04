@@ -1,5 +1,21 @@
 {
-  "steps": ["Chọn dịch vụ", "Chọn loại kho", "Thông tin cá nhân", "Báo giá", "Hoàn tất"],
+    "stepsSelf": [
+    "Chọn loại dịch vụ",
+    "Chọn phòng",
+    "Tùy chọn lưu kho",
+    "Chọn gói sẵn",
+    "Tùy chỉnh phòng 3D",
+    "Thông tin cá nhân",
+    "Xác nhận đặt chỗ",
+    "Hoàn tất"
+  ],
+  "stepsBox": [
+    "Chọn loại dịch vụ",
+    "Chọn gói Box",
+    "Thông tin cá nhân",
+    "Xác nhận đặt chỗ",
+    "Hoàn tất"
+  ],
   "common": {
     "next": "Tiếp tục",
     "back": "Quay lại"
@@ -74,6 +90,18 @@
       "note": "Ghi chú thêm"
     }
   },
+  "infoForm": {
+    "title": "Thông tin cá nhân",
+    "desc": "Vui lòng nhập thông tin của bạn để hoàn tất đặt chỗ.",
+    "name": "Họ và tên",
+    "phone": "Số điện thoại",
+    "email": "Email (không bắt buộc)",
+    "note": "Ghi chú thêm",
+    "error": {
+      "required": "Vui lòng nhập đầy đủ họ tên và số điện thoại.",
+      "email": "Địa chỉ email không hợp lệ."
+    }
+  },
 
   "step4_summary": {
     "title": "Báo Giá Cuối Cùng",
@@ -93,5 +121,19 @@
     "name": "Họ và tên",
     "phone": "Số điện thoại",
     "total": "Tổng cộng"
+  },
+  "customizeChoice": {
+    "title": "Chọn hình thức lưu kho",
+    "desc": "Phòng {{room}} của bạn có thể dùng gói sẵn hoặc tự tùy chỉnh.",
+    "packageTitle": "Dùng gói sẵn",
+    "packageDesc": "Sử dụng cấu hình cơ bản (kệ và thùng có sẵn) với mức giá cố định.",
+    "customTitle": "Tùy chỉnh 3D",
+    "customDesc": "Tự bố trí kệ, thùng trong không gian 3D theo nhu cầu của bạn.",
+    "selectPackage": "Chọn gói sẵn",
+    "selectCustom": "Tùy chỉnh phòng"
+  },
+  "actions": {
+    "back": "Quay lại",
+    "next": "Tiếp tục"
   }
 }

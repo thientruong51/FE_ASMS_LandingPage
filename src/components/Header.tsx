@@ -257,6 +257,7 @@ export default function Header() {
                 boxShadow: "none",
                 "&:hover": { backgroundColor: "#35a982" },
               }}
+              onClick={() => navigate("/booking")}
             >
               {t("nav.rentOnline")}
             </Button>

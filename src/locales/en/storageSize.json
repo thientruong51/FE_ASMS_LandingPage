@@ -44,5 +44,27 @@
   "common": {
     "next": "Next",
     "back": "Back"
+  },
+  "custom3d": {
+    "title": "Customize your storage room",
+    "desc": "Add shelves and boxes into your room to organize it your way.",
+    "addBox": "Add box",
+    "addShelf": "Add shelf"
+  },
+  "packageSelect": {
+    "title": "Package matching your selected room",
+    "basicDesc": "Small room - Basic package: 1 shelf + 10 boxes A",
+    "businessDesc": "Medium room - Business package: 2 shelves + 20 boxes + 10km delivery",
+    "premiumDesc": "Large room - Premium package: 5 shelves + 30 boxes + 2 oversize items"
+  },
+  "customChoice": {
+    "title": "Choose your room type",
+    "desc": "Would you like to use a pre-set package or customize your own storage layout?",
+    "package": "Use package",
+    "custom": "Customize room"
+  },
+  "actions": {
+    "back": "Back",
+    "next": "Next"
   }
 }
