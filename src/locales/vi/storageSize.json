@@ -41,6 +41,10 @@
     },
     "areaLabel": "Diện tích",
     "priceLabel": "tháng"
+  },
+  "common": {
+    "next": "Tiếp tục",
+    "back": "Quay lại"
   }
 
 

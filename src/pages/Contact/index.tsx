@@ -171,6 +171,7 @@ export default function Contact() {
                       borderRadius: 10,
                       fontWeight: 600,
                       alignSelf: "flex-start",
+                      color:"#fff"
                     }}
                   >
                     {t("form.submit")}

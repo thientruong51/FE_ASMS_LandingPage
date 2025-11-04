@@ -10,6 +10,8 @@ import ShareWarehousePage from "../pages/ShareWarehouse";
 import StorageSize from "../pages/StorageSize";
 import ProcessPage from "../pages/Process";
 import PartnerPage from "../pages/Partner";
+import ThreeDTour from "../pages/3DTour";
+import Booking from "../pages/Booking";
 
 export default function AppRoutes() {
   return (
@@ -25,7 +27,8 @@ export default function AppRoutes() {
       <Route path="/services/size-guide" element={<StorageSize  />} />
       <Route path="/services/process" element={<ProcessPage />} />
       <Route path="/partner" element={<PartnerPage />} />
-
+      <Route path="/3d-tour" element={<ThreeDTour />} />
+      <Route path="/booking" element={<Booking />} />
     </Routes>
   );
 }

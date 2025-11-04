@@ -70,8 +70,6 @@ export default function Hero() {
 
   return (
     <>
-      <Header />
-
       <Box
         sx={{
           position: "relative",
@@ -112,6 +110,20 @@ export default function Hero() {
             autoResumeDelay={3000}
             autoRampDuration={0.6}
           />
+                  <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 2,
+            background:
+              "linear-gradient(180deg, #BFE3C6 0%, #F8FCFA 100%)",
+            pointerEvents: "none",
+          }}
+        />
+
         </Box>
 
         {/* Mũi tên trái */}

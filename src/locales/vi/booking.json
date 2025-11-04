@@ -1,0 +1,97 @@
+{
+  "steps": ["Chọn dịch vụ", "Chọn loại kho", "Thông tin cá nhân", "Báo giá", "Hoàn tất"],
+  "common": {
+    "next": "Tiếp tục",
+    "back": "Quay lại"
+  },
+
+  "step1": {
+    "title": "Chọn Phong Cách Lưu Trữ",
+    "desc": "Có 2 lựa chọn lưu trữ, xem kiểu nào phù hợp với bạn nhất nhé.",
+    "self": {
+      "title": "Kho Tự Quản",
+      "desc": "Phù hợp cho người thích độc lập, tự mang đồ tới kho và ra vào 24/7.",
+      "points": [
+        "Ra vào kho thoải mái 24/7",
+        "Có không gian làm việc chung tiện lợi",
+        "Riêng tư tuyệt đối với chìa khóa riêng"
+      ],
+      "img": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762270959/unnamed_4_wphzib.jpg"
+    },
+    "full": {
+      "title": "Dịch Vụ Trọn Gói",
+      "desc": "Ngồi nhà thư giãn – để chúng tôi lo toàn bộ.",
+      "points": [
+        "Kho hiện đại với không gian chuyên nghiệp",
+        "Dịch vụ đóng gói và vận chuyển tận nơi",
+        "Chỉ cần gọi là có – giao nhận tận tay"
+      ],
+      "img": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762184559/unnamed_3_bbwuwu.jpg"
+    },
+    "back": "Đổi Kích Cỡ",
+    "next": "Tiếp Theo"
+  },
+
+  "step2_room": {
+    "title": "Chọn Loại Kho Tự Quản",
+    "desc": "Xem mô hình kho 3D và chọn loại kho phù hợp với nhu cầu của bạn.",
+    "toggle": {
+      "ac": "Kho Có Điều Hòa",
+      "noAC": "Kho Không Điều Hòa"
+    },
+    "rooms": {
+      "small": { "name": "Small (BASIC)" },
+      "medium": { "name": "Medium (BUSINESS)" },
+      "large": { "name": "Large (PREMIUM)" },
+      "areaLabel": "Diện tích",
+      "priceLabel": "tháng"
+    },
+    "price": {
+      "acTitle": "Bảng giá kho có điều hòa",
+      "noAcTitle": "Bảng giá kho không điều hòa",
+      "colRoom": "Loại kho",
+      "colArea": "Diện tích",
+      "colBase": "Giá cơ bản",
+      "colDiscount": "Giảm giá",
+      "colMonth": "Giá / Tháng",
+      "colWeek": "Giá / Tuần"
+    }
+  },
+
+  "step2_box": {
+    "title": "Chọn Kích Cỡ Thùng Phù Hợp",
+    "desc": "Chúng tôi có 4 loại thùng lưu trữ, hãy chọn loại phù hợp với đồ đạc của bạn.",
+    "next": "Tiếp Tục",
+    "back": "Quay Lại"
+  },
+
+  "step3_info": {
+    "title": "Thông Tin Cá Nhân",
+    "fields": {
+      "name": "Họ và tên",
+      "phone": "Số điện thoại",
+      "email": "Email (tuỳ chọn)",
+      "note": "Ghi chú thêm"
+    }
+  },
+
+  "step4_summary": {
+    "title": "Báo Giá Cuối Cùng",
+    "confirm": "Xác Nhận Đặt Kho"
+  },
+
+  "step5_success": {
+    "title": "Đã Nhận Được Yêu Cầu Của Bạn!",
+    "desc": "Cảm ơn bạn đã đặt dịch vụ với ASMS. Chuyên gia lưu trữ sẽ xem xét và liên hệ với bạn trong 24h.",
+    "backHome": "Về Trang Chủ"
+  },
+
+  "summary": {
+    "service": "Loại dịch vụ",
+    "room": "Loại kho",
+    "box": "Loại thùng",
+    "name": "Họ và tên",
+    "phone": "Số điện thoại",
+    "total": "Tổng cộng"
+  }
+}

@@ -14,6 +14,7 @@ import vishareWarehouse from "./locales/vi/shareWarehouse.json";
 import vistorageSize from "./locales/vi/storageSize.json";
 import viprocess from "./locales/vi/process.json";
 import vipartner from "./locales/vi/partner.json";
+import vibooking from "./locales/vi/booking.json";
 
 // English
 import enLanding from "./locales/en/translation.json";
@@ -28,6 +29,7 @@ import enshareWarehouse from "./locales/en/shareWarehouse.json";
 import enstorageSize from "./locales/en/storageSize.json";
 import enprocess from "./locales/en/process.json";
 import enpartner from "./locales/en/partner.json";
+import enbooking from "./locales/en/booking.json";
 
 
 i18n.use(initReactI18next).init({
@@ -44,7 +46,8 @@ i18n.use(initReactI18next).init({
       shareWarehouse:vishareWarehouse,
       storageSize:vistorageSize,
       process:viprocess,
-      partner:vipartner
+      partner:vipartner,
+      booking:vibooking
 
     },
     en: {
@@ -59,7 +62,8 @@ i18n.use(initReactI18next).init({
       shareWarehouse:enshareWarehouse,
       storageSize:enstorageSize,
       process:enprocess,
-      partner:enpartner
+      partner:enpartner,
+      booking:enbooking
 
     },
   },
