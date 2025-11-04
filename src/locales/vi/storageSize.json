@@ -45,6 +45,28 @@
   "common": {
     "next": "Tiếp tục",
     "back": "Quay lại"
+  },
+  "custom3d": {
+    "title": "Tùy chỉnh phòng của bạn",
+    "desc": "Thêm kệ và các loại thùng vào trong phòng để sắp xếp theo ý muốn.",
+    "addBox": "Thêm thùng",
+    "addShelf": "Thêm kệ"
+  },
+    "packageSelect": {
+    "title": "Gói dịch vụ tương ứng với phòng bạn chọn",
+    "basicDesc": "Phòng Small - Gói cơ bản: 1 kệ + 10 thùng A",
+    "businessDesc": "Phòng Medium - Gói doanh nghiệp: 2 kệ + 20 thùng + vận chuyển 10km",
+    "premiumDesc": "Phòng Large - Gói cao cấp: 5 kệ + 30 thùng + 2 hàng quá khổ"
+  },
+   "customChoice": {
+    "title": "Chọn loại phòng bạn muốn",
+    "desc": "Bạn muốn sử dụng gói sẵn hay tự tùy chỉnh bố trí phòng của mình?",
+    "package": "Dùng gói sẵn",
+    "custom": "Tự tùy chỉnh phòng"
+  },
+  "actions": {
+    "back": "Quay lại",
+    "next": "Tiếp tục"
   }
 
 

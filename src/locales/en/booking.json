@@ -1,5 +1,21 @@
 {
-  "steps": ["Select Service", "Select Storage", "Personal Info", "Summary", "Completed"],
+ "stepsSelf": [
+    "Select service type",
+    "Choose room",
+    "Storage option",
+    "Select package",
+    "Customize in 3D",
+    "Your information",
+    "Summary",
+    "Done"
+  ],
+  "stepsBox": [
+    "Select service type",
+    "Choose Box",
+    "Your information",
+    "Summary",
+    "Done"
+  ],
   "common": {
     "next": "Next",
     "back": "Back"
@@ -74,6 +90,18 @@
       "note": "Additional Notes"
     }
   },
+  "infoForm": {
+    "title": "Personal Information",
+    "desc": "Please enter your information to complete the booking.",
+    "name": "Full name",
+    "phone": "Phone number",
+    "email": "Email (optional)",
+    "note": "Additional notes",
+    "error": {
+      "required": "Please fill in your name and phone number.",
+      "email": "Invalid email address."
+    }
+  },
 
   "step4_summary": {
     "title": "Final Quote",
@@ -93,5 +121,19 @@
     "name": "Name",
     "phone": "Phone Number",
     "total": "Total"
+  },
+  "customizeChoice": {
+    "title": "Choose your storage option",
+    "desc": "Your {{room}} room can use a predefined package or custom layout.",
+    "packageTitle": "Use Predefined Package",
+    "packageDesc": "Use a ready-made package with included shelves and boxes.",
+    "customTitle": "Customize in 3D",
+    "customDesc": "Arrange your own shelves and boxes freely in a 3D space.",
+    "selectPackage": "Select Package",
+    "selectCustom": "Customize Room"
+  },
+  "actions": {
+    "back": "Back",
+    "next": "Next"
   }
 }

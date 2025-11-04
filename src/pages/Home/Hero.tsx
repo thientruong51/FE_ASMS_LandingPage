@@ -11,7 +11,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useTranslation } from "react-i18next";
-import Header from "../../components/Header";
 import LiquidEther from '../../components/LiquidEther';
 import GlareHover from "../../components/GlareHover";
 import ShinyText from "../../components/ShinyText";

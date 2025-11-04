@@ -1,9 +1,13 @@
 import { Step, StepLabel, Stepper } from "@mui/material";
-import { useTranslation } from "react-i18next";
 
-export default function StepperHeader({ activeStep }: { activeStep: number }) {
-  const { t } = useTranslation("booking");
-  const labels = t("steps", { returnObjects: true }) as string[];
+export default function StepperHeader({
+  activeStep,
+  labels,
+}: {
+  activeStep: number;
+  labels: string[];
+}) {
+  if (!labels || labels.length === 0) return null;
 
   return (
     <Stepper activeStep={activeStep} sx={{ mb: { xs: 2, md: 3 } }}>
