@@ -1,81 +1,52 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, useGLTF } from "@react-three/drei";
-import {  Stack, Typography, Button, Paper } from "@mui/material";
-import { Suspense, useState } from "react";
+import { OrbitControls, Environment } from "@react-three/drei";
+import { Stack, Typography, Button, Paper } from "@mui/material";
+import { Suspense, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import * as THREE from "three";
+import ModelViewer from "./components/ModelViewer";
+import Item3D from "./components/Item3D";
+import { useWarehouseLogic, type Item3DData, type RoomSize } from "./components/useWarehouseLogic";
+import { MODELS, ROOM_LAYOUTS } from "./constants/models";
 
-const MODELS = {
-  rooms: {
-    small: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847449/PHONG_SMALL_bjalft.glb",
-    smallAC: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847448/PHONG_SMALL_may_lanh_cyv1yy.glb",
-    medium: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847447/PHONG_MEDIUM_zos1eu.glb",
-    mediumAC: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847446/PHONG_MEDIUM_may_lanh_oskv0t.glb",
-    large: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847446/PHONG_LARGE_hu7i9i.glb",
-    largeAC: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847444/PHONG_LARGE_may_lanh_ab7z38.glb",
-  },
-  shelf: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847444/KE_1550X1057X2045_jvuubl.glb",
-  boxes: {
-    A: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847449/THUNG_A_uu6f3w.glb",
-    B: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847443/THUNG_B_qp8ysr.glb",
-    C: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847443/THUNG_C_wtagvu.glb",
-    D: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847446/THUNG_D_cs1w1m.glb",
-  },
+// ===== KIỂU DỮ LIỆU CHO ROOM =====
+export type RoomData = {
+  id: "small" | "medium" | "large";
+  hasAC: boolean;
 };
 
-function ModelViewer({ url }: { url: string }) {
-  const model = useGLTF(url);
-  const scene = model.scene.clone();
-
-  const box = new THREE.Box3().setFromObject(scene);
-  const center = new THREE.Vector3();
-  box.getCenter(center);
-  scene.position.sub(center);
-
-  return <primitive object={scene} />;
-}
-
-function Item3D({ url, position }: { url: string; position: [number, number, number] }) {
-  const model = useGLTF(url);
-  return <primitive object={model.scene.clone()} position={position} />;
-}
-
-export default function Step3Custom3D({
-  room,
-  onBack,
-  onNext,
-}: {
-  room: { id: string; hasAC: boolean };
+type Step3Custom3DProps = {
+  room: RoomData;
   onBack: () => void;
-  onNext: (items: any[]) => void;
-}) {
+  onNext: (items: Item3DData[]) => void;
+};
+
+export default function Step3Custom3D({ room, onBack, onNext }: Step3Custom3DProps) {
   const { t } = useTranslation("storageSize");
-  const [items, setItems] = useState<
-    { id: number; type: string; url: string; position: [number, number, number] }[]
-  >([]);
+  const [items, setItems] = useState<Item3DData[]>([]);
 
+  // ===== KÍCH THƯỚC PHÒNG =====
+  const roomSize: RoomSize = useMemo(() => {
+    switch (room.id) {
+      case "small":
+        return { width: 3.3, depth: 1.8 };
+      case "medium":
+        return { width: 3.3, depth: 3.2 };
+      default:
+        return { width: 4.8, depth: 3.2 };
+    }
+  }, [room.id]);
+
+  // ===== LOGIC THÊM ITEM =====
+  const { handleAdd } = useWarehouseLogic(items, setItems, room.id, roomSize);
+
+  // ===== CHỌN MÔ HÌNH PHÒNG =====
   const roomModel =
-    room.id === "small"
-      ? room.hasAC
-        ? MODELS.rooms.smallAC
-        : MODELS.rooms.small
-      : room.id === "medium"
-      ? room.hasAC
-        ? MODELS.rooms.mediumAC
-        : MODELS.rooms.medium
-      : room.hasAC
-      ? MODELS.rooms.largeAC
-      : MODELS.rooms.large;
+    room.hasAC
+      ? (MODELS.rooms[`${room.id}AC` as keyof typeof MODELS.rooms])
+      : MODELS.rooms[room.id];
 
-  const handleAdd = (type: "shelf" | "A" | "B" | "C" | "D") => {
-    const url = type === "shelf" ? MODELS.shelf : MODELS.boxes[type];
-    const position: [number, number, number] = [
-      Math.random() * 4 - 2,
-      0,
-      Math.random() * 4 - 2,
-    ];
-    setItems((prev) => [...prev, { id: Date.now(), type, url, position }]);
-  };
+  const totalShelves =
+    ROOM_LAYOUTS[room.id].rows * ROOM_LAYOUTS[room.id].perRow;
 
   return (
     <Stack spacing={3} alignItems="center">
@@ -86,6 +57,7 @@ export default function Step3Custom3D({
         {t("custom3d.desc")}
       </Typography>
 
+      {/* ===== CANVAS 3D ===== */}
       <Paper
         sx={{
           width: "100%",
@@ -101,7 +73,12 @@ export default function Step3Custom3D({
           <Suspense fallback={null}>
             <ModelViewer url={roomModel} />
             {items.map((item) => (
-              <Item3D key={item.id} url={item.url} position={item.position} />
+              <Item3D
+                key={item.id}
+                url={item.url}
+                position={item.position}
+                type={item.type}
+              />
             ))}
           </Suspense>
           <OrbitControls enablePan enableZoom />
@@ -109,26 +86,26 @@ export default function Step3Custom3D({
         </Canvas>
       </Paper>
 
-      {/* ======= THANH CÔNG CỤ THÊM ITEM ======= */}
+      {/* ===== THANH CÔNG CỤ ===== */}
       <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-        <Button variant="outlined" onClick={() => handleAdd("shelf")}>
+        <Button
+          variant="outlined"
+          onClick={() => handleAdd("shelf")}
+          disabled={
+            items.filter((i) => i.type === "shelf").length >= totalShelves
+          }
+        >
           {t("custom3d.addShelf")}
         </Button>
-        <Button variant="outlined" onClick={() => handleAdd("A")}>
-          {t("custom3d.addBox")} A
-        </Button>
-        <Button variant="outlined" onClick={() => handleAdd("B")}>
-          {t("custom3d.addBox")} B
-        </Button>
-        <Button variant="outlined" onClick={() => handleAdd("C")}>
-          {t("custom3d.addBox")} C
-        </Button>
-        <Button variant="outlined" onClick={() => handleAdd("D")}>
-          {t("custom3d.addBox")} D
-        </Button>
+
+        {(["A", "B", "C", "D"] as const).map((type) => (
+          <Button key={type} variant="outlined" onClick={() => handleAdd(type)}>
+            {t("custom3d.addBox")} {type}
+          </Button>
+        ))}
       </Stack>
 
-      {/* ======= NÚT ĐIỀU HƯỚNG ======= */}
+      {/* ===== NÚT ĐIỀU HƯỚNG ===== */}
       <Stack direction="row" spacing={2}>
         <Button variant="outlined" onClick={onBack}>
           {t("actions.back")}
@@ -144,15 +121,3 @@ export default function Step3Custom3D({
     </Stack>
   );
 }
-
-useGLTF.preload(MODELS.rooms.small);
-useGLTF.preload(MODELS.rooms.smallAC);
-useGLTF.preload(MODELS.rooms.medium);
-useGLTF.preload(MODELS.rooms.mediumAC);
-useGLTF.preload(MODELS.rooms.large);
-useGLTF.preload(MODELS.rooms.largeAC);
-useGLTF.preload(MODELS.shelf);
-useGLTF.preload(MODELS.boxes.A);
-useGLTF.preload(MODELS.boxes.B);
-useGLTF.preload(MODELS.boxes.C);
-useGLTF.preload(MODELS.boxes.D);
