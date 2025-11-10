@@ -10,7 +10,7 @@ export default function Item3D({
   type: string;
 }) {
   const model = useGLTF(url);
-  const shouldRotate = ["shelf", "A", "C", "D"].includes(type);
+  const shouldRotate = ["shelf"].includes(type);
 
   return (
     <primitive

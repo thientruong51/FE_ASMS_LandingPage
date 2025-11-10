@@ -51,6 +51,7 @@ export const ROOM_LAYOUTS = {
   },
 };
 
+
 Object.values(MODELS.rooms).forEach((url) => useGLTF.preload(url));
 Object.values(MODELS.boxes).forEach((url) => useGLTF.preload(url));
 useGLTF.preload(MODELS.shelf);
