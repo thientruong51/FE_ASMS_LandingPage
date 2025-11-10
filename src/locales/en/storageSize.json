@@ -48,7 +48,10 @@
   "custom3d": {
     "title": "Customize your storage room",
     "desc": "Add shelves and boxes into your room to organize it your way.",
-    "addBox": "Add box",
+    "addBoxA": "Add box A",
+    "addBoxB": "Add box B",
+    "addBoxC": "Add box C",
+    "addBoxD": "Add box D",
     "addShelf": "Add shelf"
   },
   "packageSelect": {
@@ -65,6 +68,8 @@
   },
   "actions": {
     "back": "Back",
-    "next": "Next"
+    "next": "Next",
+    "removeOne": "Remove one",
+    "removeAll": "Remove all"
   }
 }

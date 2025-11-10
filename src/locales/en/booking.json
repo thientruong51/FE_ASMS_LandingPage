@@ -74,12 +74,47 @@
     }
   },
 
-  "step2_box": {
-    "title": "Select Your Box Size",
-    "desc": "We have four types of boxes. Choose one that fits your storage needs best.",
-    "next": "Continue",
-    "back": "Back"
+ "step2_box": {
+    "title": "Select box",
+    "desc": "Choose the box type and quantity. Then select goods types.",
+    "back": "Back",
+    "next": "Next"
   },
+  "boxes": {
+    "A": {
+      "label": "Box A",
+      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "35,000 đ / month"
+    },
+    "B": {
+      "label": "Box B",
+      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "50,000 đ / month"
+    },
+    "C": {
+      "label": "Box C",
+      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "60,000 đ / month"
+    },
+    "D": {
+      "label": "Box D",
+      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "55,000 đ / month"
+    }
+  },
+  "goods": {
+    "fragile": "Fragile",
+    "electronics": "Electronics",
+    "cold": "Cold items",
+    "heavy": "Heavy items"
+  },
+  "quantityLabel": "Quantity",
+  "chosenQuantity": "Chosen quantity",
+  "increase": "Increase",
+  "decrease": "Decrease",
+  "chooseGoods": "Choose goods types",
+  "selectedCount": "Selected count",
+  "grandTotal": "Grand total",
 
   "step3_info": {
     "title": "Personal Information",

@@ -74,12 +74,47 @@
     }
   },
 
-  "step2_box": {
-    "title": "Chọn Kích Cỡ Thùng Phù Hợp",
-    "desc": "Chúng tôi có 4 loại thùng lưu trữ, hãy chọn loại phù hợp với đồ đạc của bạn.",
-    "next": "Tiếp Tục",
-    "back": "Quay Lại"
+   "step2_box": {
+    "title": "Chọn hộp",
+    "desc": "Chọn loại hộp bạn muốn thuê và số lượng. Sau đó chọn loại hàng hóa.",
+    "back": "Quay lại",
+    "next": "Tiếp theo"
   },
+  "boxes": {
+    "A": {
+      "label": "Hộp A",
+      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "35.000 đ / tháng"
+    },
+    "B": {
+      "label": "Hộp B",
+      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "50.000 đ / tháng"
+    },
+    "C": {
+      "label": "Hộp C",
+      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "60.000 đ / tháng"
+    },
+    "D": {
+      "label": "Hộp D",
+      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "priceMonth": "55.000 đ / tháng"
+    }
+  },
+  "goods": {
+    "fragile": "Hàng dễ vỡ",
+    "electronics": "Thiết bị điện tử",
+    "cold": "Hàng lạnh",
+    "heavy": "Hàng nặng"
+  },
+  "quantityLabel": "Số lượng",
+  "chosenQuantity": "Số lượng đã chọn",
+  "increase": "Tăng",
+  "decrease": "Giảm",
+  "chooseGoods": "Chọn loại hàng hóa",
+  "selectedCount": "Số lượng đã chọn",
+  "grandTotal": "Tổng cộng",
 
   "step3_info": {
     "title": "Thông Tin Cá Nhân",
