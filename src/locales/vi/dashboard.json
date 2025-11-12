@@ -1,0 +1,73 @@
+{
+  "sidebar": {
+    "dashboard": "Bảng điều khiển",
+    "myOrders": "Đơn hàng của tôi",
+    "userInfo": "Thông tin người dùng",
+    "settings": "Cài đặt",
+    "contactWarehouse": "Liên hệ kho",
+    "goHome": "Về trang chủ"
+  },
+  "dashboardPage": {
+    "welcome": "Chào mừng trở lại, {{name}}!",
+    "activeOrders": "Đơn hàng đang hoạt động",
+    "ordersInProgress": "Đơn đang xử lý",
+    "nextExpiry": "Đơn sắp hết hạn",
+    "quickActions": "Tác vụ nhanh",
+    "newOrder": "Tạo đơn mới",
+    "callStaff": "Gọi nhân viên",
+    "renew": "Gia hạn"
+  },
+  "ordersPage": {
+    "title": "Đơn hàng của tôi",
+    "filter": "Lọc & hành động nhanh",
+    "searchOrder": "Tìm kiếm đơn hàng",
+    "export": "Xuất dữ liệu",
+    "details": "Chi tiết",
+    "status": {
+      "created": "Đã tạo",
+      "pickup_scheduled": "Đã lên lịch lấy hàng",
+      "picked": "Đã lấy hàng",
+      "in_warehouse": "Đang lưu kho",
+      "out_for_delivery": "Đang giao hàng",
+      "delivered": "Đã giao",
+      "expired": "Hết hạn",
+      "cancelled": "Đã hủy"
+    }
+  },
+  "orderDetail": {
+    "summary": "Tóm tắt đơn hàng",
+    "tracking": "Theo dõi trạng thái",
+    "renewOrder": "Gia hạn đơn",
+    "contactStaff": "Liên hệ nhân viên kho",
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "status": "Trạng thái",
+    "warehouseStaff": "Nhân viên phụ trách",
+    "messageLabel": "Tin nhắn",
+    "send": "Gửi",
+    "cancel": "Hủy"
+  },
+  "userInfo": {
+    "title": "Thông tin người dùng",
+    "profile": "Hồ sơ cá nhân",
+    "name": "Họ tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "history": "Lịch sử thuê kho"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "notification": "Email thông báo",
+    "save": "Lưu thay đổi"
+  },
+  "contact": {
+    "title": "Liên hệ kho",
+    "formTitle": "Mẫu liên hệ",
+    "subject": "Chủ đề",
+    "message": "Tin nhắn",
+    "send": "Gửi",
+    "onDuty": "Nhân viên trực ca",
+    "available": "Có mặt từ 8:00 - 17:00"
+  }
+}
