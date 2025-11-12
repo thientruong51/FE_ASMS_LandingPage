@@ -19,7 +19,7 @@ type Step3Custom3DProps = {
 };
 
 export default function Step3Custom3D({ room, onBack, onNext }: Step3Custom3DProps) {
-  const { t, i18n } = useTranslation("storageSize");
+  const { t } = useTranslation("storageSize");
   const [items, setItems] = useState<Item3DData[]>([]);
 
   const roomSize: RoomSize = useMemo(() => {
@@ -54,10 +54,10 @@ export default function Step3Custom3D({ room, onBack, onNext }: Step3Custom3DPro
     <Stack spacing={3} alignItems="center">
       <Typography variant="h4" fontWeight={700} color="primary.main">
         {/* hiển thị song ngữ tiêu đề */}
-        {t("custom3d.title")} / {i18n.getFixedT("en")("custom3d.title")}
+        {t("custom3d.title")} 
       </Typography>
       <Typography variant="body1" color="text.secondary" textAlign="center">
-        {t("custom3d.desc")} / {i18n.getFixedT("en")("custom3d.desc")}
+        {t("custom3d.desc")} 
       </Typography>
 
       <Paper sx={{ width: "100%", height: 500, borderRadius: 4, overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>

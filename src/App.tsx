@@ -2,6 +2,8 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 import { BrowserRouter } from "react-router-dom";
 import theme from "./theme";
 import AppRoutes from "./routes/AppRoutes";
+import ScrollToTop from "./components/ScrollToTop";
+import GlobalLoader from "./components/GlobalLoader";
 import "./i18n";
 
 function App() {
@@ -9,7 +11,10 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-        <AppRoutes />
+        <ScrollToTop />
+        <GlobalLoader>
+          <AppRoutes />
+        </GlobalLoader>
       </BrowserRouter>
     </ThemeProvider>
   );

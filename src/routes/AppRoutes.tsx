@@ -12,6 +12,7 @@ import ProcessPage from "../pages/Process";
 import PartnerPage from "../pages/Partner";
 import ThreeDTour from "../pages/3DTour";
 import Booking from "../pages/Booking";
+import LoginPage from "../pages/Auth/LoginPage";
 
 export default function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export default function AppRoutes() {
       <Route path="/partner" element={<PartnerPage />} />
       <Route path="/3d-tour" element={<ThreeDTour />} />
       <Route path="/booking" element={<Booking />} />
+      <Route path="/login" element={<LoginPage />} />
     </Routes>
   );
 }

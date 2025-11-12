@@ -1,4 +1,5 @@
-import  { Suspense, useEffect, useRef, useState } from "react";
+// BoxCard.tsx
+import { Suspense, useEffect, useRef, useState } from "react";
 import {
   Paper,
   Stack,
@@ -9,12 +10,10 @@ import {
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
-import { useTranslation } from "react-i18next";
-
 
 function ModelViewer({ url }: { url: string }) {
   const model = useGLTF(url);
-  const { camera, gl } = useThree();
+  const { camera } = useThree();
   const controlsRef = useRef<any>(null);
 
   useEffect(() => {
@@ -49,14 +48,8 @@ function ModelViewer({ url }: { url: string }) {
     if (controlsRef.current && typeof controlsRef.current.target?.set === "function") {
       controlsRef.current.target.set(0, camY * 0.2, 0);
       controlsRef.current.update();
-    } else {
-      // fallback: attempt to find traverse function safely (best-effort)
-      const root = model.scene.parent || model.scene;
-      if (root && typeof (root as any).traverse === "function") {
-        // no-op here; kept only for completeness
-      }
     }
-  }, [model, camera, gl]);
+  }, [model, camera]);
 
   return (
     <>
@@ -85,8 +78,6 @@ export default function BoxCard({
   id?: string;
   modelUrl?: string;
 }) {
-  const { t } = useTranslation("booking");
-
   // IntersectionObserver to defer rendering heavy canvas until in view
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -110,7 +101,8 @@ export default function BoxCard({
   useEffect(() => {
     if (modelUrl) {
       try {
-        useGLTF.preload(modelUrl);
+        // useGLTF.preload is a static helper provided by drei
+        (useGLTF as any).preload?.(modelUrl);
       } catch (e) {
         // ignore preload errors
       }
@@ -167,13 +159,10 @@ export default function BoxCard({
           )}
 
           {visible && modelUrl ? (
-            <Canvas camera={{ position: [2, 2, 3], fov: 45 }}
-            gl={{ toneMappingExposure: 0.3 }}>
-
+            <Canvas camera={{ position: [2, 2, 3], fov: 45 }} gl={{ toneMappingExposure: 0.3 }}>
               <Suspense fallback={null}>
                 <ModelViewer url={modelUrl} />
               </Suspense>
-              {/* We no longer place OrbitControls here — ModelViewer includes them */}
               <Environment preset="studio" />
             </Canvas>
           ) : visible && !modelUrl ? (

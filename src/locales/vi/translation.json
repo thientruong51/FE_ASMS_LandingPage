@@ -56,8 +56,10 @@
   "title": "So sánh hai hình thức kho",
   "subtitle": "Khám phá các mô hình lưu trữ tại ASMS để tìm ra giải pháp phù hợp nhất cho nhu cầu của bạn.",
   "columns": {
-    "shared": "Kho Kệ Chung",
-    "private": "Kho Tự Quản"
+    "shared": "Kho Dịch Vụ",
+    "private": "Kho Tự Quản",
+    "sharedShort": "Kho Dịch Vụ",
+    "privateShort": "Kho Tự Quản"
   },
    
 

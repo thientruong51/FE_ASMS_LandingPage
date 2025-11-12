@@ -15,6 +15,7 @@ import vistorageSize from "./locales/vi/storageSize.json";
 import viprocess from "./locales/vi/process.json";
 import vipartner from "./locales/vi/partner.json";
 import vibooking from "./locales/vi/booking.json";
+import viauth from "./locales/vi/auth.json";
 
 // English
 import enLanding from "./locales/en/translation.json";
@@ -30,6 +31,7 @@ import enstorageSize from "./locales/en/storageSize.json";
 import enprocess from "./locales/en/process.json";
 import enpartner from "./locales/en/partner.json";
 import enbooking from "./locales/en/booking.json";
+import enauth from "./locales/en/auth.json";
 
 
 i18n.use(initReactI18next).init({
@@ -47,8 +49,8 @@ i18n.use(initReactI18next).init({
       storageSize:vistorageSize,
       process:viprocess,
       partner:vipartner,
-      booking:vibooking
-
+      booking:vibooking,
+      auth:viauth
     },
     en: {
       translation: enLanding,
@@ -63,7 +65,8 @@ i18n.use(initReactI18next).init({
       storageSize:enstorageSize,
       process:enprocess,
       partner:enpartner,
-      booking:enbooking
+      booking:enbooking,
+      auth:enauth
 
     },
   },

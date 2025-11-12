@@ -26,14 +26,14 @@ type ToolItem3DProps = {
   count: number;
   specs?: ModelSpec;
   size?: number;
-  disabled?: boolean; // disables ADD (ButtonBase)
+  disabled?: boolean;
   missingTranslation?: boolean;
   onAdd: (id: string) => void;
   onRemoveOne?: (id: string) => void;
   onRemoveAll?: (id: string) => void;
   removeOneLabel?: string;
   removeAllLabel?: string;
-  removeDisabled?: boolean; // (if true, the remove buttons themselves are disabled)
+  removeDisabled?: boolean; 
 };
 
 export default function ToolItem3D({
@@ -154,8 +154,7 @@ export default function ToolItem3D({
         </Box>
       )}
 
-      {/* Remove buttons: SIBLINGS, absolutely positioned over the card.
-          They are rendered even when ButtonBase is disabled and still receive clicks. */}
+
       <Fade in={hovered && count > 0}>
         <Box
           sx={{
@@ -168,9 +167,8 @@ export default function ToolItem3D({
             display: "flex",
             justifyContent: "center",
             gap: 1.2,
-            zIndex: 10, // above the ButtonBase
+            zIndex: 10, 
             pointerEvents: "auto",
-            // prevent these buttons from being blocked by parent disabled styles
           }}
         >
           <Tooltip title={removeOneLabel}>
