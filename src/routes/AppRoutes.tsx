@@ -13,6 +13,7 @@ import PartnerPage from "../pages/Partner";
 import ThreeDTour from "../pages/3DTour";
 import Booking from "../pages/Booking";
 import LoginPage from "../pages/Auth/LoginPage";
+import { ContactPage, DashboardPage, Layout, OrderDetailPage, OrdersPage, SettingsPage, UserInfoPage } from "../pages/Dashboard";
 
 export default function AppRoutes() {
   return (
@@ -31,6 +32,15 @@ export default function AppRoutes() {
       <Route path="/3d-tour" element={<ThreeDTour />} />
       <Route path="/booking" element={<Booking />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/dashboard" element={<Layout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="orders" element={<OrdersPage />} />
+        <Route path="orders/:id" element={<OrderDetailPage />} />
+        <Route path="userinfo" element={<UserInfoPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="contact" element={<ContactPage />} />
+      </Route>
     </Routes>
+    
   );
 }

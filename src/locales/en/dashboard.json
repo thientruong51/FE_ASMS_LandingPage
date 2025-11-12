@@ -1,0 +1,74 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "myOrders": "My Orders",
+    "userInfo": "User Info",
+    "settings": "Settings",
+    "contactWarehouse": "Contact Warehouse",
+    "goHome": "Go Home"
+
+  },
+  "dashboardPage": {
+    "welcome": "Welcome back, {{name}}!",
+    "activeOrders": "Active Orders",
+    "ordersInProgress": "Orders In Progress",
+    "nextExpiry": "Next Expiry",
+    "quickActions": "Quick Actions",
+    "newOrder": "New Order",
+    "callStaff": "Call Staff",
+    "renew": "Renew"
+  },
+  "ordersPage": {
+    "title": "My Orders",
+    "filter": "Filter & Quick Actions",
+    "searchOrder": "Search Order",
+    "export": "Export",
+    "details": "Details",
+    "status": {
+      "created": "Created",
+      "pickup_scheduled": "Pickup Scheduled",
+      "picked": "Picked",
+      "in_warehouse": "In Warehouse",
+      "out_for_delivery": "Out For Delivery",
+      "delivered": "Delivered",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    }
+  },
+  "orderDetail": {
+    "summary": "Order Summary",
+    "tracking": "Tracking",
+    "renewOrder": "Renew Order",
+    "contactStaff": "Contact Warehouse Staff",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "status": "Status",
+    "warehouseStaff": "Warehouse Staff",
+    "messageLabel": "Message",
+    "send": "Send",
+    "cancel": "Cancel"
+  },
+  "userInfo": {
+    "title": "User Info",
+    "profile": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "history": "Order & Renewal History"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "notification": "Notification Email",
+    "save": "Save Changes"
+  },
+  "contact": {
+    "title": "Contact Warehouse",
+    "formTitle": "Contact Form",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send",
+    "onDuty": "On-Duty Staff",
+    "available": "Available 8:00 - 17:00"
+  }
+}
