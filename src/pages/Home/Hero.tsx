@@ -82,14 +82,14 @@ export default function Hero() {
           backgroundColor: "#fff",
         }}
       >
+        {/* --- Liquid background: zIndex thấp, pointerEvents none --- */}
         <Box
           sx={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 1,
+            inset: 0,
+            zIndex: 0, // nằm dưới nội dung
+            pointerEvents: "auto", // để không chặn click/hover nội dung khác
+            // nếu LiquidEther cần tương tác chuột, bạn có thể bật pointerEvents chỉ cho canvas trong LiquidEther
           }}
         >
           <LiquidEther
@@ -108,24 +108,26 @@ export default function Hero() {
             takeoverDuration={0.25}
             autoResumeDelay={3000}
             autoRampDuration={0.6}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
           />
-                  <Box
+        </Box>
+
+        {/* Gradient overlay (nhẹ): zIndex giữa */}
+        <Box
           sx={{
             position: "absolute",
             top: 0,
             left: 0,
             width: "100%",
             height: "100%",
-            zIndex: 2,
+            zIndex: 1,
             background:
-              "linear-gradient(180deg, #BFE3C6 0%, #F8FCFA 100%)",
+              "linear-gradient(180deg, rgba(191,227,198,0.8) 0%, rgba(248,252,250,0.8) 100%)",
             pointerEvents: "none",
           }}
         />
 
-        </Box>
-
-        {/* Mũi tên trái */}
+        {/* Mũi tên trái (zIndex cao hơn nội dung) */}
         <IconButton
           onClick={handlePrev}
           sx={{
@@ -136,13 +138,13 @@ export default function Hero() {
             backgroundColor: "white",
             boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             "&:hover": { backgroundColor: "#3CBD96", color: "white" },
-            zIndex: 2,
+            zIndex: 4, // cao nhất so với nội dung
           }}
         >
           <ArrowBackIosNewIcon fontSize="small" />
         </IconButton>
 
-        {/* Nội dung */}
+        {/* Nội dung chính: zIndex > LiquidEther */}
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={{ xs: 5, md: 3 }}
@@ -152,7 +154,8 @@ export default function Hero() {
             width: "100%",
             margin: "0 auto",
             marginLeft: { xs: 0, md: 5 },
-            zIndex: 1,
+            zIndex: 3, // trên LiquidEther và overlay
+            position: "relative",
           }}
         >
 
@@ -197,7 +200,7 @@ export default function Hero() {
                     variant="contained"
                     size="large"
                     component={RouterLink}
-                    to="/services"
+                    to="/booking"
                     sx={{
                       backgroundColor: "#3CBD96",
                       color: "#fff",
@@ -304,7 +307,7 @@ export default function Hero() {
             backgroundColor: "white",
             boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             "&:hover": { backgroundColor: "#3CBD96", color: "white" },
-            zIndex: 2,
+            zIndex: 4,
           }}
         >
           <ArrowForwardIosIcon fontSize="small" />

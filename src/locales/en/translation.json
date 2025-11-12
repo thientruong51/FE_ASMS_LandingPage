@@ -57,7 +57,9 @@
   "subtitle": "Explore ASMS storage models to find the best solution for your business needs.",
   "columns": {
     "shared": "Shared Storage",
-    "private": "Private Storage"
+    "private": "Private Storage",
+    "sharedShort": "Service Warehouse",
+"privateShort": "Self-Storage"
   },
    "features": {
     "f1": "Two-way pickup and delivery",

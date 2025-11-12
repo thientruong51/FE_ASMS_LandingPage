@@ -1,3 +1,4 @@
+// BoxList.tsx
 import { useEffect, useState } from "react";
 import { Box, Stack, IconButton, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,12 +8,19 @@ import { MODELS } from "../../Step3Custom3D/constants/models";
 import { MODEL_SPECS } from "../../Step3Custom3D/constants/modelSpecs";
 import { useTranslation } from "react-i18next";
 
+type SelectedItem = {
+  id: string;
+  quantity?: number;
+  [k: string]: any;
+};
+
 export default function BoxList({
   initialSelected,
   onChange,
 }: {
-  initialSelected?: any[];
-  onChange: (selected: any[]) => void;
+  // cho phép mảng hoặc object (Record) hoặc undefined
+  initialSelected?: SelectedItem[] | Record<string, SelectedItem>;
+  onChange: (selected: SelectedItem[]) => void;
 }) {
   const { t } = useTranslation("booking");
 
@@ -21,14 +29,12 @@ export default function BoxList({
   type BoxId = typeof order[number]; // 'A' | 'B' | 'C' | 'D'
 
   const boxes = order.map((id) => {
-    // TS now knows id is one of the keys of MODEL_SPECS
     const spec = MODEL_SPECS[id as keyof typeof MODEL_SPECS] as {
       depth: number;
       width: number;
       height: number;
     };
 
-    // If MODEL_SPECS is already typed precisely, you can drop the 'as' cast above.
     return {
       id,
       label: t(`boxes.${id}.label`, `Hộp ${id}`),
@@ -44,9 +50,25 @@ export default function BoxList({
     };
   });
 
-  const [selected, setSelected] = useState<Record<string, any>>(() => {
-    const init: Record<string, any> = {};
-    (initialSelected || []).forEach((s: any) => (init[s.id] = { ...s }));
+  // ========== Safe normalization of initialSelected ==========
+  const [selected, setSelected] = useState<Record<string, SelectedItem>>(() => {
+    const init: Record<string, SelectedItem> = {};
+
+    // Normalize initialSelected into an array of items
+    const arr: SelectedItem[] = Array.isArray(initialSelected)
+      ? initialSelected
+      : initialSelected && typeof initialSelected === "object"
+      ? // If it's an object/map like { A: {...}, B: {...} } -> take values
+        Object.values(initialSelected as Record<string, SelectedItem>)
+      : [];
+
+    arr.forEach((s) => {
+      if (s && s.id) {
+        // ensure quantity exists
+        init[s.id] = { quantity: s.quantity ?? 1, ...s };
+      }
+    });
+
     return init;
   });
 
