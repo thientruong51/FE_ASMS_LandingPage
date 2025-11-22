@@ -1,6 +1,10 @@
 import { useGLTF } from "@react-three/drei";
 
-export const MODELS = {
+export const MODELS: {
+  rooms: Record<string, string>;
+  shelf: string;
+  boxes: Record<string, string>;
+} = {
   rooms: {
     small: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847449/PHONG_SMALL_bjalft.glb",
     smallAC: "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847448/PHONG_SMALL_may_lanh_cyv1yy.glb",
@@ -18,7 +22,19 @@ export const MODELS = {
   },
 };
 
-export const ROOM_LAYOUTS = {
+export const ROOM_LAYOUTS: Record<
+  string,
+  {
+    rows: number;
+    perRow: number;
+    shelfWidth: number;
+    shelfDepth: number;
+    shelfSpacing: number;
+    wallGap: number;
+    rowGap: number;
+    offset: { x: number; y: number; z: number };
+  }
+> = {
   small: {
     rows: 1,
     perRow: 2,
@@ -51,7 +67,22 @@ export const ROOM_LAYOUTS = {
   },
 };
 
-
-Object.values(MODELS.rooms).forEach((url) => useGLTF.preload(url));
-Object.values(MODELS.boxes).forEach((url) => useGLTF.preload(url));
-useGLTF.preload(MODELS.shelf);
+Object.values(MODELS.rooms).forEach((url) => {
+  try {
+    useGLTF.preload(url as string);
+  } catch {
+    /* ignore */
+  }
+});
+Object.values(MODELS.boxes).forEach((url) => {
+  try {
+    useGLTF.preload(url as string);
+  } catch {
+    /* ignore */
+  }
+});
+try {
+  useGLTF.preload(MODELS.shelf as string);
+} catch {
+  /* ignore */
+}

@@ -13,10 +13,10 @@ import { useTranslation } from "react-i18next";
 
 function ModelViewer({ url }: { url: string }) {
   const model = useGLTF(url);
-  const { camera, controls } = useThree();
+  const { camera } = useThree();
 
   useEffect(() => {
-    if (!model.scene) return;
+    if (!model?.scene) return;
 
     const box = new THREE.Box3().setFromObject(model.scene);
     const size = new THREE.Vector3();
@@ -28,14 +28,18 @@ function ModelViewer({ url }: { url: string }) {
     model.scene.position.y += -center.y;
     model.scene.position.z += -center.z;
 
-    const camZ = size.z * 1.6;
-    const camY = size.y * 0.5;
+    const camZ = Math.max(1, size.z * 1.6);
+    const camY = Math.max(0.5, size.y * 0.5);
     camera.position.set(0, camY, camZ);
-    if (controls) {
-      (controls as any).target.set(0, camY * 0.8, 0);
-      (controls as any).update();
+
+    // @ts-ignore
+    if (camera.controls) {
+      // @ts-ignore
+      camera.controls.target.set(0, camY * 0.8, 0);
+      // @ts-ignore
+      camera.controls.update();
     }
-  }, [model.scene, camera, controls]);
+  }, [model, camera]);
 
   return <primitive object={model.scene} />;
 }
@@ -48,18 +52,22 @@ export default function RoomCard({
   model,
   selected,
   onSelect,
+  available,
 }: {
-  type: "small" | "medium" | "large";
+  type: "small" | "medium" | "large" | string;
   area: string;
   dimension: string;
   price: string;
   model: string;
   selected: boolean;
   onSelect: () => void;
+  available?: number;
 }) {
   const { t } = useTranslation("storageSize");
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
+
+  const controlsRef = useRef<any>(null);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -76,7 +84,7 @@ export default function RoomCard({
     return () => observer.disconnect();
   }, []);
 
-  const name = t(`rooms.${type}.name`);
+  const name = t(`rooms.${type}.name`, { defaultValue: type });
   const areaLabel = t("rooms.areaLabel");
   const priceLabel = t("rooms.priceLabel");
 
@@ -94,16 +102,10 @@ export default function RoomCard({
         transform: selected ? "translateY(-4px)" : "none",
         transition: "all 0.3s ease",
         "&:hover": { transform: "translateY(-6px)" },
+        minWidth: 260,
       }}
     >
-      {/* ========== VIEWER 3D ========== */}
-      <Box
-        sx={{
-          height: 300,
-          bgcolor: "#f5f5f5",
-          position: "relative",
-        }}
-      >
+      <Box sx={{ height: 300, bgcolor: "#f5f5f5", position: "relative" }}>
         {!visible && (
           <Box
             sx={{
@@ -119,19 +121,40 @@ export default function RoomCard({
         )}
 
         {visible && (
-          <Canvas camera={{ position: [2, 2, 3], fov: 45 }}>
+          <Canvas
+            camera={{ position: [2, 2, 3], fov: 55 }}
+            onCreated={(state) => {
+
+              (state.camera as any).controls = controlsRef.current;
+            }}
+          >
             <ambientLight intensity={1.2} />
             <directionalLight position={[3, 5, 2]} intensity={1.5} />
-            <Suspense fallback={null}>
+
+            <Suspense
+              fallback={
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CircularProgress size={30} />
+                </Box>
+              }
+            >
               <ModelViewer url={model} />
             </Suspense>
-            <OrbitControls enablePan={false} enableZoom={false} />
+
+            <OrbitControls ref={controlsRef} enablePan={false} enableZoom={false} makeDefault />
             <Environment preset="warehouse" />
           </Canvas>
         )}
       </Box>
 
-      {/* ========== TEXT ========== */}
       <Stack spacing={1.2} p={3} textAlign="center">
         <Typography variant="h6" fontWeight={700} color="primary.main">
           {name}
@@ -145,25 +168,17 @@ export default function RoomCard({
           {areaLabel}: {area}
         </Typography>
 
-        <Typography
-          variant="h6"
-          fontWeight={700}
-          color="text.primary"
-          sx={{ mt: 1 }}
-        >
+        <Typography variant="h6" fontWeight={700} color="text.primary" sx={{ mt: 1 }}>
           {price} / {priceLabel}
         </Typography>
+
+        {typeof available === "number" && (
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+            {t("priceTable.title", { mode: "" })}
+            Sẵn sàng: {available} {available > 1 ? "phòng" : "phòng"}
+          </Typography>
+        )}
       </Stack>
     </Paper>
   );
 }
-
-useGLTF.preload(
-  "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847454/BASIC_jtoarm.glb"
-);
-useGLTF.preload(
-  "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847449/BUSINESS_tstcam.glb"
-);
-useGLTF.preload(
-  "https://res.cloudinary.com/dkfykdjlm/image/upload/v1761847452/PREMIUM_rsg6ue.glb"
-);

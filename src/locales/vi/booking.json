@@ -1,5 +1,5 @@
 {
-    "stepsSelf": [
+  "stepsSelf": [
     "Chọn loại dịch vụ",
     "Chọn phòng",
     "Tùy chọn lưu kho",
@@ -20,7 +20,6 @@
     "next": "Tiếp tục",
     "back": "Quay lại"
   },
-
   "step1": {
     "title": "Chọn Phong Cách Lưu Trữ",
     "desc": "Có 2 lựa chọn lưu trữ, xem kiểu nào phù hợp với bạn nhất nhé.",
@@ -47,7 +46,6 @@
     "back": "Đổi Kích Cỡ",
     "next": "Tiếp Theo"
   },
-
   "step2_room": {
     "title": "Chọn Loại Kho Tự Quản",
     "desc": "Xem mô hình kho 3D và chọn loại kho phù hợp với nhu cầu của bạn.",
@@ -56,9 +54,15 @@
       "noAC": "Kho Không Điều Hòa"
     },
     "rooms": {
-      "small": { "name": "Small (BASIC)" },
-      "medium": { "name": "Medium (BUSINESS)" },
-      "large": { "name": "Large (PREMIUM)" },
+      "small": {
+        "name": "Small (BASIC)"
+      },
+      "medium": {
+        "name": "Medium (BUSINESS)"
+      },
+      "large": {
+        "name": "Large (PREMIUM)"
+      },
       "areaLabel": "Diện tích",
       "priceLabel": "tháng"
     },
@@ -73,8 +77,10 @@
       "colWeek": "Giá / Tuần"
     }
   },
+  "perMonth": " / tháng",
+"currencyVND": "đ",
 
-   "step2_box": {
+  "step2_box": {
     "title": "Chọn hộp",
     "desc": "Chọn loại hộp bạn muốn thuê và số lượng. Sau đó chọn loại hàng hóa.",
     "back": "Quay lại",
@@ -83,25 +89,26 @@
   "boxes": {
     "A": {
       "label": "Hộp A",
-      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Kích thước: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "35.000 đ / tháng"
     },
     "B": {
       "label": "Hộp B",
-      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Kích thước: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "50.000 đ / tháng"
     },
     "C": {
       "label": "Hộp C",
-      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Kích thước: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "60.000 đ / tháng"
     },
     "D": {
       "label": "Hộp D",
-      "infoSize": "Kích thước: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Kích thước: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "55.000 đ / tháng"
     }
   },
+  "boxSizeTemplate": "Kích thước: {{length}} x {{width}} x {{height}} cm",
   "goods": {
     "fragile": "Hàng dễ vỡ",
     "electronics": "Thiết bị điện tử",
@@ -112,16 +119,15 @@
   "chosenQuantity": "Số lượng đã chọn",
   "increase": "Tăng",
   "decrease": "Giảm",
-  "chooseGoods": "Chọn loại hàng hóa",
   "selectedCount": "Số lượng đã chọn",
   "grandTotal": "Tổng cộng",
-
   "step3_info": {
     "title": "Thông Tin Cá Nhân",
     "fields": {
       "name": "Họ và tên",
       "phone": "Số điện thoại",
-      "email": "Email (tuỳ chọn)",
+      "email": "Email",
+      "address": "Địa chỉ",
       "note": "Ghi chú thêm"
     }
   },
@@ -130,25 +136,57 @@
     "desc": "Vui lòng nhập thông tin của bạn để hoàn tất đặt chỗ.",
     "name": "Họ và tên",
     "phone": "Số điện thoại",
-    "email": "Email (không bắt buộc)",
+    "email": "Email",
+    "address": "Địa chỉ",
     "note": "Ghi chú thêm",
     "error": {
       "required": "Vui lòng nhập đầy đủ họ tên và số điện thoại.",
       "email": "Địa chỉ email không hợp lệ."
-    }
+    },
+    "chooseServices": "Dịch vụ bổ sung (tuỳ chọn)"
   },
-
   "step4_summary": {
-    "title": "Báo Giá Cuối Cùng",
-    "confirm": "Xác Nhận Đặt Kho"
+    "title": "Tadaaa - Gói Lưu Trữ Hoàn Hảo!",
+    "desc": "Kiểm tra cuối cùng - sắp xong rồi đó!",
+    "packageTitle": "Lựa Chọn Của Bạn",
+    "breakdownTitle": "Chi Phí",
+    "baseLabel": "Giá Cơ Bản (1 tháng)",
+    "subtotalLabel": "Tạm Tính",
+    "totalLabel": "Tổng Cộng (tháng đầu)",
+    "contactTitle": "Chúng Tôi Phục Vụ Ai",
+    "payOptions": "Tùy Chọn Thanh Toán",
+    "pay_card": "Thẻ Tín Dụng / Thẻ Ghi Nợ (Online)",
+    "pay_bank": "Chuyển Khoản",
+    "pay_cash": "Thanh Toán Tại Kho",
+    "pay_card_desc": "Thanh toán nhanh gọn, xác nhận ngay lập tức",
+    "pay_bank_desc": "Chuyển khoản ngân hàng truyền thống, an toàn và dễ dàng",
+    "pay_cash_desc": "Thanh toán trực tiếp bằng tiền mặt tại kho",
+    "extraServicesLabel": "Dịch Vụ Thêm",
+    "acLabel": "Điều Hòa Nhiệt Độ",
+    "noServices": "Không có dịch vụ bổ sung",
+    "noRoom": "Không có thông tin phòng",
+    "confirm": "Xác Nhận Đặt Kho",
+    "agree1": "Tôi đồng ý với điều khoản và điều kiện",
+    "terms": "Điều Khoản và Điều Kiện",
+    "and": "và",
+    "privacy": "Chính Sách Bảo Mật",
+    "countsTitle": "Số Lượng Thiết Bị",
+    "shelvesLabel": "Số kệ",
+    "boxesLabel": "Số thùng",
+    "totalShelvesLabel": "Tổng số kệ tối đa",
+    "breakdownByType": "Giá phân bổ theo loại:",
+    "itemsLabel": "Giá items (có giá sẵn)",
+    "items_inferred": "Items (tự động tính)",
+    "items_inferred_other": "Items khác (tự động tính)",
+    "pay_shelf_label": "Giá kệ",
+    "items_total_label": "Tổng giá items",
+    "servicesLabel": "Dịch vụ"
   },
-
   "step5_success": {
     "title": "Đã Nhận Được Yêu Cầu Của Bạn!",
     "desc": "Cảm ơn bạn đã đặt dịch vụ với ASMS. Chuyên gia lưu trữ sẽ xem xét và liên hệ với bạn trong 24h.",
     "backHome": "Về Trang Chủ"
   },
-
   "summary": {
     "service": "Loại dịch vụ",
     "room": "Loại kho",
@@ -170,5 +208,29 @@
   "actions": {
     "back": "Quay lại",
     "next": "Tiếp tục"
+  },
+  "startDate": {
+    "title": "Ngày Bắt Đầu Lưu Trữ",
+    "desc": "Ngày nào tiện để chuyển đồ vào nhất?"
+  },
+  "endDate": {
+    "title": "Ngày Kết Thúc Lưu Trữ",
+    "desc": "Ngày bạn sẽ đến lấy đồ về?"
+  },
+  "rental": {
+    "period": {
+      "title": "Chọn thời gian thuê",
+      "week": "Theo tuần",
+      "month": "Theo tháng",
+      "custom": "Tùy chỉnh (số tháng)",
+      "weeksLabel": "Số tuần",
+      "weeksHelp": "Chọn từ 1 đến 4 tuần. Giá = giá tháng × 0.3 × số tuần",
+      "monthsLabel": "Số tháng",
+      "monthSuffix": "tháng"
+    },
+    "error": {
+      "weeksRange": "Số tuần phải từ 1 đến 4.",
+      "monthsPositive": "Vui lòng nhập số tháng hợp lệ (> 0)."
+    }
   }
 }

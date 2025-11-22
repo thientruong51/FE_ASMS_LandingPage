@@ -1,70 +1,74 @@
 {
- "stepsSelf": [
-    "Select service type",
-    "Choose room",
-    "Storage option",
-    "Select package",
-    "Customize in 3D",
-    "Your information",
-    "Summary",
-    "Done"
+  "stepsSelf": [
+    "Choose Service Type",
+    "Choose Room",
+    "Storage Options",
+    "Choose Package",
+    "3D Customization",
+    "Personal Information",
+    "Confirm Booking",
+    "Completed"
   ],
   "stepsBox": [
-    "Select service type",
-    "Choose Box",
-    "Your information",
-    "Summary",
-    "Done"
+    "Choose Service Type",
+    "Choose Box Package",
+    "Personal Information",
+    "Confirm Booking",
+    "Completed"
   ],
   "common": {
-    "next": "Next",
+    "next": "Continue",
     "back": "Back"
   },
-
   "step1": {
     "title": "Choose Your Storage Style",
-    "desc": "There are 2 types of storage, pick the one that best fits your needs.",
+    "desc": "There are 2 storage options. See which one suits you best.",
     "self": {
       "title": "Self Storage",
-      "desc": "For those who like flexibility and privacy.",
+      "desc": "Perfect for those who prefer independence, bring items yourself and access 24/7.",
       "points": [
-        "Access your items 24/7 at any time",
-        "Work comfortably at the facility",
+        "24/7 access",
+        "Convenient co-working space",
         "Full privacy with your own key"
       ],
       "img": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762270959/unnamed_4_wphzib.jpg"
     },
     "full": {
       "title": "Full Service",
-      "desc": "Sit back and relax – we handle everything for you.",
+      "desc": "Sit back and relax — we handle everything.",
       "points": [
-        "Modern warehouse with professional staff",
-        "Packing and delivery service included",
-        "Just call us when you need your items back"
+        "Modern and professional storage facilities",
+        "Packing & transportation included",
+        "Just call — doorstep pickup & delivery"
       ],
       "img": "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762184559/unnamed_3_bbwuwu.jpg"
     },
     "back": "Change Size",
-    "next": "Continue"
+    "next": "Next"
   },
-
   "step2_room": {
-    "title": "Choose Your Self Storage Unit",
-    "desc": "Preview the warehouse in 3D and pick the one that suits you best.",
+    "title": "Choose Self-Storage Room Type",
+    "desc": "View 3D room models and select the type that fits your needs.",
     "toggle": {
-      "ac": "Air-conditioned",
-      "noAC": "Non-AC"
+      "ac": "Air-Conditioned Storage",
+      "noAC": "Non-AC Storage"
     },
     "rooms": {
-      "small": { "name": "Small (BASIC)" },
-      "medium": { "name": "Medium (BUSINESS)" },
-      "large": { "name": "Large (PREMIUM)" },
+      "small": {
+        "name": "Small (BASIC)"
+      },
+      "medium": {
+        "name": "Medium (BUSINESS)"
+      },
+      "large": {
+        "name": "Large (PREMIUM)"
+      },
       "areaLabel": "Area",
       "priceLabel": "month"
     },
     "price": {
-      "acTitle": "Air-conditioned Units Pricing",
-      "noAcTitle": "Non-AC Units Pricing",
+      "acTitle": "Price List - AC Storage",
+      "noAcTitle": "Price List - Non-AC Storage",
       "colRoom": "Room Type",
       "colArea": "Area",
       "colBase": "Base Price",
@@ -73,102 +77,161 @@
       "colWeek": "Price / Week"
     }
   },
-
- "step2_box": {
-    "title": "Select box",
-    "desc": "Choose the box type and quantity. Then select goods types.",
+  "perMonth": " / month",
+  "currencyVND": "VND",
+  "step2_box": {
+    "title": "Select Boxes",
+    "desc": "Choose the box types you want to rent and set quantity. Then select goods type.",
     "back": "Back",
     "next": "Next"
   },
   "boxes": {
     "A": {
       "label": "Box A",
-      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Size: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "35,000 đ / month"
     },
     "B": {
       "label": "Box B",
-      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Size: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "50,000 đ / month"
     },
     "C": {
       "label": "Box C",
-      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Size: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "60,000 đ / month"
     },
     "D": {
       "label": "Box D",
-      "infoSize": "Size: {{depth}}x{{width}}x{{height}} m³",
+      "infoSize": "Size: {{length}} x {{width}} x {{height}} cm",
       "priceMonth": "55,000 đ / month"
     }
   },
+  "boxSizeTemplate": "Size: {{length}} x {{width}} x {{height}} cm",
+  "chooseGoodsPerBox": "Select Product Types ",
   "goods": {
     "fragile": "Fragile",
     "electronics": "Electronics",
-    "cold": "Cold items",
-    "heavy": "Heavy items"
+    "cold": "Cold Goods",
+    "heavy": "Heavy Goods"
   },
   "quantityLabel": "Quantity",
-  "chosenQuantity": "Chosen quantity",
+  "chosenQuantity": "Selected quantity",
   "increase": "Increase",
   "decrease": "Decrease",
-  "chooseGoods": "Choose goods types",
-  "selectedCount": "Selected count",
-  "grandTotal": "Grand total",
-
+  "chooseGoods": "Choose goods type",
+  "selectedCount": "Selected items",
+  "grandTotal": "Total",
   "step3_info": {
     "title": "Personal Information",
     "fields": {
       "name": "Full Name",
       "phone": "Phone Number",
-      "email": "Email (optional)",
+      "email": "Email",
+      "address": "Address",
       "note": "Additional Notes"
     }
   },
   "infoForm": {
     "title": "Personal Information",
     "desc": "Please enter your information to complete the booking.",
-    "name": "Full name",
-    "phone": "Phone number",
-    "email": "Email (optional)",
-    "note": "Additional notes",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email",
+    "address": "Address",
+    "note": "Additional Notes",
     "error": {
-      "required": "Please fill in your name and phone number.",
+      "required": "Please enter your full name and phone number.",
       "email": "Invalid email address."
-    }
+    },
+    "chooseServices": "Additional Services (optional)"
   },
-
   "step4_summary": {
-    "title": "Final Quote",
-    "confirm": "Confirm Booking"
+    "title": "Tadaaa — Your Perfect Storage Package!",
+    "desc": "Final check — you're almost done!",
+    "packageTitle": "Your Selection",
+    "breakdownTitle": "Cost Breakdown",
+    "baseLabel": "Base Price (1 month)",
+    "subtotalLabel": "Subtotal",
+    "totalLabel": "Total (first month)",
+    "contactTitle": "Who We Serve",
+    "payOptions": "Payment Options",
+    "pay_card": "Credit / Debit Card (Online)",
+    "pay_bank": "Bank Transfer",
+    "pay_cash": "Pay at Warehouse",
+    "pay_card_desc": "Instant confirmation with quick online payment",
+    "pay_bank_desc": "Traditional bank transfer, safe and easy",
+    "pay_cash_desc": "Pay directly in cash at the warehouse",
+    "extraServicesLabel": "Additional Services",
+    "acLabel": "Air Conditioning",
+    "noServices": "No extra services",
+    "noRoom": "No room information",
+    "confirm": "Confirm Booking",
+    "agree1": "I agree to the Terms and Conditions",
+    "terms": "Terms and Conditions",
+    "and": "and",
+    "privacy": "Privacy Policy",
+    "countsTitle": "Equipment Count",
+    "shelvesLabel": "Shelves",
+    "boxesLabel": "Boxes",
+    "totalShelvesLabel": "Max shelves",
+    "breakdownByType": "Cost breakdown by type:",
+    "itemsLabel": "Item prices (preset)",
+    "items_inferred": "Items (auto-calculated)",
+    "items_inferred_other": "Other items (auto-calculated)",
+    "pay_shelf_label": "Shelf cost",
+    "items_total_label": "Total item cost",
+    "servicesLabel": "Services"
   },
-
   "step5_success": {
-    "title": "Your Request Has Been Received!",
-    "desc": "Thank you for booking with ASMS. Our storage specialist will review and contact you within 24 hours.",
+    "title": "We've Received Your Request!",
+    "desc": "Thank you for booking with ASMS. Our storage specialist will contact you within 24 hours.",
     "backHome": "Back to Home"
   },
-
   "summary": {
     "service": "Service Type",
-    "room": "Storage Room",
+    "room": "Room Type",
     "box": "Box Type",
-    "name": "Name",
+    "name": "Full Name",
     "phone": "Phone Number",
     "total": "Total"
   },
   "customizeChoice": {
-    "title": "Choose your storage option",
-    "desc": "Your {{room}} room can use a predefined package or custom layout.",
-    "packageTitle": "Use Predefined Package",
-    "packageDesc": "Use a ready-made package with included shelves and boxes.",
-    "customTitle": "Customize in 3D",
-    "customDesc": "Arrange your own shelves and boxes freely in a 3D space.",
-    "selectPackage": "Select Package",
+    "title": "Choose Your Storage Style",
+    "desc": "Your {{room}} can use preset packages or be fully customized.",
+    "packageTitle": "Use Preset Package",
+    "packageDesc": "Use the basic configuration (shelves & boxes included) at a fixed price.",
+    "customTitle": "3D Customization",
+    "customDesc": "Arrange shelves and boxes in 3D space however you like.",
+    "selectPackage": "Choose Preset",
     "selectCustom": "Customize Room"
   },
   "actions": {
     "back": "Back",
-    "next": "Next"
+    "next": "Continue"
+  },
+  "startDate": {
+    "title": "Storage Start Date",
+    "desc": "What date works best for moving your items in?"
+  },
+  "endDate": {
+    "title": "End Date of Storage",
+    "desc": "What date will you come to pick up your items?"
+  },
+  "rental": {
+    "period": {
+      "title": "Choose rental duration",
+      "week": "Weekly",
+      "month": "Monthly",
+      "custom": "Custom (months)",
+      "weeksLabel": "Number of weeks",
+      "weeksHelp": "Choose between 1 and 4 weeks. Price = monthly price × 0.3 × weeks",
+      "monthsLabel": "Number of months",
+      "monthSuffix": "months"
+    },
+    "error": {
+      "weeksRange": "Weeks must be between 1 and 4.",
+      "monthsPositive": "Please enter a valid number of months (> 0)."
+    }
   }
 }

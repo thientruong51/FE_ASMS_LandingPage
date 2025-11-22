@@ -2,7 +2,7 @@ import { Box, Button, Container, Stack, Typography, Paper } from "@mui/material"
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  room: { id: string; name: string; hasAC: boolean };
+  room: { id: string; name: string; hasAC: boolean; type?: string };
   onBack: () => void;
   onSelect: (mode: "package" | "custom") => void;
 };
@@ -39,11 +39,7 @@ export default function Step2CustomizeChoice({ room, onBack, onSelect }: Props) 
               <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
                 {t("customizeChoice.packageDesc")}
               </Typography>
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={() => onSelect("package")}
-              >
+              <Button variant="contained" fullWidth onClick={() => onSelect("package")}>
                 {t("customizeChoice.selectPackage")}
               </Button>
             </Paper>
@@ -64,11 +60,7 @@ export default function Step2CustomizeChoice({ room, onBack, onSelect }: Props) 
               <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
                 {t("customizeChoice.customDesc")}
               </Typography>
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={() => onSelect("custom")}
-              >
+              <Button variant="outlined" fullWidth onClick={() => onSelect("custom")}>
                 {t("customizeChoice.selectCustom")}
               </Button>
             </Paper>

@@ -1,4 +1,3 @@
-// components/ToolItem3D.tsx
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -11,7 +10,7 @@ import {
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import ModelViewer from "../components/ModelViewer";
+import ModelViewer from "./ModelViewer";
 
 export type ModelSpec =
   | { width: number; depth: number; height: number }
@@ -33,7 +32,7 @@ type ToolItem3DProps = {
   onRemoveAll?: (id: string) => void;
   removeOneLabel?: string;
   removeAllLabel?: string;
-  removeDisabled?: boolean; 
+  removeDisabled?: boolean;
 };
 
 export default function ToolItem3D({
@@ -46,7 +45,6 @@ export default function ToolItem3D({
   specs,
   size = 120,
   disabled = false,
-  missingTranslation = false,
   onAdd,
   onRemoveOne,
   onRemoveAll,
@@ -55,10 +53,8 @@ export default function ToolItem3D({
   removeDisabled = false,
 }: ToolItem3DProps) {
   const [hovered, setHovered] = React.useState(false);
-
   const showEn = showBilingual && labelEn && labelEn !== labelVi;
 
-  // Render buttons as siblings (outside ButtonBase) so they are clickable
   return (
     <Box
       sx={{
@@ -68,13 +64,11 @@ export default function ToolItem3D({
         alignItems: "center",
         justifyContent: "flex-start",
         margin: 1,
-        // ensure the card establishes a stacking context for absolutely positioned children
         zIndex: 0,
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Thumbnail / ADD button (may be disabled) */}
       <ButtonBase
         onClick={() => onAdd(id)}
         disabled={disabled}
@@ -92,9 +86,7 @@ export default function ToolItem3D({
           backgroundColor: (theme) =>
             disabled ? theme.palette.action.disabledBackground : "#fff",
           transition: "transform 0.18s ease, box-shadow 0.18s ease",
-          boxShadow: hovered
-            ? "0 3px 12px rgba(0,0,0,0.12)"
-            : "0 1px 5px rgba(0,0,0,0.04)",
+          boxShadow: hovered ? "0 3px 12px rgba(0,0,0,0.12)" : "0 1px 5px rgba(0,0,0,0.04)",
           "&:hover": { transform: "translateY(-2px)" },
         }}
         focusRipple
@@ -110,30 +102,17 @@ export default function ToolItem3D({
           </Canvas>
         </div>
 
-        {/* Label */}
-        <Typography
-          variant="body2"
-          sx={{ mt: 0.5, fontWeight: 700, color: "text.primary", lineHeight: 1 }}
-        >
+        <Typography variant="body2" sx={{ mt: 0.5, fontWeight: 700, color: "text.primary", lineHeight: 1 }}>
           {labelVi}
         </Typography>
-        {showEn && (
-          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
-            {labelEn}
-          </Typography>
-        )}
+        {showEn && <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>{labelEn}</Typography>}
         {specs && (
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ lineHeight: 1, mt: 0.25 }}
-          >
+          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1, mt: 0.25 }}>
             {`${specs.width}×${specs.depth}×${specs.height} m`}
           </Typography>
         )}
       </ButtonBase>
 
-      {/* Count badge (still inside the card) */}
       {count > 0 && (
         <Box
           sx={{
@@ -154,7 +133,6 @@ export default function ToolItem3D({
         </Box>
       )}
 
-
       <Fade in={hovered && count > 0}>
         <Box
           sx={{
@@ -167,7 +145,7 @@ export default function ToolItem3D({
             display: "flex",
             justifyContent: "center",
             gap: 1.2,
-            zIndex: 10, 
+            zIndex: 10,
             pointerEvents: "auto",
           }}
         >
@@ -189,10 +167,7 @@ export default function ToolItem3D({
                   "&:hover": !removeDisabled ? { bgcolor: "rgba(255,230,230,1)" } : {},
                 }}
               >
-                <RemoveCircleOutlineIcon
-                  fontSize="small"
-                  sx={{ color: removeDisabled ? "rgba(0,0,0,0.26)" : "#e53935" }}
-                />
+                <RemoveCircleOutlineIcon fontSize="small" sx={{ color: removeDisabled ? "rgba(0,0,0,0.26)" : "#e53935" }} />
               </IconButton>
             </span>
           </Tooltip>
@@ -215,23 +190,12 @@ export default function ToolItem3D({
                   "&:hover": !removeDisabled ? { bgcolor: "rgba(255,230,230,1)" } : {},
                 }}
               >
-                <DeleteOutlineIcon
-                  fontSize="small"
-                  sx={{ color: removeDisabled ? "rgba(0,0,0,0.26)" : "#e53935" }}
-                />
+                <DeleteOutlineIcon fontSize="small" sx={{ color: removeDisabled ? "rgba(0,0,0,0.26)" : "#e53935" }} />
               </IconButton>
             </span>
           </Tooltip>
         </Box>
       </Fade>
-
-      {missingTranslation && (
-        <Box sx={{ mt: 0.5 }}>
-          <Typography variant="caption" color="warning.main">
-            (missing i18n)
-          </Typography>
-        </Box>
-      )}
     </Box>
   );
 }

@@ -19,22 +19,16 @@ export default function ToolToolbar({
   onRemoveOne,
   onRemoveAll,
 }: ToolToolbarProps) {
-  const {  i18n } = useTranslation("storageSize");
+  const { i18n } = useTranslation("storageSize");
   const tEn = i18n.getFixedT("en", "storageSize");
-
   const currentLang = (i18n.language || "vi").toLowerCase();
 
-  // resolve an action label with fallback
   const resolveActionLabel = (actionKey: string) => {
     const existsVi = i18n.exists(actionKey, { lng: "vi", ns: "storageSize" });
     const existsEn = i18n.exists(actionKey, { lng: "en", ns: "storageSize" });
-
     const viLabel = existsVi ? i18n.t(actionKey, { lng: "vi", ns: "storageSize" }) : "";
     const enLabel = existsEn ? tEn(actionKey) : "";
-
-    if (currentLang.startsWith("en")) {
-      return enLabel || viLabel || actionKey;
-    }
+    if (currentLang.startsWith("en")) return enLabel || viLabel || actionKey;
     return viLabel || enLabel || actionKey;
   };
 
@@ -53,16 +47,13 @@ export default function ToolToolbar({
   const resolveLabel = (key: string) => {
     const existsVi = i18n.exists(key, { lng: "vi", ns: "storageSize" });
     const existsEn = i18n.exists(key, { lng: "en", ns: "storageSize" });
-
     const viLabel = existsVi ? i18n.t(key, { lng: "vi", ns: "storageSize" }) : "";
     const enLabel = existsEn ? tEn(key) : "";
-
     if (currentLang.startsWith("en")) {
       if (enLabel) return { labelVi: enLabel, missing: false };
       if (viLabel) return { labelVi: viLabel, missing: false };
       return { labelVi: key, missing: true };
     }
-
     if (viLabel) return { labelVi: viLabel, missing: false };
     if (enLabel) return { labelVi: enLabel, missing: false };
     return { labelVi: key, missing: true };
@@ -70,7 +61,7 @@ export default function ToolToolbar({
 
   return (
     <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center" sx={{ mt: 1 }}>
-      {/* ====== KỆ ====== */}
+      {/* Shelf */}
       {(() => {
         const { labelVi, missing } = resolveLabel("custom3d.addShelf");
         return (
@@ -87,9 +78,7 @@ export default function ToolToolbar({
             onAdd={onAdd}
             onRemoveOne={onRemoveOne}
             onRemoveAll={onRemoveAll}
-            // ❗ Chỉ disable hành động "thêm" khi đạt giới hạn
             disabled={shelfCount >= totalShelves}
-            // ❗ Nhưng vẫn cho phép xóa kệ
             removeDisabled={false}
             removeOneLabel={removeOneLabel}
             removeAllLabel={removeAllLabel}
@@ -97,7 +86,7 @@ export default function ToolToolbar({
         );
       })()}
 
-      {/* ====== CÁC THÙNG ====== */}
+      {/* Boxes A..D */}
       {(["A", "B", "C", "D"] as const).map((type) => {
         const key = boxKeys[type];
         const { labelVi, missing } = resolveLabel(key);
