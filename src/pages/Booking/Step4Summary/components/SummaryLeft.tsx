@@ -1,11 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Box, Avatar, Divider, Paper, Stack, Typography, styled, Chip } from "@mui/material";
 import type { BookingPayload } from "./types";
 import useServiceDetails from "./useServiceDetails";
-import { usePricing } from "./pricingUtils";
+import { usePricing } from "./pricingUtils"; 
 import { useTranslation } from "react-i18next";
-
-const PREVIEW_IMAGE = "/mnt/data/dcf27b0d-c367-4185-8977-494b2bf92430.png";
 
 const TwoColWrap = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -28,25 +26,34 @@ const LeftCard = styled(Paper)(({ theme }) => ({
   border: `1px solid ${theme.palette.action.hover}`,
 }));
 
-export default function SummaryLeft({ data }: { data: BookingPayload }) {
+export default function SummaryLeft({
+  data,
+  onPayloadChange,
+}: {
+  data: BookingPayload;
+  onPayloadChange?: (payload: BookingPayload) => void;
+}) {
   const { t } = useTranslation("booking");
   const serviceDetails = useServiceDetails(data.services);
+
   const pricing = usePricing(data, serviceDetails);
 
   const serviceStyle: "self" | "full" =
     (data.style as any) === "full"
       ? "full"
       : (data.style as any) === "self"
-        ? "self"
-        : Array.isArray((data as any).boxes) && (data as any).boxes.length > 0
-          ? "full"
-          : "self";
+      ? "self"
+      : Array.isArray((data as any).boxes) && (data as any).boxes.length > 0
+      ? "full"
+      : data.room
+      ? "self"
+      : "self";
 
   const boxes: any[] = Array.isArray((data as any).boxes)
     ? (data as any).boxes
     : (data as any).box
-      ? [(data as any).box]
-      : [];
+    ? [(data as any).box]
+    : [];
 
   const itemsArray = useMemo<any[]>(() => {
     if (Array.isArray(data.items)) return data.items;
@@ -142,10 +149,10 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
     const daysCustom = Number((data as any).rentalDays ?? 0);
 
     const startRaw = (data as any).selectedDate;
-    if (!startRaw) return { valid: false };
+    if (!startRaw) return { valid: false, startVN: "-", endVN: "-", startRaw: null, endRaw: null };
 
     const start = new Date(startRaw);
-    if (isNaN(start.getTime())) return { valid: false };
+    if (isNaN(start.getTime())) return { valid: false, startVN: "-", endVN: "-", startRaw: null, endRaw: null };
 
     let end = new Date(start);
 
@@ -153,7 +160,7 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
       if (rt === "week") {
         const w = weeks > 0 ? weeks : 1;
         end.setDate(end.getDate() + w * 7);
-        end.setDate(end.getDate() - 1); 
+        end.setDate(end.getDate() - 1);
       } else if (rt === "month") {
         const m = months > 0 ? months : 1;
         end.setMonth(end.getMonth() + m);
@@ -171,17 +178,21 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
         end = new Date(start);
       }
     } catch (err) {
-      return { valid: false };
+      return { valid: false, startVN: "-", endVN: "-", startRaw: null, endRaw: null };
     }
 
     const viFmt = new Intl.DateTimeFormat("vi-VN");
     const enFmt = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric" });
+
+    const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
+    const endRaw = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`;
 
     return {
       valid: true,
       startRaw,
       startVN: viFmt.format(start),
       startEN: enFmt.format(start),
+      endRaw,
       endVN: viFmt.format(end),
       endEN: enFmt.format(end),
     };
@@ -211,6 +222,23 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
     return normalized;
   }
 
+  useEffect(() => {
+    if (typeof onPayloadChange === "function") {
+
+      const depositDateExisting = (data as any).depositDate ?? (data as any).selectedDate ?? null;
+      const returnDateExisting = (data as any).returnDate ?? (data as any).endDate ?? null;
+
+      const depositDateToSet = depositDateExisting ?? se.startRaw ?? null;
+      const returnDateToSet = returnDateExisting ?? se.endRaw ?? null;
+
+      const patched: any = { ...data };
+      if (depositDateToSet != null) patched.depositDate = depositDateToSet;
+      if (returnDateToSet != null) patched.returnDate = returnDateToSet;
+
+      onPayloadChange(patched);
+    }
+  }, [data, se.startRaw, se.endRaw, onPayloadChange]);
+
   return (
     <TwoColWrap>
       <LeftCard>
@@ -218,34 +246,31 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
           {t("step4_summary.packageTitle")}
         </Typography>
 
-
-
         <Stack spacing={2}>
           {serviceStyle === "self" && (
-  <Stack direction="row" spacing={2} alignItems="center">
-    <Avatar variant="rounded" src={PREVIEW_IMAGE} sx={{ width: 72, height: 72 }} />
-    <Box>
-      <Typography variant="subtitle1" fontWeight={700}>
-        {data.room?.name ?? t("summary.service")}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {data.room?.width && data.room?.depth ? `${data.room.width} x ${data.room.depth} m` : ""}
-      </Typography>
-    </Box>
-  </Stack>
-)}
+            <Stack direction="row" spacing={2} alignItems="center">
+              {data.room?.image ? (
+                <Avatar variant="rounded" src={data.room.image} sx={{ width: 72, height: 72 }} />
+              ) : null}
+              <Box>
+                <Typography variant="subtitle1" fontWeight={700}>
+                  {data.room?.name ?? t("summary.service")}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {data.room?.width && data.room?.depth ? `${data.room.width} x ${data.room.depth} m` : ""}
+                </Typography>
+              </Box>
+            </Stack>
+          )}
 
           <Divider />
 
-          {/* SELF STORAGE VIEW */}
           {serviceStyle === "self" && (
             <Stack spacing={1}>
               <Typography variant="body2">
                 <strong>{t("summary.room")}:</strong> {data.room?.name ?? t("step4_summary.noRoom", "")}
               </Typography>
 
-              {/* Start & End appear globally above, but keep a small Start shown here if desired */}
-              {/* Extra services */}
               <Typography variant="body2">
                 <strong>{t("step4_summary.extraServicesLabel")}:</strong>{" "}
                 {(serviceDetails ?? []).map((s) => `${s.name} (${fmtCurrency(s.price)})`).join(", ")}
@@ -256,16 +281,13 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
                 {data.room?.hasAC ? t("step2_room.toggle.ac") : t("step2_room.toggle.noAC")}
               </Typography>
 
-              <Typography variant="body2" >
-                <strong>{t("startDate.title")}:</strong>{" "}
-                {se.startVN}
+              <Typography variant="body2">
+                <strong>{t("startDate.title")}:</strong> {se.startVN}
               </Typography>
-              <Typography variant="body2" >
-                <strong>{t("endDate.title")}:</strong>{" "}
-                {se.endVN}
+              <Typography variant="body2">
+                <strong>{t("endDate.title")}:</strong> {se.endVN}
               </Typography>
 
-              {/* inferred counts */}
               {inferredCounts && (
                 <>
                   <Divider />
@@ -296,7 +318,6 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
                     </Typography>
                   )}
 
-                  {/* Price breakdown (if pricing contains info) */}
                   <Divider sx={{ mt: 1 }} />
                   <Typography variant="subtitle2" fontWeight={700} mt={1}>
                     {t("step4_summary.breakdownByType", "Chi tiết theo loại")}
@@ -321,7 +342,6 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
             </Stack>
           )}
 
-          {/* FULL SERVICE VIEW */}
           {serviceStyle === "full" && (
             <Stack spacing={2}>
               {boxes.length === 0 ? (
@@ -333,7 +353,7 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
                   const normalized = normalizeBoxProductTypes(b);
                   const quantity = b.quantity ?? b.qty ?? 1;
                   const label = b.label ?? b.name ?? t("summary.box", "Loại thùng");
-                  const image = b.imageUrl ?? PREVIEW_IMAGE;
+                  const image = b.imageUrl ?? b.image ?? undefined;
                   const unitPrice = b.price ?? b.unitPrice ?? 0;
                   const totalPrice = (unitPrice ?? 0) * (quantity ?? 1);
 
@@ -349,7 +369,7 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
                         bgcolor: "background.paper",
                       }}
                     >
-                      <Avatar variant="rounded" src={image} sx={{ width: 64, height: 64 }} />
+                      {image ? <Avatar variant="rounded" src={image} sx={{ width: 64, height: 64 }} /> : null}
 
                       <Box flex={1}>
                         <Typography variant="subtitle1" fontWeight={700}>
@@ -396,13 +416,11 @@ export default function SummaryLeft({ data }: { data: BookingPayload }) {
                   {(serviceDetails ?? []).map((s) => `${s.name} (${fmtCurrency(s.price)})`).join(", ")}
                 </Typography>
               )}
-              <Typography variant="body2" >
-                <strong>{t("startDate.title")}:</strong>{" "}
-                {se.startVN}
+              <Typography variant="body2">
+                <strong>{t("startDate.title")}:</strong> {se.startVN}
               </Typography>
-              <Typography variant="body2" >
-                <strong>{t("endDate.title")}:</strong>{" "}
-                {se.endVN}
+              <Typography variant="body2">
+                <strong>{t("endDate.title")}:</strong> {se.endVN}
               </Typography>
             </Stack>
           )}

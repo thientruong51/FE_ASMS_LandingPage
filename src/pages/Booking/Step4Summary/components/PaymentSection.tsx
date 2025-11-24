@@ -9,6 +9,7 @@ import {
   Checkbox,
   styled,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import type { BookingPayload } from "./types";
@@ -31,12 +32,14 @@ const PaymentOption = styled(Paper)(({ theme }) => ({
 }));
 
 export default function PaymentSection({
+  data,
   agree,
   setAgree,
   paymentMethod,
   setPaymentMethod,
   onBack,
   onConfirm,
+  loading = false,
 }: {
   data: BookingPayload;
   agree: boolean;
@@ -45,6 +48,7 @@ export default function PaymentSection({
   setPaymentMethod: (v: string) => void;
   onBack: () => void;
   onConfirm: () => void;
+  loading?: boolean;
 }) {
   const { t } = useTranslation("booking");
 
@@ -99,10 +103,15 @@ export default function PaymentSection({
         />
 
         <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
-          <Button variant="outlined" onClick={onBack}>
+          <Button variant="outlined" onClick={onBack} disabled={loading}>
             {t("actions.back")}
           </Button>
-          <Button variant="contained" disabled={!agree} onClick={onConfirm}>
+          <Button
+            variant="contained"
+            disabled={!agree || loading}
+            onClick={onConfirm}
+            startIcon={loading ? <CircularProgress size={18} /> : null}
+          >
             {t("step4_summary.confirm")}
           </Button>
         </Box>
