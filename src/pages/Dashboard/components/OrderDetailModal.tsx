@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogTitle,
@@ -20,14 +19,21 @@ import {
   IconButton,
 } from "@mui/material";
 import TrackingTimeline from "./TrackingTimeline";
-import type { Order } from "../types";
+import type { Order as UIOrder } from "../types";
 import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 
 type Props = {
   open: boolean;
-  order?: Order | null;
+  order?: UIOrder | null;
   onClose: () => void;
+};
+
+
+const safeDate = (value?: string | null): Date | null => {
+  if (!value) return null;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
 };
 
 export default function OrderDetailModal({ open, order, onClose }: Props) {
@@ -35,30 +41,31 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
 
   if (!order) return null;
 
-  const items = ((order as any).items ?? [
-    { id: "i1", name: "Laptop", price: 80, qty: 1, img: undefined },
-    { id: "i2", name: "Watch", price: 56, qty: 2, img: undefined },
-    { id: "i3", name: "Headphone", price: 94, qty: 1, img: undefined },
-    { id: "i4", name: "Perfume", price: 83, qty: 1, img: undefined },
-  ]) as Array<{ id?: string; name: string; price: number; qty: number; img?: string }>;
+  const items =
+    Array.isArray((order as any).items) && (order as any).items.length > 0
+      ? (order as any).items
+      : [
+          { id: "i1", name: "Laptop", price: 80, qty: 1, img: undefined },
+          { id: "i2", name: "Watch", price: 56, qty: 2, img: undefined },
+        ];
 
-  const subtotal = items.reduce((s, it) => s + it.price * it.qty, 0);
+  const subtotal = items.reduce(
+    (s: number, it: any) => s + (Number(it.price ?? 0) || 0) * (Number(it.qty ?? 1) || 1),
+    0
+  );
 
-  const fmtDate = (iso?: string) => {
-    if (!iso) return "-";
-    const d = new Date(iso);
+  const fmtDate = (iso?: string | null) => {
+    const d = safeDate(iso);
+    if (!d) return "-";
     return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
   };
 
   const calcDays = () => {
-    try {
-      const s = new Date(order.startDate);
-      const e = new Date(order.endDate);
-      const days = Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
-      return `${days} Days`;
-    } catch {
-      return "-";
-    }
+    const s = safeDate(order.startDate);
+    const e = safeDate(order.endDate);
+    if (!s || !e) return "-";
+    const days = Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+    return `${days} Days`;
   };
 
   return (
@@ -70,7 +77,9 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
               {order.id}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {order.kind === "managed" ? t("orderDetail.summary") + " • Kho dịch vụ" : t("orderDetail.summary") + " • Kho tự quản"}
+              {order.kind === "managed"
+                ? t("orderDetail.summary") + " • Kho dịch vụ"
+                : t("orderDetail.summary") + " • Kho tự quản"}
             </Typography>
           </Box>
 
@@ -110,12 +119,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
           }}
         >
           {/* Column 1 - Order Information */}
-          <Box
-            sx={{
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, height: "100%" }}>
               <Typography variant="subtitle2" fontWeight={700} mb={1}>
                 Order Information
@@ -141,12 +145,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
           </Box>
 
           {/* Column 2 - Locations */}
-          <Box
-            sx={{
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, height: "100%" }}>
               <Typography variant="subtitle2" fontWeight={700} mb={1}>
                 Locations
@@ -179,12 +178,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
           </Box>
 
           {/* Column 3 - Customer Details */}
-          <Box
-            sx={{
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, height: "100%" }}>
               <Typography variant="subtitle2" fontWeight={700} mb={1}>
                 Customer Details
@@ -229,20 +223,28 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
               </TableHead>
 
               <TableBody>
-                {items.map((it, idx) => (
-                  <TableRow key={it.id ?? idx}>
-                    <TableCell>{idx + 1}</TableCell>
-                    <TableCell>
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        {it.img ? <Avatar src={it.img} variant="rounded" sx={{ width: 36, height: 36 }} /> : <Avatar sx={{ width: 36, height: 36 }}>{String(idx + 1)}</Avatar>}
-                        <Typography variant="body2">{it.name}</Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="right">${it.price.toFixed(2)}</TableCell>
-                    <TableCell align="center">{it.qty}</TableCell>
-                    <TableCell align="right">${(it.price * it.qty).toFixed(2)}</TableCell>
-                  </TableRow>
-                ))}
+                {items.map((it: any, idx: number) => {
+                  const price = Number(it.price ?? 0) || 0;
+                  const qty = Number(it.qty ?? 1) || 1;
+                  return (
+                    <TableRow key={it.id ?? idx}>
+                      <TableCell>{idx + 1}</TableCell>
+                      <TableCell>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          {it.img ? (
+                            <Avatar src={it.img} variant="rounded" sx={{ width: 36, height: 36 }} />
+                          ) : (
+                            <Avatar sx={{ width: 36, height: 36 }}>{String(idx + 1)}</Avatar>
+                          )}
+                          <Typography variant="body2">{it.name}</Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell align="right">${price.toFixed(2)}</TableCell>
+                      <TableCell align="center">{qty}</TableCell>
+                      <TableCell align="right">${(price * qty).toFixed(2)}</TableCell>
+                    </TableRow>
+                  );
+                })}
 
                 <TableRow>
                   <TableCell colSpan={4} align="right" sx={{ fontWeight: 700 }}>

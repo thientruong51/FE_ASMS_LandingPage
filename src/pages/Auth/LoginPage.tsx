@@ -1,270 +1,298 @@
+import { useState } from "react";
 import {
   Box,
   Button,
-  Container,
+  Dialog,
+  DialogContent,
+  IconButton,
   Stack,
   TextField,
   Typography,
   Link,
-  Paper,
+  CircularProgress,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
-import { motion } from "framer-motion";
+import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import Header from "../../components/Header";
-import Footer from "../Home/Footer";
+import { useNavigate } from "react-router-dom";
+import { customerLogin } from "../../api/auth";
+import { motion } from "framer-motion";
 
-const WaveBg =
+
+const BG_WAVE =
   "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762962577/wave-haikei_skn4to.svg";
+const ILLUSTRATION =
+  "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762884106/download_btrzmx.png";
+const LOGO = "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762190185/LOGO-remove_1_o1wgk2.png";
 
-export default function Login() {
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+};
+
+export default function LoginDialog({ open, onClose, onSuccess }: Props) {
   const { t } = useTranslation("auth");
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
-  const handleLogin = () => {
+ const handleLogin = async () => {
+  setErr("");
+  if (!email || !password) {
+    setErr(t("pleaseFill") ?? "Vui lòng nhập email và mật khẩu");
+    return;
+  }
+
+  try {
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500); 
-  };
+    const res = await customerLogin({ email, password });
 
-  const leftVariant = {
-    hidden: { opacity: 0, x: -40 },
-    show: { opacity: 1, x: 0, transition: { duration: 0.8 } },
-  };
-  const rightVariant = {
-    hidden: { opacity: 0, x: 40 },
-    show: { opacity: 1, x: 0, transition: { duration: 0.8, delay: 0.2 } },
-  };
+    if (res.success) {
+
+      if (res.data?.accessToken) {
+        localStorage.setItem("accessToken", res.data.accessToken);
+      }
+      if (res.data?.refreshToken) {
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+      }
+      if (res.data?.userId) {
+        localStorage.setItem("userId", res.data.userId);
+      }
+
+      if (onSuccess) onSuccess();
+
+      onClose();
+      navigate("/");
+
+    } else {
+      setErr(res.errorMessage ?? (t("loginFailed") ?? "Đăng nhập thất bại"));
+    }
+  } catch {
+    setErr(t("loginError") ?? "Lỗi kết nối");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#fff",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="lg"
+      PaperProps={{
+        sx: {
+          overflow: "visible",
+          borderRadius: 3,
+          background: "transparent",
+          boxShadow: "none",
+          m: { xs: 1, md: 6 },
+        },
       }}
     >
-      <Header />
-
-      <Container
-        maxWidth="lg"
+      {/* Close */}
+      <IconButton
+        onClick={onClose}
         sx={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 6,
+          position: "absolute",
+          right: 12,
+          top: 12,
+          zIndex: 40,
+          bgcolor: "rgba(255,255,255,0.9)",
         }}
+        aria-label="close"
       >
-        <Paper
-          elevation={8}
+        <CloseIcon />
+      </IconButton>
+
+      <DialogContent sx={{ p: 0 }}>
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.28 }}
           sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            borderRadius: 5,
-            overflow: "hidden",
             width: "100%",
-            maxWidth: 1000,
-            position: "relative", 
-            bgcolor: "transparent",
+            maxWidth: 980,
+            mx: "auto",
+            borderRadius: 4,
+            overflow: "hidden",
+            boxShadow: "0 18px 50px rgba(4,40,20,0.12)",
+            display: "grid",
+            gridTemplateColumns: isSm ? "1fr" : "440px 1fr",
+            minHeight: { xs: 420, md: 480 },
+            backgroundImage: `url(${BG_WAVE})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         >
-          {/* === SVG placed absolute on the right (controls the curve) === */}
+          {/* LEFT: Illustration + logo pushed left */}
           <Box
-            component="img"
-            src={WaveBg}
-            alt="wave"
             sx={{
-              position: "absolute",
-              right: { xs: -40, md: -10 }, 
-              top: 0,
-              height: "100%", 
-              width: "auto",
-              objectFit: "cover",
-              zIndex: 1,
-              pointerEvents: "none",
-              display: { xs: "none", md: "block" }, 
-            }}
-          />
-
-          {/* ==== LEFT IMAGE SECTION ==== */}
-          <Box
-            component={motion.div}
-            variants={leftVariant}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.6 }}
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               position: "relative",
-              zIndex: 2,
-              p: "2rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              px: { xs: 4, md: 6 },
+              py: { xs: 4, md: 6 },
+              minHeight: { xs: 220, md: 480 },
             }}
           >
+           
             <Box
               sx={{
-                position: "absolute",
-                top: 24,
-                left: 24,
                 display: "flex",
+                justifyContent: isSm ? "center" : "flex-start",
                 alignItems: "center",
-                gap: 1,
-                zIndex: 3,
+                mb: { xs: 2, md: 3 },
               }}
             >
               <Box
                 component="img"
-                src="https://res.cloudinary.com/dkfykdjlm/image/upload/v1762190185/LOGO-remove_1_o1wgk2.png"
+                src={LOGO}
                 alt="Logo"
-                sx={{ width: 80 }}
+                sx={{
+                  width: { xs: 72, md: 92 },
+                  height: "auto",
+                  objectFit: "contain",
+                }}
               />
-             
             </Box>
 
             <Box
-              component="img"
-              src="https://res.cloudinary.com/dkfykdjlm/image/upload/v1762884106/download_btrzmx.png"
-              alt="Login Illustration"
               sx={{
-                width: { xs: "80%", md: "85%" },
-                maxWidth: 400,
-              }}
-            />
-
-            <Typography
-              variant="caption"
-              sx={{
-                position: "absolute",
-                bottom: 12,
-                left: 24,
-                color: "#3CBD96",
-                zIndex: 3,
+                display: "flex",
+                justifyContent: isSm ? "center" : "flex-start",
+                alignItems: "center",
+                mt: { xs: 0, md: 1 },
               }}
             >
-              © 2025 {t("company")}
-            </Typography>
+              <Box
+                component="img"
+                src={ILLUSTRATION}
+                alt="illustration"
+                sx={{
+                  width: { xs: "78%", md: 360 },
+                  maxWidth: "100%",
+                  userSelect: "none",
+                  pointerEvents: "none",
+                }}
+              />
+            </Box>
           </Box>
 
-          {/* ==== RIGHT LOGIN FORM ==== */}
+          {/* RIGHT: Form — glass overlay so form reads clearly over wave */}
           <Box
-            component={motion.div}
-            variants={rightVariant}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.6 }}
             sx={{
-              flex: 1,
               position: "relative",
-              zIndex: 2,
+              p: { xs: 3, md: 6 },
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              minHeight: { xs: 420, md: "auto" },
+
             }}
           >
-            {/* RIGHT panel background color — đặt dưới nội dung nhưng trên Paper bg */}
+            {/* glass overlay background (covers entire form area) */}
             <Box
               sx={{
                 position: "absolute",
-                right: 0,
-                top: 0,
-                height: "100%",
+                inset: 0,
+                borderRadius: 2,
+                zIndex: 1,
               }}
             />
 
-            {/* Nội dung form — phải có zIndex cao hơn để nằm trên svg */}
-            <Box
-              sx={{
-                position: "relative",
-                zIndex: 3,
-                width: "100%",
-                maxWidth: 360,
-                p: { xs: 4, md: 6 },
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Stack spacing={3} sx={{ width: "100%" }}>
+            <Box sx={{ width: "100%", maxWidth: 360, position: "relative", zIndex: 2, ml:10 }}>
+              <Stack spacing={2.5} sx={{ color: "#fff" }}>
+
                 <Typography
-                  variant="h4"
+                  variant="h5"
                   fontWeight={700}
-                  color="#fff"
                   textAlign="center"
+                  sx={{ color: "#fff" }}   
                 >
-                  {t("login")}
+                  {t("login") ?? "Đăng nhập"}
                 </Typography>
 
-                <Typography variant="body2" color="#E0F2EF" textAlign="center">
-                  {t("subtitle")}
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  sx={{ color: "rgba(255,255,255,0.85)" }}   
+                >
+                  {t("subtitle") ?? "Nhập thông tin tài khoản để truy cập hệ thống."}
                 </Typography>
 
-                {/* Username */}
+                {/* --- USERNAME --- */}
                 <TextField
                   fullWidth
-                  label={t("username")}
-                  variant="outlined"
+                  label={t("username") ?? "Số điện thoại"}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
                   InputLabelProps={{
                     sx: {
-                      color: "#5a5a5a",
-                      transition: "all 0.18s ease",
-                      "&.MuiInputLabel-shrink": {
-                        transform: "translate(14px, -20px) scale(0.85)",
-                        color: "#ffffff",
-                      },
+                      color: "rgba(255,255,255,0.85)",
+                      "&.Mui-focused": { color: "#fff" },
                     },
                   }}
                   InputProps={{
                     sx: {
-                      borderRadius: 3,
-                      bgcolor: "#E8F5F0",
-                      input: { padding: "14px 16px" },
-                      // outline xử lý
-                      "& fieldset": { borderColor: "transparent" },
-                      "&:hover fieldset": { borderColor: "#3CBD96" },
-                      "&.Mui-focused fieldset": { borderColor: "#3CBD96" },
+                      borderRadius: 2,
+                      color: "#fff",
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      backdropFilter: "blur(4px)",
+                      "& input": { color: "#fff" },
+                      "& fieldset": { borderColor: "rgba(255,255,255,0.4)" },
+                      "&:hover fieldset": { borderColor: "#fff" },
+                      "&.Mui-focused fieldset": { borderColor: "#fff" },
                     },
                   }}
                 />
 
-                {/* Password */}
+                {/* --- PASSWORD --- */}
                 <TextField
                   fullWidth
-                  label={t("password")}
+                  label={t("password") ?? "Mật khẩu"}
                   type="password"
-                  variant="outlined"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
                   InputLabelProps={{
                     sx: {
-                      color: "#5a5a5a",
-                      transition: "all 0.18s ease",
-                      "&.MuiInputLabel-shrink": {
-                        transform: "translate(14px, -20px) scale(0.85)",
-                        color: "#ffffff",
-                      },
+                      color: "rgba(255,255,255,0.85)",
+                      "&.Mui-focused": { color: "#fff" },
                     },
                   }}
                   InputProps={{
                     sx: {
-                      borderRadius: 3,
-                      bgcolor: "#E8F5F0",
-                      input: { padding: "14px 16px" },
-                      "& fieldset": { borderColor: "transparent" },
-                      "&:hover fieldset": { borderColor: "#3CBD96" },
-                      "&.Mui-focused fieldset": { borderColor: "#3CBD96" },
+                      borderRadius: 2,
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      backdropFilter: "blur(4px)",
+                      color: "#fff",
+                      "& input": { color: "#fff" },
+                      "& fieldset": { borderColor: "rgba(255,255,255,0.4)" },
+                      "&:hover fieldset": { borderColor: "#fff" },
+                      "&.Mui-focused fieldset": { borderColor: "#fff" },
                     },
                   }}
                 />
 
+                {err && (
+                  <Typography sx={{ color: "#ffb3b3" }} variant="body2">
+                    {err}
+                  </Typography>
+                )}
 
-                <Box width="100%" display="flex" justifyContent="flex-end" sx={{ mt: -1 }}>
-                  <Link href="#" underline="hover" color="#fff">
-                    {t("forgot")}
-                  </Link>
-                </Box>
-
+                {/* BUTTON */}
                 <Button
                   fullWidth
                   variant="contained"
@@ -274,34 +302,38 @@ export default function Login() {
                     py: 1.2,
                     borderRadius: 3,
                     bgcolor: "#3CBD96",
-                    "&:hover": {
-                      bgcolor: "#2E9E7C",
-                    },
-                    color: "#fff",
-                    fontWeight: 600,
-                    boxShadow: "0 3px 6px rgba(0,0,0,0.2)",
+                    "&:hover": { bgcolor: "#2E9E7C" },
+                    fontWeight: 700,
+                    color: "#fff",  
                   }}
                 >
-                  {loading ? t("loading") : t("loginButton")}
+                  {loading ? <CircularProgress size={20} color="inherit" /> : (t("loginButton") ?? "Đăng nhập")}
                 </Button>
 
-                <Typography variant="body2" color="#E0F2EF" textAlign="center">
-                  {t("noAccount")}{" "}
-                  <Link href="#" underline="hover" color="#BFE3C6">
-                    {t("register")}
+                {/* LINKS + FOOTER */}
+                <Box display="flex" justifyContent="space-between" sx={{ color: "#fff" }}>
+                  <Link underline="hover" sx={{ color: "#fff" }}>
+                    {t("forgot") ?? "Quên mật khẩu?"}
                   </Link>
+                  <Link underline="hover" sx={{ color: "#fff" }}>
+                    {t("register") ?? "Đăng ký"}
+                  </Link>
+                </Box>
+
+                <Typography
+                  variant="caption"
+                  textAlign="center"
+                  sx={{ color: "rgba(255,255,255,0.7)", mt: 1 }}
+                >
+                  © 2025 ASMS
                 </Typography>
 
-                <Link href="#" underline="hover" color="#E0F2EF" sx={{ fontSize: "0.875rem", textAlign: "center" }}>
-                  {t("terms")}
-                </Link>
               </Stack>
+
             </Box>
           </Box>
-        </Paper>
-      </Container>
-
-      <Footer />
-    </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 }

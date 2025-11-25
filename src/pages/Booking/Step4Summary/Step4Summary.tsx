@@ -99,6 +99,7 @@ export default function Step4Summary({
         depositDate: (currentBooking as any).depositDate ?? (currentBooking as any).selectedDate ?? null,
         returnDate: (currentBooking as any).returnDate ?? (currentBooking as any).endDate ?? null,
         paymentMethod,
+        style: mode ?? currentBooking.style,
       };
 
       const orderPayload = await buildOrderPayloadFromBooking(bookingForOrder, options, extras);

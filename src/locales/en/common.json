@@ -6,7 +6,10 @@
     "3D": "3D Tour",
     "partner": "Partnership",
     "contact": "Contact",
-    "rentOnline": "Rent Storage Online"
+    "rentOnline": "Rent Storage Online",
+    "login": "Login",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
   },
   "servicesDropdown": {
     "type": "Storage types",

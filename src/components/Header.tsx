@@ -25,6 +25,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AnimatedList from "./AnimatedList";
 import { useTheme } from "@mui/material/styles";
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LogoutIcon from "@mui/icons-material/Logout";
+// Login dialog (adjust path if needed) — use actual component file name
+import LoginDialog from "../pages/Auth/LoginPage";
 
 export default function Header() {
   const { t, i18n } = useTranslation("common");
@@ -34,8 +39,8 @@ export default function Header() {
   const location = useLocation();
   const trigger = useScrollTrigger({ threshold: 10 });
 
-  // language menu
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // language menu (separate anchor)
+  const [anchorLang, setAnchorLang] = useState<null | HTMLElement>(null);
   const currentLang = i18n.language || "vi";
 
   useEffect(() => {
@@ -45,13 +50,24 @@ export default function Header() {
     }
   }, [i18n]);
 
-  const handleMenuOpenLang = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
-  const handleMenuCloseLang = () => setAnchorEl(null);
+  const handleMenuOpenLang = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorLang(event.currentTarget);
+    setAnchorUser(null); // close user menu if open
+  };
+  const handleMenuCloseLang = () => setAnchorLang(null);
   const handleLanguageChange = (lng: string) => {
     i18n.changeLanguage(lng);
     localStorage.setItem("lang", lng);
-    setAnchorEl(null);
+    setAnchorLang(null);
   };
+
+  // user/avatar menu (separate anchor)
+  const [anchorUser, setAnchorUser] = useState<null | HTMLElement>(null);
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorUser(event.currentTarget);
+    setAnchorLang(null); // close language menu if open
+  };
+  const handleUserClose = () => setAnchorUser(null);
 
   // services dropdown (desktop)
   const [openService, setOpenService] = useState(false);
@@ -93,6 +109,69 @@ export default function Header() {
   // Topbar height responsive
   const appbarHeight = isMdUp ? 90 : 64;
 
+  // Auth state: check multiple possible token keys
+  const tokenKeys = ["authToken", "accessToken", "access_token", "refreshToken"];
+  const hasAnyToken = () =>
+    Boolean(tokenKeys.some((k) => !!localStorage.getItem(k)));
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => hasAnyToken());
+
+  // Keep auth state in sync if other parts of app update localStorage (listen for keys above)
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key) {
+        // some browsers may send key==null for clear(); just re-evaluate
+        setIsAuthenticated(hasAnyToken());
+        return;
+      }
+      if (tokenKeys.includes(e.key)) {
+        setIsAuthenticated(Boolean(e.newValue));
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // Login dialog control
+  const [loginOpen, setLoginOpen] = useState(false);
+  const openLogin = () => {
+    setLoginOpen(true);
+    // ensure menus close
+    setAnchorUser(null);
+    setAnchorLang(null);
+  };
+  const closeLogin = () => {
+    setLoginOpen(false);
+    // re-evaluate tokens (in case LoginDialog wrote to localStorage right before closing)
+    setTimeout(() => {
+      setIsAuthenticated(hasAnyToken());
+    }, 0);
+  };
+
+  // optional callback when LoginDialog reports success immediately
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    setLoginOpen(false);
+    setAnchorUser(null);
+  };
+
+  const handleLogout = () => {
+    // remove known token keys & update state
+    tokenKeys.forEach((k) => localStorage.removeItem(k));
+    // remove other common user keys if used
+    localStorage.removeItem("userId");
+    localStorage.removeItem("user");
+    setIsAuthenticated(false);
+    setAnchorUser(null);
+    // optional: call logout API here
+    navigate("/");
+  };
+
+  const goToDashboard = () => {
+    setAnchorUser(null);
+    navigate("/dashboard");
+  };
+
   return (
     <Box sx={{ position: "relative", width: "100%", overflow: "hidden" }}>
       {/* decorative curved background */}
@@ -130,7 +209,7 @@ export default function Header() {
       <AppBar
         position="fixed"
         sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 10, // ensure header above sidebar
+          zIndex: (theme) => theme.zIndex.drawer + 10,
           backgroundColor: trigger ? "rgba(255,255,255,0.95)" : "transparent",
           boxShadow: trigger ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
           backdropFilter: trigger ? "blur(6px)" : "none",
@@ -269,9 +348,9 @@ export default function Header() {
             </Stack>
           )}
 
-          {/* Right: phone, CTA, language, avatar */}
+          {/* Right: phone, CTA, Login/avatar, language */}
           <Stack direction="row" spacing={2} alignItems="center" sx={{ zIndex: 2 }}>
-            {/* phone */}
+            {/* phone (hide on xs) */}
             <Stack direction="row" alignItems="center" spacing={1} sx={{ display: { xs: "none", sm: "flex" } }}>
               <PhoneIcon sx={{ color: "#3CBD96", fontSize: 20 }} />
               <Typography sx={{ color: "#222", fontWeight: 600 }}>028 7771 0118</Typography>
@@ -297,7 +376,53 @@ export default function Header() {
               {isMdUp ? t("nav.rentOnline") : t("nav.rentOnline")}
             </Button>
 
-            {/* language */}
+            {/* Avatar (desktop) */}
+            <Box sx={{ display: { xs: "none", sm: "inline-flex" } }}>
+              <IconButton onClick={handleAvatarClick} size="small" aria-label="user menu" >
+                <PersonPinIcon sx={{ color: "green", fontSize: 26 }} />
+              </IconButton>
+
+              <Menu
+                anchorEl={anchorUser}
+                open={Boolean(anchorUser)}
+                onClose={handleUserClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                PaperProps={{ sx: { mt: 1, minWidth: 160, borderRadius: "8px" } }}
+              >
+                {!isAuthenticated ? (
+                  <MenuItem
+                    onClick={() => {
+                      handleUserClose();
+                      openLogin();
+                    }}
+                  >
+                    {t("nav.login") || "Đăng nhập"}
+                  </MenuItem>
+                ) : (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        goToDashboard();
+                      }}
+                    >
+                      <DashboardIcon sx={{ mr: 1, fontSize: 18 }} />
+                      {t("nav.dashboard") || "Dashboard"}
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleLogout();
+                      }}
+                    >
+                      <LogoutIcon sx={{ mr: 1, fontSize: 18 }} />
+                      {t("nav.logout") || "Đăng xuất"}
+                    </MenuItem>
+                  </>
+                )}
+              </Menu>
+            </Box>
+
+            {/* language (both desktop & mobile) */}
             <Box>
               <IconButton
                 onClick={handleMenuOpenLang}
@@ -314,10 +439,10 @@ export default function Header() {
               </IconButton>
 
               <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
+                anchorEl={anchorLang}
+                open={Boolean(anchorLang)}
                 onClose={handleMenuCloseLang}
-                PaperProps={{ sx: { mt: 1, minWidth: 120, borderRadius: "8px" } }}
+                PaperProps={{ sx: { mt: 1, minWidth: 140, borderRadius: "8px" } }}
               >
                 {currentLang !== "vi" && (
                   <MenuItem onClick={() => handleLanguageChange("vi")}>
@@ -357,13 +482,12 @@ export default function Header() {
           <Box component="input" placeholder={t("ordersPage.searchOrder")} style={{ flex: 1, border: "none", outline: "none" }} />
         </Box>
 
+        {/* navigation items */}
         {navItems.map((n) =>
           n.isDropdown ? (
             <Box key={n.to}>
               <MenuItem
                 onClick={() => {
-                  // open a small submenu: map services as items
-                  // For mobile, navigate to services index page (and user can choose inside)
                   handleMobileNavigate(n.to);
                 }}
               >
@@ -390,7 +514,61 @@ export default function Header() {
             </MenuItem>
           )
         )}
+
+        <Box sx={{ borderTop: "1px solid rgba(0,0,0,0.06)", mt: 1 }} />
+
+        {/* mobile auth actions */}
+        {!isAuthenticated ? (
+          <MenuItem
+            onClick={() => {
+              handleMobileMenuClose();
+              openLogin();
+            }}
+          >
+            {t("nav.login") || "Đăng nhập"}
+          </MenuItem>
+        ) : (
+          <>
+            <MenuItem
+              onClick={() => {
+                handleMobileMenuClose();
+                navigate("/dashboard");
+              }}
+            >
+              <DashboardIcon sx={{ mr: 1, fontSize: 18 }} />
+              {t("nav.dashboard") || "Dashboard"}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleMobileMenuClose();
+                handleLogout();
+              }}
+            >
+              <LogoutIcon sx={{ mr: 1, fontSize: 18 }} />
+              {t("nav.logout") || "Đăng xuất"}
+            </MenuItem>
+          </>
+        )}
+
+        {/* mobile language selector */}
+        <MenuItem
+          onClick={(e) => {
+            // open language menu anchored to the mobile button - we'll reuse anchorLang
+            setAnchorLang(e.currentTarget as HTMLElement);
+          }}
+        >
+          <Box component="img" src={currentLang === "vi" ? "https://flagcdn.com/w20/vn.png" : "https://flagcdn.com/w20/gb.png"} alt="flag" sx={{ width: 24, height: 16, mr: 1 }} />
+          <Typography sx={{ fontWeight: 600 }}>{currentLang.toUpperCase()}</Typography>
+        </MenuItem>
       </Menu>
+
+      {/* Render Login Dialog */}
+      <LoginDialog
+        open={loginOpen}
+        onClose={closeLogin}
+        onSuccess={handleLoginSuccess}
+      />
+
     </Box>
   );
 }

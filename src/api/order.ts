@@ -39,7 +39,7 @@ export type OrderWithDetailsPayload = {
   note?: string | null;
   address?: string | null;
   image?: string | null;
-
+  style?: "self" | "full" | null;
   orderDetails: OrderDetailPayload[];
 };
 
@@ -416,8 +416,8 @@ export async function buildOrderPayloadFromBooking(
     note,
     address,
     image: bookingData?.image ?? null,
-
     orderDetails,
+    style: options?.mode ?? bookingData?.style ?? undefined,
   };
 
   return payload;

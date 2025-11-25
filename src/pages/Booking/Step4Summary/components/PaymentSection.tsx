@@ -32,7 +32,6 @@ const PaymentOption = styled(Paper)(({ theme }) => ({
 }));
 
 export default function PaymentSection({
-  data,
   agree,
   setAgree,
   paymentMethod,

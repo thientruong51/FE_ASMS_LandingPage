@@ -9,7 +9,9 @@ import {
   Button,
   Divider,
 } from "@mui/material";
-import type { Order, Item } from "../types";
+import type { Order as UIOrder, Item as UIItem } from "../types";
+
+/** fallback image (local upload) */
 
 const statusColor = (s: string) => {
   switch (s) {
@@ -22,7 +24,7 @@ const statusColor = (s: string) => {
     case "out_for_delivery":
       return { bg: "#FFF8E6", color: "#C28700", label: "Out for Delivery" };
     default:
-      return { bg: "#F3F4F6", color: "#6B7280", label: s };
+      return { bg: "#F3F4F6", color: "#6B7280", label: s ?? "Unknown" };
   }
 };
 
@@ -32,20 +34,20 @@ const formatMoney = (n?: number) => {
 };
 
 interface OrderCardProps {
-  order: Order;
-  onOpenDetail?: (order: Order) => void;
+  order: UIOrder;
+  onOpenDetail?: (order: UIOrder) => void;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail }) => {
-  const { items } = order;
+  const items: UIItem[] = Array.isArray(order.items) ? order.items : [];
 
-  // ✅ Tính tổng tiền từ items
+  // Tính tổng tiền từ items
   const total = items.reduce(
-    (sum: number, it: Item) => sum + (it.price ?? 0) * (it.qty ?? 1),
+    (sum: number, it: UIItem) => sum + (it.price ?? 0) * (it.qty ?? 1),
     0
   );
 
-  const chip = statusColor(order.status);
+  const chip = statusColor(order.status ?? "");
 
   return (
     <Paper
@@ -105,7 +107,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail }) => {
                   Order Date
                 </Typography>
                 <Typography variant="body2">
-                  {new Date(order.startDate).toLocaleDateString()}
+                  {order.startDate ? new Date(order.startDate).toLocaleDateString() : "-"}
                 </Typography>
               </Box>
 
@@ -114,7 +116,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail }) => {
                   Delivery Date
                 </Typography>
                 <Typography variant="body2">
-                  {new Date(order.endDate).toLocaleDateString()}
+                  {order.endDate ? new Date(order.endDate).toLocaleDateString() : "-"}
                 </Typography>
               </Box>
             </Box>
@@ -175,7 +177,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail }) => {
           <Stack spacing={1.5}>
             {items.map((it, idx) => (
               <Box
-                key={it.id}
+                key={it.id ?? idx}
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
@@ -188,7 +190,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail }) => {
                 <Box display="flex" alignItems="center" gap={2}>
                   <Avatar
                     variant="rounded"
-                    src={it.img}
+                    src={it.img }
                     sx={{
                       width: 72,
                       height: 72,

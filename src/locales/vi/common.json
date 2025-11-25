@@ -6,7 +6,10 @@
     "3D": "Tham quan kho 3D",
     "partner": "Hợp tác",
     "contact": "Liên hệ",
-    "rentOnline": "Thuê kho online"
+    "rentOnline": "Thuê kho online",
+    "login": "Đăng nhập",
+    "dashboard": "Bảng điều khiển",
+    "logout": "Đăng xuất"
   },
   "servicesDropdown": {
     "type": "Các loại hình thuê kho",
