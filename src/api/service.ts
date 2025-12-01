@@ -16,5 +16,12 @@ export async function fetchServices(): Promise<ServiceApi[]> {
 
   const res = await axios.get(url);
 
-  return res.data?.data ?? [];
+  const payload = res.data ?? {};
+  const list =
+    payload.data?.data ??
+    payload.data ??
+    payload.services ??
+    (Array.isArray(payload) ? payload : undefined);
+
+  return list ?? [];
 }

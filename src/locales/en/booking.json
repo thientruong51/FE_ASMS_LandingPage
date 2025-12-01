@@ -181,7 +181,19 @@
     "items_inferred_other": "Other items (auto-calculated)",
     "pay_shelf_label": "Shelf cost",
     "items_total_label": "Total item cost",
-    "servicesLabel": "Services"
+    "servicesLabel": "Services",
+  "items_explicit": "Explicit item prices",
+  "boxes_base": "Boxes / Shelves base price",
+  "surcharges_total": "Total product-type surcharges",
+  "boxes_detail": "Boxes / Product types detail",
+  "no_boxes_detail": "No specific boxes",
+  "qty": "Qty",
+  "no_surcharge": "No surcharge",
+  "surcharge_amount": "Surcharge amount",
+  "shipping_fee": "Shipping fee",
+  "shipping_detail": "Shipping details",
+  "box_count": "Box count",
+  "distance": "Distance (km)"
   },
   "step5_success": {
     "title": "We've Received Your Request!",
@@ -212,7 +224,8 @@
   },
   "startDate": {
     "title": "Storage Start Date",
-    "desc": "What date works best for moving your items in?"
+    "desc": "What date works best for moving your items in?",
+    "chooseDate": "Choose Date"
   },
   "endDate": {
     "title": "End Date of Storage",

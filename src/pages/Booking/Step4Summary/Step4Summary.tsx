@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Box, Stack, Typography, styled, Divider, Snackbar, Alert } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import SummaryLeft from "./components/SummaryLeft";
@@ -7,6 +7,10 @@ import PaymentSection from "./components/PaymentSection";
 import type { BookingPayload } from "./components/types";
 
 import { buildOrderPayloadFromBooking, createOrderWithDetails } from "../../../api/order";
+
+// NEW imports to compute pricing
+import useServiceDetails from "./components/useServiceDetails";
+import { usePricing } from "./components/pricingUtils";
 
 const TwoColWrap = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -32,7 +36,7 @@ export default function Step4Summary({
   const { t } = useTranslation("booking");
 
   const [agree, setAgree] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<string>(data.paymentMethod ?? "card");
+  const [paymentMethod, setPaymentMethod] = useState<string>(() => data.paymentMethod ?? "card");
 
   const [currentBooking, setCurrentBooking] = useState<BookingPayload>(data);
   const [loading, setLoading] = useState(false);
@@ -47,20 +51,36 @@ export default function Step4Summary({
     severity: "success",
   });
 
-  const handleCloseSnackbar = () => {
+  const handleCloseSnackbar = useCallback(() => {
     setSnackbar((prev) => ({ ...prev, open: false }));
-  };
+  }, []);
 
-  const serviceStyle: "self" | "full" | "unknown" =
-    currentBooking.style === "self"
-      ? "self"
-      : currentBooking.style === "full"
-      ? "full"
-      : currentBooking.boxes && currentBooking.boxes.length > 0
-      ? "full"
-      : currentBooking.room
-      ? "self"
-      : "unknown";
+  // stable callback for children -> avoids changing function identity every render
+  const handlePayloadChange = useCallback((payload: BookingPayload) => {
+    setCurrentBooking((prev) => {
+      // cheap identity guard: if same reference, avoid update
+      if (prev === payload) return prev;
+      return payload;
+    });
+  }, []);
+
+  const serviceStyle: "self" | "full" | "unknown" = useMemo(
+    () =>
+      currentBooking.style === "self"
+        ? "self"
+        : currentBooking.style === "full"
+        ? "full"
+        : currentBooking.boxes && currentBooking.boxes.length > 0
+        ? "full"
+        : currentBooking.room
+        ? "self"
+        : "unknown",
+    [currentBooking]
+  );
+
+  // --- NEW: compute pricing for currentBooking (so we can attach to payload/order) ---
+  const serviceDetails = useServiceDetails(currentBooking.services);
+  const computedPricing = usePricing(currentBooking, serviceDetails);
 
   async function handleConfirm() {
     if (!agree) {
@@ -94,11 +114,21 @@ export default function Step4Summary({
         paymentStatus: currentBooking.paymentStatus,
       };
 
+      // Attach computed pricing into bookingForOrder
       const bookingForOrder: BookingPayload = {
         ...currentBooking,
         depositDate: (currentBooking as any).depositDate ?? (currentBooking as any).selectedDate ?? null,
         returnDate: (currentBooking as any).returnDate ?? (currentBooking as any).endDate ?? null,
         paymentMethod,
+        style: mode ?? currentBooking.style,
+        // IMPORTANT: do not pass containerCode — set it explicitly to null
+        containerCode: null as any,
+        // Attach price breakdown so order builder/ backend receives exact numbers user saw
+        pricing: {
+          basePrice: Number(computedPricing.basePrice ?? 0),
+          subtotal: Number(computedPricing.subtotal ?? 0),
+          total: Number(computedPricing.total ?? computedPricing.subtotal ?? 0),
+        },
       };
 
       const orderPayload = await buildOrderPayloadFromBooking(bookingForOrder, options, extras);
@@ -114,7 +144,8 @@ export default function Step4Summary({
         severity: "success",
       });
 
-      onConfirm?.(currentBooking);
+      // pass bookingForOrder (contains pricing) back to parent so it can save
+      onConfirm?.(bookingForOrder);
     } catch (err: any) {
       console.error("Order error:", err);
       const msg = err?.response?.data?.message ?? err?.message ?? String(err);
@@ -158,9 +189,7 @@ export default function Step4Summary({
         <TwoColWrap>
           <SummaryLeft
             data={currentBooking}
-            onPayloadChange={(payload) => {
-              setCurrentBooking(payload);
-            }}
+            onPayloadChange={handlePayloadChange}
           />
           <SummaryRight data={currentBooking} />
         </TwoColWrap>

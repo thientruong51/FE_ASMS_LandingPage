@@ -1,5 +1,5 @@
 {
-  "nav": { "home": "Trang chủ", "about": "Giới thiệu", "services": "Dịch vụ", "contact": "Liên hệ" },
+  "nav": { "home": "Trang chủ", "about": "Giới thiệu", "services": "Dịch vụ", "contact": "Liên hệ", "login": "Đăng nhập" },
   "sections": { "services": "Dịch vụ", "about": "Giới thiệu", "contact": "Liên hệ","gallery": "Thư viện" },
   "hero": {
   "slides": [

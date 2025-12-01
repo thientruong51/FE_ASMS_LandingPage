@@ -1,27 +1,101 @@
-import React from "react";
-import { Stack, Typography, Box, Chip, Paper, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Stack,
+  Typography,
+  Box,
+  Paper,
+  Button,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  type SelectChangeEvent,
+  Chip,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { MOCK_ORDERS } from "./mockOrders"; // chỉnh path nếu khác
 import type { Order } from "./types";
 import OrderCard from "./components/OrderCard";
 import OrderDetailModal from "./components/OrderDetailModal";
+import { fetchOrdersWithDetails } from "./components/api.helpers";
+
+const FILTERS = [
+  "All",
+  "Pending",
+  "WaitPickUp",
+  "Verify",
+  "Checkout",
+  "PickUp",
+  "Processing",
+  "Stored",
+  "Renting",
+  "Overdue",
+];
+
+const colorForStatus = (s?: string) => {
+  switch (s) {
+    case "Pending":
+      return "default";
+    case "WaitPickUp":
+      return "warning";
+    case "Verify":
+      return "info";
+    case "Checkout":
+      return "primary";
+    case "PickUp":
+      return "secondary";
+    case "Processing":
+      return "warning";
+    case "Stored":
+      return "success";
+    case "Renting":
+      return "primary";
+    case "Overdue":
+      return "error";
+    default:
+      return "default";
+  }
+};
 
 const OrdersPage: React.FC = () => {
   const { t } = useTranslation("dashboard");
-  const orders = MOCK_ORDERS as Order[];
 
-  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleOpen = (o: Order) => {
-    setSelectedOrder(o);
-    setOpen(true);
-  };
+  const [selected, setSelected] = useState<Order | null>(null);
+  const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
-    setOpen(false);
-    // nếu muốn giữ selected để debug, có thể không clear
-    setSelectedOrder(null);
+  const [filter, setFilter] = useState("All");
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await fetchOrdersWithDetails(1, 20);
+        if (mounted) setOrders(data);
+      } catch (err: any) {
+        if (mounted) setError(err?.message ?? "Failed to load orders");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const filtered = orders.filter((o) => {
+    if (filter === "All") return true;
+    return (o.displayStatus ?? o.status) === filter;
+  });
+
+  const handleFilterChange = (e: SelectChangeEvent<string>) => {
+    setFilter(e.target.value as string);
   };
 
   return (
@@ -30,31 +104,53 @@ const OrdersPage: React.FC = () => {
         {t("ordersPage.title")}
       </Typography>
 
-      <Box display="flex" gap={2} flexWrap="wrap">
-        <Chip label="All" color="primary" />
-        <Chip label={t("ordersPage.status.created")} />
-        <Chip label={t("ordersPage.status.in_warehouse")} />
-        <Chip label={t("ordersPage.status.out_for_delivery")} />
+      {/* Dropdown filter */}
+      <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel id="orders-filter-label">{t("ordersPage.filter") ?? "Filter"}</InputLabel>
+          <Select
+            labelId="orders-filter-label"
+            value={filter}
+            label={t("ordersPage.filter") ?? "Filter"}
+            onChange={handleFilterChange}
+          >
+            {FILTERS.map((f) => (
+              <MenuItem key={f} value={f}>
+                {f}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+       
       </Box>
 
-      <Stack spacing={3}>
-        {orders.map((o) => (
-          // CHÚ Ý: truyền onOpenDetail = handleOpen
-          <OrderCard key={o.id} order={o} onOpenDetail={handleOpen} />
-        ))}
-      </Stack>
-
-      <Paper sx={{ p: 2, borderRadius: 2 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="body2" color="text.secondary">
-            Showing {orders.length} orders
-          </Typography>
-          <Button variant="outlined">{t("ordersPage.export")}</Button>
+      {loading ? (
+        <Box textAlign="center" py={6}>
+          <CircularProgress />
         </Box>
-      </Paper>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
+      ) : (
+        <Stack spacing={3}>
+          {filtered.map((o) => {
+            const ds = o.displayStatus ?? o.status;
+            return (
+              <Box key={o.id}>
+                <OrderCard order={o} onOpenDetail={(o) => { setSelected(o); setOpen(true); }} />
+              </Box>
+            );
+          })}
 
-      {/* Modal phải mount ở đây, nhận open + order + onClose */}
-      <OrderDetailModal open={open} order={selectedOrder ?? undefined} onClose={handleClose} />
+          {filtered.length === 0 && (
+            <Typography textAlign="center" color="text.secondary">
+              No orders
+            </Typography>
+          )}
+        </Stack>
+      )}
+
+      <OrderDetailModal open={open} order={selected ?? undefined} onClose={() => setOpen(false)} />
     </Stack>
   );
 };

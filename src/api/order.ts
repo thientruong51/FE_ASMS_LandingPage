@@ -1,12 +1,13 @@
+// orderBuilder.ts
 import axios from "axios";
 import { pickStorageForOrder } from "./storage";
-import { pickContainerForOrderByType, fetchAvailableContainers } from "./container";
-import { fetchStorageTypes } from "./storageType"; 
-import type { StorageTypeApi } from "./storageType"; 
+import { fetchStorageTypes } from "./storageType";
+import type { StorageTypeApi } from "./storageType";
 
 const BASE = (import.meta.env.VITE_API_BASE_URL ?? "") as string;
 if (!BASE) throw new Error("VITE_API_BASE_URL not defined");
 
+// -------------------- Types --------------------
 export type OrderDetailPayload = {
   storageCode?: string | null;
   containerCode?: string | null;
@@ -15,8 +16,8 @@ export type OrderDetailPayload = {
   image?: string | null;
   containerType?: number | null;
   containerQuantity?: number | null;
-  productTypeIds?: number[];
-  serviceIds?: number[];
+  productTypeIds?: number[] | null;
+  serviceIds?: number[] | null;
   storageTypeId?: number | null;
   shelfTypeId?: number | null;
   shelfQuantity?: number | null;
@@ -39,8 +40,13 @@ export type OrderWithDetailsPayload = {
   note?: string | null;
   address?: string | null;
   image?: string | null;
-
+  style?: "self" | "full" | null;
   orderDetails: OrderDetailPayload[];
+
+  // ADDED: totals for backend
+  totalPrice?: number;
+  unpaidAmount?: number;
+  pricing?: any; // optional copy of booking pricing for traceability
 };
 
 type ApiResponse<T> = {
@@ -48,6 +54,7 @@ type ApiResponse<T> = {
   data: T;
 };
 
+// -------------------- Helpers --------------------
 function toNumberSafe(v: any): number | undefined {
   if (v == null) return undefined;
   if (typeof v === "number" && Number.isFinite(v)) return v;
@@ -87,9 +94,9 @@ function mapRoomToStorageTypeId(room: any): number | undefined {
   const id = Number(room.id);
   if (!Number.isFinite(id)) return undefined;
   const map: Record<number, number> = {
-    1: 1, 
-    2: 2, 
-    3: 3, 
+    1: 1,
+    2: 2,
+    3: 3,
     6: 6,
     7: 7,
     8: 8,
@@ -97,9 +104,8 @@ function mapRoomToStorageTypeId(room: any): number | undefined {
   return map[id] ?? undefined;
 }
 
-
-function mapContainerTypeToId(type: any): number | undefined {
-  if (type == null) return undefined;
+function mapContainerTypeToId(type: any): number | null {
+  if (type == null) return null;
   const s = String(type).toUpperCase().trim();
   const map: Record<string, number> = {
     A: 1,
@@ -113,71 +119,17 @@ function mapContainerTypeToId(type: any): number | undefined {
   };
   if (map[s]) return map[s];
   const n = Number(s);
-  return Number.isFinite(n) ? n : undefined;
+  return Number.isFinite(n) ? n : null;
 }
 
-
-async function pickMultipleContainersByType(type: string | number | null, quantity: number): Promise<string[]> {
-  const out: string[] = [];
-  if (!quantity || quantity <= 0) return out;
-
-  try {
-    // @ts-ignore
-    if (typeof (await Promise.resolve()).then === "function") {
-    }
-  } catch (e) {
-    // ignore
-  }
-
-  try {
-    // @ts-ignore
-    if (typeof fetchAvailableContainers === "function") {
-      let want: string | undefined = undefined;
-      if (typeof type === "number") {
-        const inv: Record<number, string> = { 1: "A", 2: "B", 3: "C", 4: "D" };
-        want = inv[type];
-      } else if (typeof type === "string") {
-        want = type.trim().toUpperCase();
-      }
-      const list = await fetchAvailableContainers(undefined);
-      const filtered = (list ?? []).filter((c: any) => {
-        if (!want) return true;
-        return String(c.type ?? "").toUpperCase() === want;
-      });
-      for (let i = 0; i < Math.min(quantity, filtered.length); i++) {
-        const c = filtered[i];
-        if (c && c.containerCode) out.push(c.containerCode);
-      }
-      if (out.length === quantity) return out;
-    }
-  } catch (err) {
-    // ignore and fallback
-  }
-
-  for (let i = out.length; i < quantity; i++) {
-    try {
-  
-      const picked = await pickContainerForOrderByType(type ?? undefined);
-      if (picked && picked.containerCode) {
-        out.push(picked.containerCode);
-      } else {
-        break;
-      }
-    } catch (e) {
-      break;
-    }
-  }
-
-  return out;
-}
-
+// -------------------- API helpers --------------------
 export async function createOrderWithDetails(payload: OrderWithDetailsPayload) {
   const url = `${BASE}/api/Order/with-details`;
   const res = await axios.post<ApiResponse<any>>(url, payload);
   return res.data;
 }
 
-
+// -------------------- buildOrderPayloadFromBooking --------------------
 export async function buildOrderPayloadFromBooking(
   bookingData: any,
   options?: {
@@ -196,26 +148,36 @@ export async function buildOrderPayloadFromBooking(
   if (!bookingData) throw new Error("Missing booking data");
 
   const mode: "self" | "full" | undefined =
-    options?.mode ??
-    (bookingData.style === "self" ? "self" : bookingData.style === "full" ? "full" : undefined);
+    options?.mode ?? (bookingData.style === "self" ? "self" : bookingData.style === "full" ? "full" : undefined);
 
   const orderDetails: OrderDetailPayload[] = [];
 
-  const globalProductTypeIds = ensureNumberArray(bookingData.productTypeIds ?? bookingData.selectedProductTypeIds ?? bookingData.productTypes ?? []);
+  const globalProductTypeIds = ensureNumberArray(
+    bookingData.productTypeIds ?? bookingData.selectedProductTypeIds ?? bookingData.productTypes ?? []
+  );
   const globalServiceIds = ensureNumberArray(bookingData.services ?? bookingData.serviceIds ?? []);
 
-  const countsPricing = (bookingData?.counts?.pricingInfo ?? null) as any | null;
+  const countsPricing = bookingData?.counts?.pricingInfo ?? null;
   const pricingObj = bookingData?.pricing ?? null;
 
-  const perShelfPrice = toNumberSafe(countsPricing?.perShelfPrice) ?? toNumberSafe(pricingObj?.perShelfPrice) ?? toNumberSafe(countsPricing?.shelfPrice) ?? toNumberSafe(pricingObj?.shelfPrice) ?? 0;
+  const perShelfPrice =
+    toNumberSafe(countsPricing?.perShelfPrice) ??
+    toNumberSafe(pricingObj?.perShelfPrice) ??
+    toNumberSafe(countsPricing?.shelfPrice) ??
+    toNumberSafe(pricingObj?.shelfPrice) ??
+    0;
+
   const perBoxDefault = toNumberSafe(countsPricing?.perBoxPrice) ?? toNumberSafe(pricingObj?.perBoxPrice) ?? 0;
-  const boxPricesMap = (countsPricing?.boxPricesMap && typeof countsPricing.boxPricesMap === "object") ? countsPricing.boxPricesMap : (pricingObj?.boxPricesMap ?? {});
 
+  const boxPricesMap =
+    (countsPricing?.boxPricesMap && typeof countsPricing.boxPricesMap === "object")
+      ? countsPricing.boxPricesMap
+      : pricingObj?.boxPricesMap ?? {};
 
+  // -------------------- MODE: SELF --------------------
   if (mode === "self") {
     const hasAC = typeof options?.buildingHasAC === "boolean" ? options.buildingHasAC : Boolean(bookingData?.room?.hasAC);
     const buildingCode = options?.buildingCodeOverride ?? (hasAC ? "BLD003" : "BLD002");
-
 
     const chosenStorageTypeId =
       toNumberSafe(options?.chosenStorageTypeId) ??
@@ -223,34 +185,38 @@ export async function buildOrderPayloadFromBooking(
       mapRoomToStorageTypeId(bookingData?.room) ??
       undefined;
 
+    // pickStorageForOrder may still be used to select a storage (kept here intentionally)
     const pickedStorage = await pickStorageForOrder(buildingCode, chosenStorageTypeId as any);
 
     if (!pickedStorage) {
       if (chosenStorageTypeId != null) {
-        throw new Error(`Không tìm thấy kho trạng thái Ready cho storageTypeId=${chosenStorageTypeId} tại building ${buildingCode}`);
+        throw new Error(
+          `Không tìm thấy kho trạng thái Ready cho storageTypeId=${chosenStorageTypeId} tại building ${buildingCode}`
+        );
       } else {
         throw new Error(`Không tìm thấy kho trạng thái Ready tại building ${buildingCode}`);
       }
     }
 
-
-    let storagePrice: number = 0;
-
+    // attempt to get a storage price if storage types available
+    let storagePrice = 0;
     try {
-      const storageTypeIdToLookup = toNumberSafe(chosenStorageTypeId) ?? toNumberSafe(pickedStorage?.storageTypeId) ?? undefined;
+      const storageTypeIdToLookup =
+        toNumberSafe(chosenStorageTypeId) ?? toNumberSafe(pickedStorage?.storageTypeId) ?? undefined;
       if (storageTypeIdToLookup != null) {
         const storageTypes: StorageTypeApi[] = await fetchStorageTypes();
         const found = storageTypes.find((s) => Number(s.storageTypeId) === Number(storageTypeIdToLookup));
         const foundPrice = toNumberSafe(found?.price);
-        if (foundPrice != null) {
-          storagePrice = Number(foundPrice);
-        }
+        if (foundPrice != null) storagePrice = Number(foundPrice);
       }
     } catch (err) {
-      // ignore errors; storagePrice stays 0
+      // ignore; storagePrice stays 0
     }
 
-    const byType: Record<string, number> = (bookingData?.counts?.byType && typeof bookingData.counts.byType === "object") ? bookingData.counts.byType : {};
+    // determine counts / byType
+    const byType: Record<string, number> =
+      bookingData?.counts?.byType && typeof bookingData.counts.byType === "object" ? bookingData.counts.byType : {};
+
     if ((!byType || Object.keys(byType).length === 0) && Array.isArray(bookingData?.customItems)) {
       for (const it of bookingData.customItems) {
         const k = String(it?.type ?? it?.label ?? it?.name ?? "").toUpperCase();
@@ -258,42 +224,47 @@ export async function buildOrderPayloadFromBooking(
       }
     }
 
-    const shelfQuantity = toNumberSafe(bookingData?.shelfQuantity) ?? toNumberSafe(bookingData?.counts?.shelves) ?? (byType["SHELF"] ?? byType["shelf"] ?? byType["Shelf"] ?? 0);
+    const shelfQuantity =
+      toNumberSafe(bookingData?.shelfQuantity) ??
+      toNumberSafe(bookingData?.counts?.shelves) ??
+      (byType["SHELF"] ?? byType["shelf"] ?? byType["Shelf"] ?? 0);
 
-
+    // ROOM / STORAGE line — containerCode always null
     orderDetails.push({
-      storageCode: pickedStorage.storageCode,
-      containerCode: undefined,
+      storageCode: pickedStorage.storageCode ?? null,
+      containerCode: null, // always null per requirement
       price: Number(storagePrice),
-      quantity: String(1),
+      quantity: "1",
       image: bookingData?.room?.image ?? null,
-      containerType: undefined,
-      containerQuantity: undefined,
-      productTypeIds: globalProductTypeIds,
-      serviceIds: globalServiceIds,
-      storageTypeId: chosenStorageTypeId ?? undefined,
-      shelfTypeId: undefined,
-      shelfQuantity: undefined,
+      containerType: null,
+      containerQuantity: null,
+      productTypeIds: globalProductTypeIds.length > 0 ? globalProductTypeIds : null,
+      serviceIds: globalServiceIds.length > 0 ? globalServiceIds : null,
+      storageTypeId: chosenStorageTypeId ?? null,
+      shelfTypeId: null,
+      shelfQuantity: null,
     });
 
+    // shelf lines (if any) — containerCode null
     const shelfTypeId = 1;
     if (shelfQuantity && shelfQuantity > 0) {
       const shelfTotalPrice = Number((perShelfPrice ?? 0) * shelfQuantity);
       orderDetails.push({
-        storageCode: undefined,
-        containerCode: undefined,
+        storageCode: null,
+        containerCode: null, // always null
         price: Number(shelfTotalPrice),
         quantity: String(shelfQuantity),
         image: null,
-        containerType: undefined,
-        containerQuantity: Number(shelfQuantity),
-        productTypeIds: [],
-        serviceIds: [], 
+        containerType: null,
+        containerQuantity: null,
+        productTypeIds: null,
+        serviceIds: null,
         shelfTypeId,
         shelfQuantity: Number(shelfQuantity),
       });
     }
 
+    // box-like types inferred from byType — each entry becomes an orderDetail with containerCode null
     const boxTypesEntries = Object.entries(byType).filter(([k]) => {
       if (!k) return false;
       if (/^[ABCD]$/i.test(k)) return true;
@@ -305,94 +276,98 @@ export async function buildOrderPayloadFromBooking(
       const typeKey = String(typeKeyRaw).toUpperCase();
       const unitPrice = toNumberSafe(boxPricesMap?.[typeKey]) ?? perBoxDefault ?? 0;
       const numericType = mapContainerTypeToId(typeKey);
+      // Here we record total price for that line, and quantity = cnt
       orderDetails.push({
-        storageCode: undefined,
-        containerCode: undefined,
+        storageCode: null,
+        containerCode: null, // always null
         price: Number((unitPrice ?? 0) * Number(cnt ?? 0)),
         quantity: String(cnt ?? 0),
         image: null,
-        containerType: numericType ?? undefined,
+        containerType: numericType,
         containerQuantity: Number(cnt ?? 0),
-        productTypeIds: [],
-        serviceIds: [],
+        productTypeIds: null,
+        serviceIds: null,
+        shelfTypeId: null,
+        shelfQuantity: null,
       });
     }
   }
 
-
+  // -------------------- MODE: FULL --------------------
   else if (mode === "full") {
-    const boxesArr = Array.isArray(bookingData?.boxes) ? bookingData.boxes : (Array.isArray(bookingData?.boxPayload?.boxes) ? bookingData.boxPayload.boxes : []);
+    const boxesArr = Array.isArray(bookingData?.boxes)
+      ? bookingData.boxes
+      : Array.isArray(bookingData?.boxPayload?.boxes)
+      ? bookingData.boxPayload.boxes
+      : [];
 
     if ((!boxesArr || boxesArr.length === 0) && bookingData?.box) {
       boxesArr.push(bookingData.box);
     }
 
-    if ((!boxesArr || boxesArr.length === 0) && (options?.chosenContainerType ?? bookingData.containerType)) {
-      const boxType = options?.chosenContainerType ?? bookingData.containerType;
-      const qty = Number(bookingData.quantity ?? bookingData.containerQuantity ?? 1) || 1;
-      const codes = await pickMultipleContainersByType(boxType, qty);
-      if (codes.length === 0) {
-        throw new Error(`Không có container Available cho loại ${boxType}`);
-      }
-      for (const c of codes) {
-        const unitPrice = toNumberSafe(boxPricesMap?.[String(boxType).toUpperCase()]) ?? toNumberSafe(bookingData.price) ?? 0;
+    // For FULL mode we DO NOT pick containers — create orderDetails with containerCode = null
+    for (const b of boxesArr) {
+      const label = b.label ?? b.type ?? b.id ?? b.name ?? "";
+      const quantity = Number(b.quantity ?? b.qty ?? 1) || 1;
+      const unitFromBox =
+        toNumberSafe(b.price ?? b.unitPrice) ??
+        toNumberSafe(boxPricesMap?.[String(label).toUpperCase()]) ??
+        perBoxDefault ??
+        0;
+
+      // Current behaviour: push one orderDetail per box instance with price = unit price and quantity="1".
+      // We'll keep that (backend summation will work), but our total computation later will multiply price * quantity.
+      for (let i = 0; i < quantity; i++) {
         orderDetails.push({
           storageCode: null,
-          containerCode: c,
-          price: Number(unitPrice),
+          containerCode: null, // always null
+          price: Number(unitFromBox),
           quantity: "1",
-          image: null,
-          containerType: mapContainerTypeToId(boxType) ?? undefined,
-          containerQuantity: 1,
-          productTypeIds: ensureNumberArray(bookingData.productTypeIds ?? bookingData.productTypes ?? globalProductTypeIds),
+          image: b.imageUrl ?? b.image ?? null,
+          containerType: mapContainerTypeToId(label),
+          containerQuantity: null,
+          productTypeIds: ensureNumberArray(b.productTypeIds ?? b.productTypes ?? globalProductTypeIds),
           serviceIds: ensureNumberArray(bookingData.services ?? bookingData.serviceIds ?? globalServiceIds),
+          storageTypeId: null,
+          shelfTypeId: null,
+          shelfQuantity: null,
         });
-      }
-    } else {
-      for (const b of boxesArr) {
-        const label = b.label ?? b.type ?? b.id ?? b.name;
-        const quantity = Number(b.quantity ?? b.qty ?? 1) || 1;
-        const unitFromBox = toNumberSafe(b.price ?? b.unitPrice) ?? toNumberSafe(boxPricesMap?.[String(label).toUpperCase()]) ?? perBoxDefault ?? 0;
-
-        const codes = await pickMultipleContainersByType(label, quantity);
-
-        if (!codes || codes.length === 0) {
-          for (let i = 0; i < quantity; i++) {
-            orderDetails.push({
-              storageCode: null,
-              containerCode: undefined,
-              price: Number(unitFromBox),
-              quantity: "1",
-              image: b.imageUrl ?? b.image ?? null,
-              containerType: mapContainerTypeToId(label) ?? undefined,
-              containerQuantity: 1,
-              productTypeIds: ensureNumberArray(b.productTypeIds ?? b.productTypes ?? globalProductTypeIds),
-              serviceIds: ensureNumberArray(bookingData.services ?? bookingData.serviceIds ?? globalServiceIds),
-            });
-          }
-        } else {
-          for (let i = 0; i < quantity; i++) {
-            const code = codes[i] ?? undefined;
-            orderDetails.push({
-              storageCode: null,
-              containerCode: code ?? undefined,
-              price: Number(unitFromBox),
-              quantity: "1",
-              image: b.imageUrl ?? b.image ?? null,
-              containerType: mapContainerTypeToId(label) ?? undefined,
-              containerQuantity: 1,
-              productTypeIds: ensureNumberArray(b.productTypeIds ?? b.productTypes ?? globalProductTypeIds),
-              serviceIds: ensureNumberArray(bookingData.services ?? bookingData.serviceIds ?? globalServiceIds),
-            });
-          }
-        }
       }
     }
   } else {
     throw new Error("Không xác định được mode (self/full) từ bookingData hoặc options.");
   }
 
+  // -------------------- Compute totals (totalPrice / unpaidAmount) --------------------
+  // Prefer bookingData.pricing.* if provided, otherwise sum orderDetails (price * quantity)
+  let computedTotal = 0;
+  const bPricing = bookingData?.pricing ?? null;
 
+  if (bPricing) {
+    const candidate =
+      toNumberSafe(bPricing.total) ??
+      toNumberSafe(bPricing.subtotal) ??
+      toNumberSafe(bPricing.totalPrice) ??
+      toNumberSafe(bPricing.amount) ??
+      toNumberSafe(bPricing.subTotal); // different possible keys
+    if (candidate != null && !Number.isNaN(Number(candidate)) && Number(candidate) >= 0) {
+      computedTotal = Number(candidate);
+    }
+  }
+
+  if (!computedTotal || computedTotal === 0) {
+    computedTotal = orderDetails.reduce((sum, d) => {
+      const priceNum = toNumberSafe(d.price) ?? 0;
+      const qtyRaw = d.quantity;
+      const qtyNum = qtyRaw == null || qtyRaw === "" ? 1 : Number(qtyRaw);
+      const qty = Number.isFinite(qtyNum) ? qtyNum : 1;
+      return sum + Number(priceNum) * qty;
+    }, 0);
+  }
+
+  computedTotal = Math.round(Math.max(0, Number(computedTotal)));
+
+  // -------------------- Final payload --------------------
   const customerName = bookingData?.info?.name ?? bookingData?.customerName ?? null;
   const phoneContact = bookingData?.info?.phone ?? bookingData?.phoneContact ?? bookingData?.phone ?? null;
   const email = bookingData?.info?.email ?? bookingData?.email ?? null;
@@ -403,12 +378,13 @@ export async function buildOrderPayloadFromBooking(
     customerCode: bookingData?.customerCode ?? null,
     depositDate: bookingData?.depositDate ?? bookingData?.selectedDate ?? null,
     returnDate: bookingData?.returnDate ?? bookingData?.endDate ?? null,
-    status: extras?.status ?? bookingData?.status ?? "new",
-    paymentStatus: extras?.paymentStatus ?? bookingData?.paymentStatus ?? (extras?.paymentMethod === "card" ? "Paid" : "Pending"),
+    status: extras?.status ?? bookingData?.status ?? "",
+    paymentStatus:
+      extras?.paymentStatus ?? bookingData?.paymentStatus ?? (extras?.paymentMethod === "card" ? "Paid" : "Pending"),
 
-    storageTypeId: toNumberSafe(bookingData?.storageTypeId) ?? mapRoomToStorageTypeId(bookingData?.room) ?? undefined,
+    storageTypeId: toNumberSafe(bookingData?.storageTypeId) ?? mapRoomToStorageTypeId(bookingData?.room) ?? null,
     shelfTypeId: 1,
-    shelfQuantity: typeof bookingData?.shelfQuantity === "number" ? bookingData.shelfQuantity : (bookingData?.counts?.shelves ?? undefined),
+    shelfQuantity: typeof bookingData?.shelfQuantity === "number" ? bookingData.shelfQuantity : bookingData?.counts?.shelves ?? null,
 
     customerName,
     phoneContact,
@@ -416,8 +392,14 @@ export async function buildOrderPayloadFromBooking(
     note,
     address,
     image: bookingData?.image ?? null,
-
     orderDetails,
+    style: options?.mode ?? bookingData?.style ?? null,
+
+    // totals
+    totalPrice: computedTotal,
+    unpaidAmount: computedTotal,
+    // attach original pricing (optional) for traceability
+    pricing: bookingData?.pricing ?? undefined,
   };
 
   return payload;

@@ -91,8 +91,24 @@ export default function SummaryLeft({
     } as BookingPayload["counts"];
   }, [data.counts, itemsArray]);
 
+  const packageCounts = useMemo(() => {
+    const pkg: any = (data as any).package ?? null;
+    if (!pkg) return null;
+    const shelves = typeof pkg.shelves === "number" ? pkg.shelves : undefined;
+    const boxes = typeof pkg.boxes === "number" ? pkg.boxes : undefined;
+    const byType = undefined; 
+    if (shelves === undefined && boxes === undefined) return null;
+    return {
+      shelves: shelves ?? 0,
+      boxes: boxes ?? 0,
+      byType,
+    } as BookingPayload["counts"];
+  }, [(data as any).package]);
+
+  const finalCounts = packageCounts ?? inferredCounts;
+
   const boxesByType = useMemo(() => {
-    const byType = inferredCounts?.byType ?? {};
+    const byType = finalCounts?.byType ?? {};
     const entries = Object.entries(byType);
     const boxEntries = entries.filter(([k]) => {
       if (!k) return false;
@@ -109,7 +125,7 @@ export default function SummaryLeft({
       return ka.localeCompare(kb);
     });
     return boxEntries;
-  }, [inferredCounts]);
+  }, [finalCounts]);
 
   const fmtCurrency = (n?: number) => {
     if (n == null) return "-";
@@ -223,21 +239,38 @@ export default function SummaryLeft({
   }
 
   useEffect(() => {
-    if (typeof onPayloadChange === "function") {
+    if (typeof onPayloadChange !== "function") return;
 
-      const depositDateExisting = (data as any).depositDate ?? (data as any).selectedDate ?? null;
-      const returnDateExisting = (data as any).returnDate ?? (data as any).endDate ?? null;
+    const depositDateExisting = (data as any).depositDate ?? (data as any).selectedDate ?? null;
+    const returnDateExisting = (data as any).returnDate ?? (data as any).endDate ?? null;
 
-      const depositDateToSet = depositDateExisting ?? se.startRaw ?? null;
-      const returnDateToSet = returnDateExisting ?? se.endRaw ?? null;
+    const depositDateToSet = depositDateExisting ?? se.startRaw ?? null;
+    const returnDateToSet = returnDateExisting ?? se.endRaw ?? null;
 
-      const patched: any = { ...data };
-      if (depositDateToSet != null) patched.depositDate = depositDateToSet;
-      if (returnDateToSet != null) patched.returnDate = returnDateToSet;
+    const currentDeposit = (data as any).depositDate ?? null;
+    const currentReturn = (data as any).returnDate ?? null;
 
-      onPayloadChange(patched);
-    }
-  }, [data, se.startRaw, se.endRaw, onPayloadChange]);
+    const depositChanged = (depositDateToSet ?? null) !== (currentDeposit ?? null);
+    const returnChanged = (returnDateToSet ?? null) !== (currentReturn ?? null);
+
+    if (!depositChanged && !returnChanged) return;
+
+    const patched: any = { ...data };
+    if (depositDateToSet != null) patched.depositDate = depositDateToSet;
+    if (returnDateToSet != null) patched.returnDate = returnDateToSet;
+
+    onPayloadChange(patched);
+  }, [
+    onPayloadChange,
+    (data as any).depositDate,
+    (data as any).returnDate,
+    (data as any).selectedDate,
+    se.startRaw,
+    se.endRaw,
+  ]);
+
+  const packageRawPrice = (data as any)?.package?.rawPrice ?? undefined;
+  const basePriceToShow = packageRawPrice ?? pricing.basePrice ?? pricing.subtotal ?? undefined;
 
   return (
     <TwoColWrap>
@@ -288,7 +321,7 @@ export default function SummaryLeft({
                 <strong>{t("endDate.title")}:</strong> {se.endVN}
               </Typography>
 
-              {inferredCounts && (
+              {finalCounts && (
                 <>
                   <Divider />
                   <Typography variant="subtitle2" fontWeight={700}>
@@ -296,7 +329,7 @@ export default function SummaryLeft({
                   </Typography>
 
                   <Typography variant="body2">
-                    <strong>{t("step4_summary.shelvesLabel", "Kệ")}:</strong> {inferredCounts.shelves ?? 0}
+                    <strong>{t("step4_summary.shelvesLabel", "Kệ")}:</strong> {finalCounts.shelves ?? 0}
                   </Typography>
 
                   {boxesByType && boxesByType.length > 0 ? (
@@ -314,7 +347,7 @@ export default function SummaryLeft({
                     </Box>
                   ) : (
                     <Typography variant="body2">
-                      <strong>{t("step4_summary.boxesLabel", "Thùng")}:</strong> {inferredCounts.boxes ?? 0}
+                      <strong>{t("step4_summary.boxesLabel", "Thùng")}:</strong> {finalCounts.boxes ?? 0}
                     </Typography>
                   )}
 
@@ -324,7 +357,7 @@ export default function SummaryLeft({
                   </Typography>
                   <Box mt={1}>
                     <Typography variant="body2">
-                      • {t("step4_summary.pay_shelf_label", "Giá kệ")}: {fmtCurrency(pricing.effectivePricingInfo?.perShelfPrice ?? 0)}
+                      • {t("step4_summary.pay_shelf_label", "Giá kệ")}: {fmtCurrency(pricing.effectivePricingInfo?.perShelfPrice ?? basePriceToShow ?? 0)}
                     </Typography>
 
                     {pricing.effectivePricingInfo && pricing.effectivePricingInfo.boxPricesMap && Object.keys(pricing.effectivePricingInfo.boxPricesMap).length > 0 && (
@@ -424,6 +457,31 @@ export default function SummaryLeft({
               </Typography>
             </Stack>
           )}
+
+          {/* ===== Contact block moved here (from SummaryRight) ===== */}
+          <Divider sx={{ mt: 2 }} />
+          <Stack spacing={0.4} mt={1}>
+            <Typography variant="subtitle2" fontWeight={700}>
+              {t("step4_summary.contactTitle")}
+            </Typography>
+
+            <Typography variant="body2">
+              <strong>{t("summary.name")}:</strong> {data.info?.name ?? "-"}
+            </Typography>
+            <Typography variant="body2">
+              <strong>{t("step3_info.fields.email")}:</strong> {data.info?.email ?? "-"}
+            </Typography>
+            <Typography variant="body2">
+              <strong>{t("summary.phone")}:</strong> {data.info?.phone ?? "-"}
+            </Typography>
+            <Typography variant="body2">
+              <strong>{t("step3_info.fields.address")}:</strong> {data.info?.address ?? "-"}
+            </Typography>
+            <Typography variant="body2">
+              <strong>{t("step3_info.fields.note")}:</strong> {data.info?.note ?? "-"}
+            </Typography>
+          </Stack>
+       
         </Stack>
       </LeftCard>
     </TwoColWrap>

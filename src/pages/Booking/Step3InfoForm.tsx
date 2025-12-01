@@ -16,10 +16,15 @@ import {
   FormLabel,
   InputAdornment,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchServices, type ServiceApi } from "../../api/service";
+import { calculateDistance, type DistanceResponse } from "../../api/distance";
 
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { vi, enUS } from "date-fns/locale";
 
 type FormState = {
   name: string;
@@ -30,8 +35,9 @@ type FormState = {
   services: number[];
   selectedDate?: string | null;
   rentalType?: "week" | "month" | "custom";
-  rentalWeeks?: number | null; 
-  rentalMonths?: number | null; 
+  rentalWeeks?: number | null;
+  rentalMonths?: number | null;
+  distanceInKm?: number | null;
 };
 
 type Props = {
@@ -42,33 +48,17 @@ type Props = {
   bilingualDates?: boolean;
 };
 
-const WEEKDAY_LABELS_VN = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-const WEEKDAY_LABELS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 function addDays(date: Date, days: number) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return d;
 }
 
-function formatDateLabelByLang(d: Date, lang: string, bilingual = false) {
-  const vnWeek = WEEKDAY_LABELS_VN[d.getDay()];
-  const enWeek = WEEKDAY_LABELS_EN[d.getDay()];
-  const monthEnShort = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
-  const monthVn = d.getMonth() + 1;
-  const day = d.getDate();
-
-  if (bilingual) return `${vnWeek} • ${enWeek} — ${monthEnShort} ${day}`;
-  if (lang?.startsWith("vi")) return `${vnWeek}, Th${monthVn} ${day}`;
-  return `${enWeek} — ${monthEnShort} ${day}`;
-}
-
 export default function Step3InfoForm({
   initial,
   onBack,
   onNext,
-  daysRange = 28,
-  bilingualDates = false,
+  daysRange = 31,
 }: Props) {
   const { t, i18n } = useTranslation("booking");
   const currentLang = i18n.language ?? "vi";
@@ -84,13 +74,15 @@ export default function Step3InfoForm({
     rentalType: initial?.rentalType ?? "month",
     rentalWeeks: initial?.rentalWeeks ?? 1,
     rentalMonths: initial?.rentalMonths ?? 1,
+    distanceInKm: initial?.distanceInKm ?? null,
   });
 
   const [allServices, setAllServices] = useState<ServiceApi[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingDistance, setLoadingDistance] = useState(false);
 
-  const ALLOWED_SERVICE_IDS = [2, 3, 4];
+  const ALLOWED_SERVICE_IDS = [2, 3, 4]; 
 
   useEffect(() => {
     let mounted = true;
@@ -111,13 +103,6 @@ export default function Step3InfoForm({
     };
   }, []);
 
-  const dateList = useMemo(() => {
-    const today = new Date();
-    const arr: Date[] = [];
-    for (let i = 0; i < daysRange; i++) arr.push(addDays(today, i));
-    return arr;
-  }, [daysRange]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -130,12 +115,20 @@ export default function Step3InfoForm({
     });
   };
 
-  const handleDateSelect = (d: Date) => {
+  const today = new Date();
+  const minDate = today;
+  const maxDate = addDays(today, Math.max(0, daysRange - 1));
+  const localeToUse = currentLang.startsWith("vi") ? vi : enUS;
+  const inputFormat = currentLang.startsWith("vi") ? "dd/MM/yyyy" : "MM/dd/yyyy";
+
+  const handleDateSelectIso = (d: Date | null) => {
+    if (!d) {
+      setForm((prev) => ({ ...prev, selectedDate: null }));
+      return;
+    }
     const iso = d.toISOString().slice(0, 10);
     setForm((prev) => ({ ...prev, selectedDate: iso }));
   };
-
-  const isSelected = (d: Date) => form.selectedDate === d.toISOString().slice(0, 10);
 
   const handleRentalTypeChange = (value: "week" | "month" | "custom") => {
     setForm((prev) => ({
@@ -157,8 +150,13 @@ export default function Step3InfoForm({
     setForm((prev) => ({ ...prev, rentalMonths: n > 0 ? n : 0 }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const ORIGIN_PLACE = "Ngã tư Thủ Đức";
+
+  const DELIVERY_ID = 4;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!form.name.trim() || !form.phone.trim() || !form.email?.trim() || !form.address?.trim()) {
       setError(t("infoForm.error.required"));
       return;
@@ -182,198 +180,270 @@ export default function Step3InfoForm({
     }
 
     setError(null);
-    onNext({
-      ...form,
-      services: form.services ?? [],
-      selectedDate: form.selectedDate ?? null,
-      rentalWeeks: form.rentalType === "week" ? Number(form.rentalWeeks ?? 1) : undefined,
-      rentalMonths: form.rentalType === "custom" ? Number(form.rentalMonths ?? 1) : form.rentalType === "month" ? 1 : undefined,
-    });
+    setLoadingDistance(true);
+
+    try {
+      let distanceInKm: number | null = null;
+
+      const isDeliverySelected = (form.services ?? []).includes(DELIVERY_ID);
+
+      if (isDeliverySelected) {
+        const payload = { origin: ORIGIN_PLACE, destination: form.address };
+        const data: DistanceResponse = await calculateDistance(payload);
+        distanceInKm = typeof data?.distanceInKm === "number" ? data.distanceInKm : null;
+      }
+
+      const nextPayload: FormState = {
+        ...form,
+        services: form.services ?? [],
+        selectedDate: form.selectedDate ?? null,
+        rentalWeeks: form.rentalType === "week" ? Number(form.rentalWeeks ?? 1) : undefined,
+        rentalMonths:
+          form.rentalType === "custom" ? Number(form.rentalMonths ?? 1) : form.rentalType === "month" ? 1 : undefined,
+        distanceInKm,
+      };
+
+      setLoadingDistance(false);
+      onNext(nextPayload);
+    } catch (err: any) {
+      console.error("Distance calculation failed:", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("distance.error.fetchFailed", "Tính khoảng cách thất bại. Vui lòng thử lại.");
+      setError(String(msg));
+      setLoadingDistance(false);
+    }
   };
 
-  return (
-    <Box sx={{ bgcolor: "#F9FAFB", py: { xs: 6, md: 10 } }}>
-      <Container maxWidth="md">
-        <Paper variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
-          <Stack spacing={3}>
-            <Typography variant="h5" fontWeight={700} color="primary.main" textAlign="center">
-              {t("infoForm.title")}
-            </Typography>
+ return (
+  <Box
+    sx={{
+      maxHeight: "85vh",         
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: "#F9FAFB",
+      py: { xs: 3, md: 6 },       
+      boxSizing: "border-box",
+    }}
+  >
+    <Container
+      maxWidth="md"
+      sx={{
+        height: "100%",            
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        px: { xs: 2, md: 0 },
+        boxSizing: "border-box",
+      }}
+    >
+      <Paper
+        variant="outlined"
+        sx={{
+          width: "100%",
+          maxHeight: "calc(100vh - 48px)", 
+          p: { xs: 3, md: 4 },
+          borderRadius: 3,
+          boxSizing: "border-box",
+          overflow: "visible",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Stack spacing={2} sx={{ flex: 1, minHeight: 0 }}>
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            color="primary.main"
+            textAlign="center"
+            sx={{ mb: 0 }}
+          >
+            {t("infoForm.title")}
+          </Typography>
 
-            <Typography variant="body2" textAlign="center" color="text.secondary">
-              {t("infoForm.desc")}
-            </Typography>
+          <Typography variant="body2" textAlign="center" color="text.secondary" sx={{ mb: 0 }}>
+            {t("infoForm.desc")}
+          </Typography>
 
-            {error && <Alert severity="error">{error}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
 
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={2}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField name="name" label={t("infoForm.name")} value={form.name} onChange={handleChange} fullWidth required />
-                  <TextField name="phone" label={t("infoForm.phone")} value={form.phone} onChange={handleChange} fullWidth required />
-                </Stack>
-
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    name="email"
-                    label={t("infoForm.email")}
-                    value={form.email ?? ""}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    name="address"
-                    label={t("infoForm.address")}
-                    value={form.address ?? ""}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Stack>
-
-                <TextField name="note" label={t("infoForm.note")} value={form.note ?? ""} onChange={handleChange} fullWidth multiline minRows={2} />
-
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                    {t("startDate.title")}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mb={2}>
-                    {t("startDate.desc")}
-                  </Typography>
-
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: { xs: "repeat(3,1fr)", sm: "repeat(4,1fr)", md: "repeat(7,1fr)" },
-                      gap: 1,
-                    }}
-                  >
-                    {dateList.map((d) => {
-                      const active = isSelected(d);
-                      const label = formatDateLabelByLang(d, currentLang, bilingualDates);
-                      return (
-                        <Button
-                          key={d.toISOString()}
-                          variant={active ? "contained" : "outlined"}
-                          onClick={() => handleDateSelect(d)}
-                          sx={{
-                            textTransform: "none",
-                            borderRadius: 1,
-                            py: 1.25,
-                            px: 2,
-                            justifyContent: "flex-start",
-                            backgroundColor: active ? "primary.main" : "transparent",
-                            color: active ? "white" : "text.primary",
-                          }}
-                        >
-                          <Typography variant="caption" fontWeight={600}>
-                            {label}
-                          </Typography>
-                        </Button>
-                      );
-                    })}
-                  </Box>
-                </Box>
-
-                {/* --- Rental period selector (updated to use i18n keys) --- */}
-                <Box>
-                  <FormControl component="fieldset" fullWidth>
-                    <FormLabel component="legend" sx={{ mb: 1 }}>
-                      {t("rental.period.title", "Chọn thời gian thuê")}
-                    </FormLabel>
-
-                    <RadioGroup
-                      value={form.rentalType ?? "month"}
-                      onChange={(e) => handleRentalTypeChange(e.target.value as "week" | "month" | "custom")}
-                      row
-                    >
-                      <FormControlLabel
-                        value="week"
-                        control={<Radio />}
-                        label={t("rental.period.week", "Theo tuần")}
-                      />
-                      <FormControlLabel
-                        value="month"
-                        control={<Radio />}
-                        label={t("rental.period.month", "Theo tháng")}
-                      />
-                      <FormControlLabel
-                        value="custom"
-                        control={<Radio />}
-                        label={t("rental.period.custom", "Tùy chỉnh (số tháng)")}
-                      />
-                    </RadioGroup>
-
-                    {form.rentalType === "week" && (
-                      <Box sx={{ mt: 1, display: "flex", gap: 2, alignItems: "center", maxWidth: 260 }}>
-                        <TextField
-                          label={t("rental.period.weeksLabel", "Số tuần")}
-                          type="number"
-                          inputProps={{ min: 1, max: 4 }}
-                          value={form.rentalWeeks ?? ""}
-                          onChange={(e) => handleRentalWeeksChange(e.target.value)}
-                          helperText={t(
-                            "rental.period.weeksHelp",
-                            "Chọn từ 1 đến 4 tuần. Giá = giá tháng × 0.3 × số tuần"
-                          )}
-                          fullWidth
-                        />
-                      </Box>
-                    )}
-
-                    {form.rentalType === "custom" && (
-                      <Box sx={{ mt: 1, maxWidth: 220 }}>
-                        <TextField
-                          label={t("rental.period.monthsLabel", "Số tháng")}
-                          type="number"
-                          inputProps={{ min: 1 }}
-                          value={form.rentalMonths ?? ""}
-                          onChange={(e) => handleRentalMonthsChange(e.target.value)}
-                          fullWidth
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">{t("rental.period.monthSuffix", "tháng")}</InputAdornment>,
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </FormControl>
-                </Box>
-
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                    {t("infoForm.chooseServices")}
-                  </Typography>
-                  {loadingServices ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-                      <CircularProgress size={24} />
-                    </Box>
-                  ) : (
-                    <Stack spacing={1}>
-                      {allServices.map((s) => (
-                        <FormControlLabel
-                          key={s.serviceId}
-                          control={<Checkbox checked={form.services.includes(s.serviceId)} onChange={() => toggleService(s.serviceId)} />}
-                          label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
-                        />
-                      ))}
-                    </Stack>
-                  )}
-                </Box>
-
-                <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
-                  <Button variant="outlined" onClick={onBack}>
-                    {t("actions.back")}
-                  </Button>
-                  <Button variant="contained" type="submit">
-                    {t("actions.next")}
-                  </Button>
-                </Stack>
+          <Box component="form" onSubmit={handleSubmit} sx={{ flex: "1 1 auto", overflow: "visible" }}>
+            <Stack spacing={1.5}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.5}
+                sx={{ alignItems: "stretch" }}
+              >
+                <TextField
+                  name="name"
+                  label={t("infoForm.name")}
+                  value={form.name}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+                <TextField
+                  name="phone"
+                  label={t("infoForm.phone")}
+                  value={form.phone}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
               </Stack>
-            </form>
-          </Stack>
-        </Paper>
-      </Container>
-    </Box>
-  );
+
+              {/* Email + Address */}
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                <TextField
+                  name="email"
+                  label={t("infoForm.email")}
+                  value={form.email ?? ""}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+                <TextField
+                  name="address"
+                  label={t("infoForm.address")}
+                  value={form.address ?? ""}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Stack>
+
+              {/* Note */}
+              <TextField
+                name="note"
+                label={t("infoForm.note")}
+                value={form.note ?? ""}
+                onChange={handleChange}
+                fullWidth
+                multiline
+                minRows={2}
+              />
+
+              {/* Date Picker */}
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600} mb={1}>
+                  {t("startDate.title")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  {t("startDate.desc")}
+                </Typography>
+
+                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={localeToUse}>
+                  <DatePicker
+                    label={t("startDate.chooseDate", "Chọn ngày bắt đầu")}
+                    value={form.selectedDate ? new Date(form.selectedDate) : null}
+                    onChange={handleDateSelectIso}
+                    disablePast
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    format={inputFormat}
+                    slotProps={{
+                      textField: { fullWidth: true },
+                      popper: {
+                        sx: {
+                          "& .MuiPaper-root": {
+                            borderRadius: 3,
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Box>
+
+              {/* Rental period */}
+              <Box>
+                <FormControl component="fieldset" fullWidth>
+                  <FormLabel component="legend" sx={{ mb: 1 }}>
+                    {t("rental.period.title", "Chọn thời gian thuê")}
+                  </FormLabel>
+
+                  <RadioGroup
+                    value={form.rentalType ?? "month"}
+                    onChange={(e) => handleRentalTypeChange(e.target.value as "week" | "month" | "custom")}
+                    row
+                  >
+                    <FormControlLabel value="week" control={<Radio />} label={t("rental.period.week", "Theo tuần")} />
+                    <FormControlLabel value="month" control={<Radio />} label={t("rental.period.month", "Theo tháng")} />
+                    <FormControlLabel value="custom" control={<Radio />} label={t("rental.period.custom", "Tùy chỉnh (số tháng)")} />
+                  </RadioGroup>
+
+                  {form.rentalType === "week" && (
+                    <Box sx={{ mt: 1, maxWidth: 260 }}>
+                      <TextField
+                        label={t("rental.period.weeksLabel", "Số tuần")}
+                        type="number"
+                        inputProps={{ min: 1, max: 4 }}
+                        value={form.rentalWeeks ?? ""}
+                        onChange={(e) => handleRentalWeeksChange(e.target.value)}
+                        helperText={t("rental.period.weeksHelp", "Chọn từ 1 đến 4 tuần. Giá = giá tháng × 0.3 × số tuần")}
+                        fullWidth
+                      />
+                    </Box>
+                  )}
+
+                  {form.rentalType === "custom" && (
+                    <Box sx={{ mt: 1, maxWidth: 220 }}>
+                      <TextField
+                        label={t("rental.period.monthsLabel", "Số tháng")}
+                        type="number"
+                        inputProps={{ min: 1 }}
+                        value={form.rentalMonths ?? ""}
+                        onChange={(e) => handleRentalMonthsChange(e.target.value)}
+                        fullWidth
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">{t("rental.period.monthSuffix", "tháng")}</InputAdornment>,
+                        }}
+                      />
+                    </Box>
+                  )}
+                </FormControl>
+              </Box>
+
+              {/* Services */}
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600} mb={1}>
+                  {t("infoForm.chooseServices")}
+                </Typography>
+
+                {loadingServices ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+                    <CircularProgress size={24} />
+                  </Box>
+                ) : (
+                  <Stack spacing={0.5}>
+                    {allServices.map((s) => (
+                      <FormControlLabel
+                        key={s.serviceId}
+                        control={<Checkbox checked={form.services.includes(s.serviceId)} onChange={() => toggleService(s.serviceId)} />}
+                        label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
+                      />
+                    ))}
+                  </Stack>
+                )}
+              </Box>
+
+              {/* Buttons */}
+              <Stack direction="row" spacing={2} justifyContent="center" mt={1}>
+                <Button variant="outlined" onClick={onBack} disabled={loadingDistance}>
+                  {t("actions.back")}
+                </Button>
+                <Button variant="contained" type="submit" disabled={loadingDistance}>
+                  {loadingDistance ? <CircularProgress size={20} /> : t("actions.next")}
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+      </Paper>
+    </Container>
+  </Box>
+);
+
 }

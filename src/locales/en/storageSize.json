@@ -39,7 +39,8 @@
       "tag": "PREMIUM"
     },
     "areaLabel": "Area",
-    "priceLabel": "month"
+    "priceLabel": "month",
+    "decsLabel": "Service packages"
   },
   "common": {
     "next": "Next",
