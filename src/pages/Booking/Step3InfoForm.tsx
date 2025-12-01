@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import { fetchServices, type ServiceApi } from "../../api/service";
 import { calculateDistance, type DistanceResponse } from "../../api/distance";
 
-/* Date Picker imports */
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -34,7 +33,7 @@ type FormState = {
   address: string;
   note?: string;
   services: number[];
-  selectedDate?: string | null; // ISO yyyy-mm-dd
+  selectedDate?: string | null;
   rentalType?: "week" | "month" | "custom";
   rentalWeeks?: number | null;
   rentalMonths?: number | null;
@@ -59,8 +58,7 @@ export default function Step3InfoForm({
   initial,
   onBack,
   onNext,
-  daysRange = 28,
-  bilingualDates = false,
+  daysRange = 31,
 }: Props) {
   const { t, i18n } = useTranslation("booking");
   const currentLang = i18n.language ?? "vi";
@@ -84,7 +82,7 @@ export default function Step3InfoForm({
   const [error, setError] = useState<string | null>(null);
   const [loadingDistance, setLoadingDistance] = useState(false);
 
-  const ALLOWED_SERVICE_IDS = [2, 3, 4]; // giữ filter hiện tại
+  const ALLOWED_SERVICE_IDS = [2, 3, 4]; 
 
   useEffect(() => {
     let mounted = true;
@@ -117,7 +115,6 @@ export default function Step3InfoForm({
     });
   };
 
-  // --- DATE PICKER SETTINGS ---
   const today = new Date();
   const minDate = today;
   const maxDate = addDays(today, Math.max(0, daysRange - 1));
@@ -133,7 +130,6 @@ export default function Step3InfoForm({
     setForm((prev) => ({ ...prev, selectedDate: iso }));
   };
 
-  // rental handlers
   const handleRentalTypeChange = (value: "week" | "month" | "custom") => {
     setForm((prev) => ({
       ...prev,
@@ -154,16 +150,13 @@ export default function Step3InfoForm({
     setForm((prev) => ({ ...prev, rentalMonths: n > 0 ? n : 0 }));
   };
 
-  // constant origin
   const ORIGIN_PLACE = "Ngã tư Thủ Đức";
 
-  // DELIVERY service id (change if your delivery service uses another id)
   const DELIVERY_ID = 4;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // basic validation
     if (!form.name.trim() || !form.phone.trim() || !form.email?.trim() || !form.address?.trim()) {
       setError(t("infoForm.error.required"));
       return;
@@ -195,7 +188,6 @@ export default function Step3InfoForm({
       const isDeliverySelected = (form.services ?? []).includes(DELIVERY_ID);
 
       if (isDeliverySelected) {
-        // call api/distance via calculateDistance
         const payload = { origin: ORIGIN_PLACE, destination: form.address };
         const data: DistanceResponse = await calculateDistance(payload);
         distanceInKm = typeof data?.distanceInKm === "number" ? data.distanceInKm : null;
@@ -224,209 +216,234 @@ export default function Step3InfoForm({
     }
   };
 
-  return (
-    <Box sx={{ bgcolor: "#F9FAFB", py: { xs: 6, md: 10 } }}>
-      <Container maxWidth="md">
-        <Paper variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
-          <Stack spacing={3}>
-            <Typography variant="h5" fontWeight={700} color="primary.main" textAlign="center">
-              {t("infoForm.title")}
-            </Typography>
+ return (
+  <Box
+    sx={{
+      maxHeight: "85vh",         
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: "#F9FAFB",
+      py: { xs: 3, md: 6 },       
+      boxSizing: "border-box",
+    }}
+  >
+    <Container
+      maxWidth="md"
+      sx={{
+        height: "100%",            
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        px: { xs: 2, md: 0 },
+        boxSizing: "border-box",
+      }}
+    >
+      <Paper
+        variant="outlined"
+        sx={{
+          width: "100%",
+          maxHeight: "calc(100vh - 48px)", 
+          p: { xs: 3, md: 4 },
+          borderRadius: 3,
+          boxSizing: "border-box",
+          overflow: "visible",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Stack spacing={2} sx={{ flex: 1, minHeight: 0 }}>
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            color="primary.main"
+            textAlign="center"
+            sx={{ mb: 0 }}
+          >
+            {t("infoForm.title")}
+          </Typography>
 
-            <Typography variant="body2" textAlign="center" color="text.secondary">
-              {t("infoForm.desc")}
-            </Typography>
+          <Typography variant="body2" textAlign="center" color="text.secondary" sx={{ mb: 0 }}>
+            {t("infoForm.desc")}
+          </Typography>
 
-            {error && <Alert severity="error">{error}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
 
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={2}>
-                {/* Name + Phone */}
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    name="name"
-                    label={t("infoForm.name")}
-                    value={form.name}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    name="phone"
-                    label={t("infoForm.phone")}
-                    value={form.phone}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Stack>
-
-                {/* Email + Address */}
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    name="email"
-                    label={t("infoForm.email")}
-                    value={form.email ?? ""}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    name="address"
-                    label={t("infoForm.address")}
-                    value={form.address ?? ""}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Stack>
-
-                {/* Note */}
+          <Box component="form" onSubmit={handleSubmit} sx={{ flex: "1 1 auto", overflow: "visible" }}>
+            <Stack spacing={1.5}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.5}
+                sx={{ alignItems: "stretch" }}
+              >
                 <TextField
-                  name="note"
-                  label={t("infoForm.note")}
-                  value={form.note ?? ""}
+                  name="name"
+                  label={t("infoForm.name")}
+                  value={form.name}
                   onChange={handleChange}
                   fullWidth
-                  multiline
-                  minRows={2}
+                  required
                 />
-
-                {/* Date Picker */}
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                    {t("startDate.title")}
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" mb={2}>
-                    {t("startDate.desc")}
-                  </Typography>
-
-                  <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={localeToUse}>
-                    <DatePicker
-                      label={t("startDate.chooseDate", "Chọn ngày bắt đầu")}
-                      value={form.selectedDate ? new Date(form.selectedDate) : null}
-                      onChange={handleDateSelectIso}
-                      disablePast
-                      minDate={minDate}
-                      maxDate={maxDate}
-                      format={inputFormat} 
-                      slotProps={{
-                        textField: {
-                          fullWidth: true,
-                          sx: {
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: 2,
-                            },
-                          },
-                        },
-                        popper: {
-                          sx: {
-                            "& .MuiPaper-root": {
-                              borderRadius: 3,
-                              border: (theme) => `1px solid ${theme.palette.primary.main}`,
-                              boxShadow: (theme) => theme.shadows[8],
-                            },
-                            "& .MuiPickersDay-root.Mui-selected": {
-                              backgroundColor: (theme) => `${theme.palette.primary.main} !important`,
-                              color: "#fff",
-                            },
-                            "& .MuiPickersDay-root:hover": {
-                              backgroundColor: (theme) => `${theme.palette.action.hover} !important`,
-                            },
-                          },
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Box>
-
-                {/* Rental period */}
-                <Box>
-                  <FormControl component="fieldset" fullWidth>
-                    <FormLabel component="legend" sx={{ mb: 1 }}>
-                      {t("rental.period.title", "Chọn thời gian thuê")}
-                    </FormLabel>
-
-                    <RadioGroup
-                      value={form.rentalType ?? "month"}
-                      onChange={(e) => handleRentalTypeChange(e.target.value as "week" | "month" | "custom")}
-                      row
-                    >
-                      <FormControlLabel value="week" control={<Radio />} label={t("rental.period.week", "Theo tuần")} />
-                      <FormControlLabel value="month" control={<Radio />} label={t("rental.period.month", "Theo tháng")} />
-                      <FormControlLabel value="custom" control={<Radio />} label={t("rental.period.custom", "Tùy chỉnh (số tháng)")} />
-                    </RadioGroup>
-
-                    {form.rentalType === "week" && (
-                      <Box sx={{ mt: 1, maxWidth: 260 }}>
-                        <TextField
-                          label={t("rental.period.weeksLabel", "Số tuần")}
-                          type="number"
-                          inputProps={{ min: 1, max: 4 }}
-                          value={form.rentalWeeks ?? ""}
-                          onChange={(e) => handleRentalWeeksChange(e.target.value)}
-                          helperText={t("rental.period.weeksHelp", "Chọn từ 1 đến 4 tuần. Giá = giá tháng × 0.3 × số tuần")}
-                          fullWidth
-                        />
-                      </Box>
-                    )}
-
-                    {form.rentalType === "custom" && (
-                      <Box sx={{ mt: 1, maxWidth: 220 }}>
-                        <TextField
-                          label={t("rental.period.monthsLabel", "Số tháng")}
-                          type="number"
-                          inputProps={{ min: 1 }}
-                          value={form.rentalMonths ?? ""}
-                          onChange={(e) => handleRentalMonthsChange(e.target.value)}
-                          fullWidth
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">{t("rental.period.monthSuffix", "tháng")}</InputAdornment>,
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </FormControl>
-                </Box>
-
-                {/* Services */}
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                    {t("infoForm.chooseServices")}
-                  </Typography>
-
-                  {loadingServices ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-                      <CircularProgress size={24} />
-                    </Box>
-                  ) : (
-                    <Stack spacing={1}>
-                      {allServices.map((s) => (
-                        <FormControlLabel
-                          key={s.serviceId}
-                          control={<Checkbox checked={form.services.includes(s.serviceId)} onChange={() => toggleService(s.serviceId)} />}
-                          label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
-                        />
-                      ))}
-                    </Stack>
-                  )}
-                </Box>
-
-                {/* Buttons */}
-                <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
-                  <Button variant="outlined" onClick={onBack} disabled={loadingDistance}>
-                    {t("actions.back")}
-                  </Button>
-                  <Button variant="contained" type="submit" disabled={loadingDistance}>
-                    {loadingDistance ? <CircularProgress size={20} /> : t("actions.next")}
-                  </Button>
-                </Stack>
+                <TextField
+                  name="phone"
+                  label={t("infoForm.phone")}
+                  value={form.phone}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
               </Stack>
-            </form>
-          </Stack>
-        </Paper>
-      </Container>
-    </Box>
-  );
+
+              {/* Email + Address */}
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                <TextField
+                  name="email"
+                  label={t("infoForm.email")}
+                  value={form.email ?? ""}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+                <TextField
+                  name="address"
+                  label={t("infoForm.address")}
+                  value={form.address ?? ""}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Stack>
+
+              {/* Note */}
+              <TextField
+                name="note"
+                label={t("infoForm.note")}
+                value={form.note ?? ""}
+                onChange={handleChange}
+                fullWidth
+                multiline
+                minRows={2}
+              />
+
+              {/* Date Picker */}
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600} mb={1}>
+                  {t("startDate.title")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  {t("startDate.desc")}
+                </Typography>
+
+                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={localeToUse}>
+                  <DatePicker
+                    label={t("startDate.chooseDate", "Chọn ngày bắt đầu")}
+                    value={form.selectedDate ? new Date(form.selectedDate) : null}
+                    onChange={handleDateSelectIso}
+                    disablePast
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    format={inputFormat}
+                    slotProps={{
+                      textField: { fullWidth: true },
+                      popper: {
+                        sx: {
+                          "& .MuiPaper-root": {
+                            borderRadius: 3,
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Box>
+
+              {/* Rental period */}
+              <Box>
+                <FormControl component="fieldset" fullWidth>
+                  <FormLabel component="legend" sx={{ mb: 1 }}>
+                    {t("rental.period.title", "Chọn thời gian thuê")}
+                  </FormLabel>
+
+                  <RadioGroup
+                    value={form.rentalType ?? "month"}
+                    onChange={(e) => handleRentalTypeChange(e.target.value as "week" | "month" | "custom")}
+                    row
+                  >
+                    <FormControlLabel value="week" control={<Radio />} label={t("rental.period.week", "Theo tuần")} />
+                    <FormControlLabel value="month" control={<Radio />} label={t("rental.period.month", "Theo tháng")} />
+                    <FormControlLabel value="custom" control={<Radio />} label={t("rental.period.custom", "Tùy chỉnh (số tháng)")} />
+                  </RadioGroup>
+
+                  {form.rentalType === "week" && (
+                    <Box sx={{ mt: 1, maxWidth: 260 }}>
+                      <TextField
+                        label={t("rental.period.weeksLabel", "Số tuần")}
+                        type="number"
+                        inputProps={{ min: 1, max: 4 }}
+                        value={form.rentalWeeks ?? ""}
+                        onChange={(e) => handleRentalWeeksChange(e.target.value)}
+                        helperText={t("rental.period.weeksHelp", "Chọn từ 1 đến 4 tuần. Giá = giá tháng × 0.3 × số tuần")}
+                        fullWidth
+                      />
+                    </Box>
+                  )}
+
+                  {form.rentalType === "custom" && (
+                    <Box sx={{ mt: 1, maxWidth: 220 }}>
+                      <TextField
+                        label={t("rental.period.monthsLabel", "Số tháng")}
+                        type="number"
+                        inputProps={{ min: 1 }}
+                        value={form.rentalMonths ?? ""}
+                        onChange={(e) => handleRentalMonthsChange(e.target.value)}
+                        fullWidth
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">{t("rental.period.monthSuffix", "tháng")}</InputAdornment>,
+                        }}
+                      />
+                    </Box>
+                  )}
+                </FormControl>
+              </Box>
+
+              {/* Services */}
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600} mb={1}>
+                  {t("infoForm.chooseServices")}
+                </Typography>
+
+                {loadingServices ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+                    <CircularProgress size={24} />
+                  </Box>
+                ) : (
+                  <Stack spacing={0.5}>
+                    {allServices.map((s) => (
+                      <FormControlLabel
+                        key={s.serviceId}
+                        control={<Checkbox checked={form.services.includes(s.serviceId)} onChange={() => toggleService(s.serviceId)} />}
+                        label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
+                      />
+                    ))}
+                  </Stack>
+                )}
+              </Box>
+
+              {/* Buttons */}
+              <Stack direction="row" spacing={2} justifyContent="center" mt={1}>
+                <Button variant="outlined" onClick={onBack} disabled={loadingDistance}>
+                  {t("actions.back")}
+                </Button>
+                <Button variant="contained" type="submit" disabled={loadingDistance}>
+                  {loadingDistance ? <CircularProgress size={20} /> : t("actions.next")}
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+      </Paper>
+    </Container>
+  </Box>
+);
+
 }

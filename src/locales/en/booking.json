@@ -224,7 +224,8 @@
   },
   "startDate": {
     "title": "Storage Start Date",
-    "desc": "What date works best for moving your items in?"
+    "desc": "What date works best for moving your items in?",
+    "chooseDate": "Choose Date"
   },
   "endDate": {
     "title": "End Date of Storage",

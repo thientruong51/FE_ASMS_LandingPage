@@ -73,7 +73,7 @@ export type BookingData = {
 
   productTypes?: ProductTypeSelection[] | null;
 
-  package?: { id: string; name: string; price: number | string } | null;
+  package?: { id: string; name: string; price: number | string; rawPrice?: number;shelves?: number; boxes?: number; desc?: string;} | null;
 
   customItems?: any[] | { items: any[]; counts?: Record<string, number> } | null;
   counts?: Record<string, number> | null;
@@ -191,7 +191,18 @@ export default function BookingPage() {
                     room={data.room}
                     onBack={() => handlers.goTo(2)}
                     onNext={(pkg) => {
-                      handlers.save({ package: pkg });
+                      handlers.save({
+                        package: {
+                          id: pkg.id,
+                          name: pkg.name,
+                          price: pkg.price,      // dạng text
+                          rawPrice: pkg.rawPrice, // dạng số
+                          shelves: pkg.shelves,
+                          boxes: pkg.boxes,
+                          desc: pkg.desc,
+                        },
+                      });
+
                       handlers.next(3);
                       setActive(5);
                     }}
@@ -238,7 +249,7 @@ export default function BookingPage() {
                       note: data.info?.note,
                       services:
                         Array.isArray(data.services) &&
-                        typeof data.services[0] === "number"
+                          typeof data.services[0] === "number"
                           ? (data.services as number[])
                           : [],
                       selectedDate: data.selectedDate ?? null,
@@ -307,15 +318,15 @@ export default function BookingPage() {
                         (b: any) => {
                           const ptIdsFromTypes =
                             Array.isArray(b.productTypes) &&
-                            b.productTypes.length > 0
+                              b.productTypes.length > 0
                               ? b.productTypes
-                                  .map((pt: any) => pt.id ?? pt.productTypeId)
-                                  .filter((x: any) => x != null)
+                                .map((pt: any) => pt.id ?? pt.productTypeId)
+                                .filter((x: any) => x != null)
                               : [];
 
                           const ids =
                             Array.isArray(b.productTypeIds) &&
-                            b.productTypeIds.length > 0
+                              b.productTypeIds.length > 0
                               ? b.productTypeIds.map((x: any) => Number(x))
                               : ptIdsFromTypes.map((x: any) => Number(x));
 
@@ -331,19 +342,19 @@ export default function BookingPage() {
                             imageUrl: b.imageUrl ?? b.modelUrl ?? null,
                             productTypes: Array.isArray(b.productTypes)
                               ? b.productTypes.map((pt: any) => ({
-                                  id: Number(
+                                id: Number(
+                                  pt.id ?? pt.productTypeId
+                                ),
+                                name:
+                                  pt.name ??
+                                  pt.title ??
+                                  String(
                                     pt.id ?? pt.productTypeId
                                   ),
-                                  name:
-                                    pt.name ??
-                                    pt.title ??
-                                    String(
-                                      pt.id ?? pt.productTypeId
-                                    ),
-                                  isFragile: pt.isFragile,
-                                  canStack: pt.canStack,
-                                  description: pt.description ?? null,
-                                }))
+                                isFragile: pt.isFragile,
+                                canStack: pt.canStack,
+                                description: pt.description ?? null,
+                              }))
                               : undefined,
                             productTypeIds: ids ?? [],
                           } as BoxInfoExtended;
@@ -353,24 +364,24 @@ export default function BookingPage() {
                       const masterProductTypes =
                         Array.isArray(payload?.productTypes)
                           ? payload.productTypes.map((pt: any) => ({
-                              id: Number(pt.productTypeId ?? pt.id),
-                              name: pt.name,
-                              isFragile: pt.isFragile,
-                              canStack: pt.canStack,
-                              description: pt.description ?? null,
-                            }))
+                            id: Number(pt.productTypeId ?? pt.id),
+                            name: pt.name,
+                            isFragile: pt.isFragile,
+                            canStack: pt.canStack,
+                            description: pt.description ?? null,
+                          }))
                           : Array.isArray(payload?.productTypesList)
-                          ? payload.productTypesList
-                          : undefined;
+                            ? payload.productTypesList
+                            : undefined;
 
                       const firstBox =
                         normalizedBoxes.length > 0
                           ? {
-                              id: normalizedBoxes[0].id,
-                              label: normalizedBoxes[0].label,
-                              price: normalizedBoxes[0].price,
-                              quantity: normalizedBoxes[0].quantity,
-                            }
+                            id: normalizedBoxes[0].id,
+                            label: normalizedBoxes[0].label,
+                            price: normalizedBoxes[0].price,
+                            quantity: normalizedBoxes[0].quantity,
+                          }
                           : null;
 
                       handlers.save({
@@ -398,7 +409,7 @@ export default function BookingPage() {
                       note: data.info?.note,
                       services:
                         Array.isArray(data.services) &&
-                        typeof data.services[0] === "number"
+                          typeof data.services[0] === "number"
                           ? (data.services as number[])
                           : [],
                       selectedDate: data.selectedDate ?? null,

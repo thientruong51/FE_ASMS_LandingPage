@@ -37,6 +37,14 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
     return n.toLocaleString("vi-VN") + " đ";
   };
 
+  // --- ưu tiên lấy giá gói numeric & counts từ data.package nếu có ---
+  const packageRawPrice: number | undefined = (data as any)?.package?.rawPrice ?? undefined;
+  const packageDisplayPrice: string | undefined = (data as any)?.package?.price ?? undefined;
+  const packageName: string | undefined = (data as any)?.package?.name ?? undefined;
+  const packageShelves: number | undefined = (data as any)?.package?.shelves ?? undefined;
+  const packageBoxes: number | undefined = (data as any)?.package?.boxes ?? undefined;
+  // --- end ---
+
   // per-box details (if boxes available)
   const boxDetails = useMemo(() => {
     const boxes = Array.isArray((data as any).boxes) ? (data as any).boxes : [];
@@ -100,6 +108,15 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
     });
   }, [data, pricing]);
 
+ 
+  const subtotalForDisplay = packageRawPrice !== undefined ? Number(packageRawPrice) : Number(pricing.basePrice ?? 0);
+  const extrasTotal = Number((pricing as any).breakdown?.serviceExtras ?? 0);
+  const shippingFee = Number((pricing as any).breakdown?.shippingFee ?? 0);
+  const otherSurcharges = Number((pricing as any).breakdown?.totalSurchargesAmount ?? 0);
+
+
+  const totalToDisplay = packageRawPrice !== undefined ? Number(packageRawPrice) : Number(pricing.total ?? (pricing.subtotal ?? 0));
+
   return (
     <RightCard>
       <Typography variant="h6" fontWeight={700} color="primary.main" mb={1}>
@@ -108,8 +125,22 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
 
       <Stack spacing={1} divider={<Divider sx={{ borderStyle: "dashed" }} />}>
         <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2">{t("step4_summary.baseLabel")}</Typography>
-          <Typography variant="body2">{fmt(pricing.basePrice)}</Typography>
+          <Box>
+            <Typography variant="body2">{t("step4_summary.packageLabel", "Gói")}</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>
+              {packageName ?? (data.room?.name ?? t("summary.service"))}
+            </Typography>
+            {packageShelves !== undefined || packageBoxes !== undefined ? (
+              <Typography variant="caption" color="text.secondary" display="block">
+                {packageShelves !== undefined ? `${packageShelves} kệ` : ""}{" "}
+                {packageBoxes !== undefined ? `• ${packageBoxes} thùng` : ""}
+              </Typography>
+            ) : null}
+          </Box>
+
+          <Typography variant="body2">
+            {packageDisplayPrice ?? fmt(subtotalForDisplay)}
+          </Typography>
         </Stack>
 
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
@@ -117,17 +148,17 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
             <Typography variant="body2" color="text.secondary">
               • {t("step4_summary.items_total_label")}
             </Typography>
-          
+
             <Typography variant="caption" color="text.secondary" display="block">
-              {t("step4_summary.boxes_base", "Giá cơ bản thùng/kệ")}: {fmt(pricing.breakdown.boxesPriceRaw ?? 0)}
+              {t("step4_summary.boxes_base", "Giá cơ bản thùng/kệ")}: {fmt((pricing as any).breakdown?.boxesPriceRaw ?? 0)}
             </Typography>
             <Typography variant="caption" color="text.secondary" display="block">
-              {t("step4_summary.surcharges_total", "Tổng phụ thu loại hàng")}: {fmt(pricing.breakdown.totalSurchargesAmount ?? 0)}
+              {t("step4_summary.surcharges_total", "Tổng phụ thu loại hàng")}: {fmt(otherSurcharges)}
             </Typography>
           </Box>
           <Box textAlign="right">
             <Typography variant="body2" color="text.secondary">
-              {fmt(pricing.breakdown.itemsTotal)}
+              {fmt((pricing as any).breakdown?.itemsTotal ?? subtotalForDisplay)}
             </Typography>
           </Box>
         </Stack>
@@ -137,7 +168,7 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
             • {t("step4_summary.servicesLabel")}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {fmt(pricing.breakdown.serviceExtras ?? 0)}
+            {fmt(extrasTotal)}
           </Typography>
         </Stack>
 
@@ -146,11 +177,9 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
             • {t("step4_summary.shipping_fee", "Phí vận chuyển")}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {fmt(pricing.breakdown.shippingFee ?? (pricing as any).breakdown?.shippingFee ?? 0)}
+            {fmt(shippingFee)}
           </Typography>
         </Stack>
-
-      
 
         <Divider />
 
@@ -159,7 +188,7 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
             {t("step4_summary.totalLabel")}
           </Typography>
           <Typography variant="subtitle1" fontWeight={700}>
-            {fmt(pricing.total)}
+            {fmt(totalToDisplay)}
           </Typography>
         </Stack>
       </Stack>
@@ -184,7 +213,7 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
                   {b.label}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" display="block">
-                 {fmt(b.base)}
+                  {fmt(b.base)}
                 </Typography>
                 <Box mt={0.5}>
                   {b.productTypes && b.productTypes.length > 0 &&
@@ -225,7 +254,7 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
       <Stack spacing={1} mt={1} mb={2}>
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2">{t("step4_summary.box_count", "Số thùng")}</Typography>
-          <Typography variant="body2">{(pricing as any).breakdown?.boxCount ?? (pricing as any).boxCount ?? 0}</Typography>
+          <Typography variant="body2">{packageBoxes ?? (pricing as any).breakdown?.boxCount ?? (pricing as any).boxCount ?? 0}</Typography>
         </Stack>
 
         <Stack direction="row" justifyContent="space-between">
@@ -235,13 +264,11 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
 
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2">{t("step4_summary.shipping_fee", "Phí vận chuyển")}</Typography>
-          <Typography variant="body2">{fmt(pricing.breakdown.shippingFee ?? (pricing as any).breakdown?.shippingFee ?? 0)}</Typography>
+          <Typography variant="body2">{fmt(shippingFee)}</Typography>
         </Stack>
       </Stack>
 
       <Divider sx={{ my: 1 }} />
-
-    
     </RightCard>
   );
 }

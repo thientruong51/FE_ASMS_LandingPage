@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, Container, Stack, Button, Typography, CircularProgress } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import RoomCard from "./Step2RoomSelect/RoomCard";
-import { fetchServices, type ServiceApi } from "../../api/service"; 
+import { fetchServices, type ServiceApi } from "../../api/service";
 
 type RoomId = "small" | "medium" | "large";
 
@@ -13,7 +13,16 @@ export default function Step2PackageSelect({
 }: {
   room: { id: string; name: string; hasAC: boolean; type?: string };
   onBack: () => void;
-  onNext: (pkg: { id: string; name: string; price: string }) => void;
+  onNext: (pkg: {
+    id: string;
+    name: string;
+    price: string; 
+    rawPrice: number;
+    shelves: number;
+    boxes: number;
+    desc?: string;
+    model?: string;
+  }) => void;
 }) {
   const { t } = useTranslation("storageSize");
   const [services, setServices] = useState<ServiceApi[] | null>(null);
@@ -48,7 +57,7 @@ export default function Step2PackageSelect({
     fetchServices()
       .then((res) => {
         if (!mounted) return;
-        setServices(res);
+        setServices(res); 
       })
       .catch((err) => {
         console.error("[Step2] fetchServices error:", err);
@@ -67,7 +76,16 @@ export default function Step2PackageSelect({
 
   const formatVND = (n?: number | null) => (n == null ? "—" : n.toLocaleString("vi-VN") + " đ");
 
-  // --- chuẩn hóa roomId ---
+  function extractCounts(desc: string | null | undefined) {
+    if (!desc) return { shelves: 0, boxes: 0 };
+    const shelfMatch = desc.match(/(\d+)\s*kệ/i);
+    const boxMatch = desc.match(/(\d+)\s*thùng/i);
+    return {
+      shelves: shelfMatch ? Number(shelfMatch[1]) : 0,
+      boxes: boxMatch ? Number(boxMatch[1]) : 0,
+    };
+  }
+
   const roomId: RoomId | null = (() => {
     if (room.type === "small" || room.type === "medium" || room.type === "large") {
       return room.type as RoomId;
@@ -79,7 +97,6 @@ export default function Step2PackageSelect({
     return idMap[String(room.id)] ?? null;
   })();
 
-  // --- LOADING ---
   if (loading) {
     return (
       <Box sx={{ bgcolor: "#F9FAFB", py: 6 }}>
@@ -99,7 +116,9 @@ export default function Step2PackageSelect({
       <Box sx={{ bgcolor: "#F9FAFB", py: 6 }}>
         <Container>
           <Typography color="error">Không thể tải dữ liệu gói hoặc phòng không hợp lệ.</Typography>
-          <Button onClick={onBack} sx={{ mt: 2 }}>Quay lại</Button>
+          <Button onClick={onBack} sx={{ mt: 2 }}>
+            Quay lại
+          </Button>
         </Container>
       </Box>
     );
@@ -115,11 +134,16 @@ export default function Step2PackageSelect({
       <Box sx={{ bgcolor: "#F9FAFB", py: 6 }}>
         <Container>
           <Typography color="error">Không tìm thấy gói phù hợp.</Typography>
-          <Button onClick={onBack} sx={{ mt: 2 }}>Quay lại</Button>
+          <Button onClick={onBack} sx={{ mt: 2 }}>
+            Quay lại
+          </Button>
         </Container>
       </Box>
     );
   }
+
+  // bóc tách counts từ description
+  const counts = extractCounts(svc.description);
 
   const pkg = {
     serviceId: svc.serviceId,
@@ -128,6 +152,8 @@ export default function Step2PackageSelect({
     desc: svc.description ?? "",
     price: formatVND(svc.price),
     rawPrice: svc.price,
+    shelves: counts.shelves,
+    boxes: counts.boxes,
     model: room.hasAC ? modelMap[roomId].ac : modelMap[roomId].normal,
   };
 
@@ -151,7 +177,7 @@ export default function Step2PackageSelect({
             }
             price={pkg.price}
             model={pkg.model}
-            desc={pkg.desc}       
+            desc={pkg.desc}
             selected={selectedServiceId === pkg.serviceId}
             onSelect={() => setSelectedServiceId(pkg.serviceId)}
           />
@@ -169,6 +195,11 @@ export default function Step2PackageSelect({
                   id: pkg.id,
                   name: pkg.name,
                   price: pkg.price,
+                  rawPrice: pkg.rawPrice,
+                  shelves: pkg.shelves,
+                  boxes: pkg.boxes,
+                  desc: pkg.desc,
+                  model: pkg.model,
                 })
               }
             >
