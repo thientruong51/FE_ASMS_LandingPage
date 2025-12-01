@@ -17,6 +17,7 @@ import Header from "../../components/Header";
 import Footer from "../Home/Footer";
 import React from "react";
 
+// ====== TYPES ======
 
 export type ServiceSelection = { serviceId: number; name: string; price: number };
 
@@ -47,8 +48,8 @@ export type BoxInfo = {
 };
 
 export type BoxInfoExtended = BoxInfo & {
-  productTypes?: ProductTypeSelection[]; 
-  productTypeIds?: number[]; 
+  productTypes?: ProductTypeSelection[];
+  productTypeIds?: number[];
 };
 
 export type PriceBreakdown = {
@@ -91,13 +92,19 @@ export type BookingData = {
   pricing?: PriceBreakdown | null;
 
   rentalType?: "week" | "month" | "custom";
-  rentalWeeks?: number; 
-  rentalMonths?: number; 
-
+  rentalWeeks?: number;
+  rentalMonths?: number;
+  distanceInKm?: number | null;
   prevStep?: number;
+
+  // used only on full service
+  storageTypeId?: number | null;
+  paymentMethod?: string;
+  status?: string;
+  paymentStatus?: string;
 };
 
-
+// ====== MAIN COMPONENT ======
 
 export default function BookingPage() {
   const { t } = useTranslation("booking");
@@ -119,7 +126,8 @@ export default function BookingPage() {
 
     const back = () => setActive((s) => Math.max(s - 1, 0));
     const goTo = (index: number) => setActive(index);
-    const save = (patch: Partial<BookingData>) => setData((prev) => ({ ...prev, ...patch }));
+    const save = (patch: Partial<BookingData>) =>
+      setData((prev) => ({ ...prev, ...patch }));
 
     return { next, back, goTo, save };
   }, []);
@@ -188,7 +196,7 @@ export default function BookingPage() {
                       setActive(5);
                     }}
                   />
-                )} 
+                )}
 
                 {/* STEP 5: Custom 3D */}
                 {active === 4 && data.room && (
@@ -197,9 +205,19 @@ export default function BookingPage() {
                     onBack={() => handlers.goTo(2)}
                     onNext={(payload) => {
                       if (Array.isArray(payload)) {
-                        handlers.save({ customItems: payload, counts: undefined });
-                      } else if (payload && typeof payload === "object" && Array.isArray((payload as any).items)) {
-                        handlers.save({ customItems: (payload as any).items, counts: (payload as any).counts ?? undefined });
+                        handlers.save({
+                          customItems: payload,
+                          counts: undefined,
+                        });
+                      } else if (
+                        payload &&
+                        typeof payload === "object" &&
+                        Array.isArray((payload as any).items)
+                      ) {
+                        handlers.save({
+                          customItems: (payload as any).items,
+                          counts: (payload as any).counts ?? undefined,
+                        });
                       } else {
                         handlers.save({ customItems: payload as any });
                       }
@@ -218,7 +236,11 @@ export default function BookingPage() {
                       email: data.info?.email,
                       address: data.info?.address,
                       note: data.info?.note,
-                      services: Array.isArray(data.services) && typeof data.services[0] === "number" ? (data.services as number[]) : [],
+                      services:
+                        Array.isArray(data.services) &&
+                        typeof data.services[0] === "number"
+                          ? (data.services as number[])
+                          : [],
                       selectedDate: data.selectedDate ?? null,
                       rentalType: data.rentalType ?? undefined,
                       rentalWeeks: data.rentalWeeks ?? undefined,
@@ -230,82 +252,116 @@ export default function BookingPage() {
                     }}
                     onNext={(form) => {
                       handlers.save({
-                        info: { name: form.name, phone: form.phone, email: form.email, address: form.address, note: form.note },
+                        info: {
+                          name: form.name,
+                          phone: form.phone,
+                          email: form.email,
+                          address: form.address,
+                          note: form.note,
+                        },
                         services: form.services ?? [],
                         selectedDate: form.selectedDate ?? null,
                         rentalType: (form as any).rentalType ?? undefined,
                         rentalWeeks: (form as any).rentalWeeks ?? undefined,
                         rentalMonths: (form as any).rentalMonths ?? undefined,
+                        distanceInKm: (form as any).distanceInKm ?? null,
                       });
                       handlers.next();
                     }}
                   />
                 )}
 
-                {/* STEP 7: Summary */}
+                {/* STEP 7: SUMMARY */}
                 {active === 6 && (
                   <Step4Summary
                     data={data}
                     onBack={handlers.back}
-                    onConfirm={() => {
-                      console.log("BOOKING_PAYLOAD", data);
+                    onConfirm={(payload) => {
+                      if (payload?.pricing) {
+                        handlers.save({ pricing: payload.pricing });
+                      }
                       handlers.next();
                     }}
                   />
                 )}
 
-                {/* STEP 8: Success */}
+                {/* STEP 8: SUCCESS */}
                 {active === 7 && <Step5Success />}
               </>
             )}
 
-            {/* FULL SERVICE (BOX) FLOW */}
+            {/* FULL SERVICE FLOW */}
             {data.style === "full" && (
               <React.Fragment>
-                {/* STEP 2: Box select */}
+                {/* STEP 2: BOX SELECT */}
                 {active === 1 && (
                   <Step2BoxSelect
                     selected={data.boxes ?? []}
                     onBack={handlers.back}
                     onNext={(payload) => {
+                      const rawBoxes = Array.isArray(payload?.boxes)
+                        ? payload.boxes
+                        : [];
 
-                      const rawBoxes = Array.isArray(payload?.boxes) ? payload.boxes : [];
-                      const normalizedBoxes: BoxInfoExtended[] = rawBoxes.map((b: any) => {
-                        const productTypeIdsFromTypes =
-                          Array.isArray(b.productTypes) && b.productTypes.length > 0
-                            ? b.productTypes.map((pt: any) => pt.id ?? pt.productTypeId).filter((x: any) => x != null)
-                            : [];
+                      const normalizedBoxes: BoxInfoExtended[] = rawBoxes.map(
+                        (b: any) => {
+                          const ptIdsFromTypes =
+                            Array.isArray(b.productTypes) &&
+                            b.productTypes.length > 0
+                              ? b.productTypes
+                                  .map((pt: any) => pt.id ?? pt.productTypeId)
+                                  .filter((x: any) => x != null)
+                              : [];
 
-                        const ids =
-                          Array.isArray(b.productTypeIds) && b.productTypeIds.length > 0
-                            ? b.productTypeIds.map((x: any) => Number(x))
-                            : productTypeIdsFromTypes.map((x: any) => Number(x));
+                          const ids =
+                            Array.isArray(b.productTypeIds) &&
+                            b.productTypeIds.length > 0
+                              ? b.productTypeIds.map((x: any) => Number(x))
+                              : ptIdsFromTypes.map((x: any) => Number(x));
 
-                        return {
-                          id: String(b.id ?? b.containerTypeId ?? b.boxId ?? ""),
-                          label: b.label ?? b.name ?? "",
-                          price: Number(b.price ?? b.priceMonthValue ?? 0),
-                          quantity: Number(b.quantity ?? 1),
-                          imageUrl: b.imageUrl ?? b.modelUrl ?? null,
-                          productTypes: Array.isArray(b.productTypes) ? b.productTypes.map((pt: any) => ({
-                            id: Number(pt.id ?? pt.productTypeId),
-                            name: pt.name ?? pt.title ?? String(pt.id ?? pt.productTypeId),
-                            isFragile: pt.isFragile ?? pt.isFragile,
-                            canStack: pt.canStack ?? pt.canStack,
-                            description: pt.description ?? null,
-                          })) : undefined,
-                          productTypeIds: ids ?? [],
-                        } as BoxInfoExtended;
-                      });
+                          return {
+                            id: String(
+                              b.id ?? b.containerTypeId ?? b.boxId ?? ""
+                            ),
+                            label: b.label ?? b.name ?? "",
+                            price: Number(
+                              b.price ?? b.priceMonthValue ?? 0
+                            ),
+                            quantity: Number(b.quantity ?? 1),
+                            imageUrl: b.imageUrl ?? b.modelUrl ?? null,
+                            productTypes: Array.isArray(b.productTypes)
+                              ? b.productTypes.map((pt: any) => ({
+                                  id: Number(
+                                    pt.id ?? pt.productTypeId
+                                  ),
+                                  name:
+                                    pt.name ??
+                                    pt.title ??
+                                    String(
+                                      pt.id ?? pt.productTypeId
+                                    ),
+                                  isFragile: pt.isFragile,
+                                  canStack: pt.canStack,
+                                  description: pt.description ?? null,
+                                }))
+                              : undefined,
+                            productTypeIds: ids ?? [],
+                          } as BoxInfoExtended;
+                        }
+                      );
 
                       const masterProductTypes =
-                        Array.isArray(payload?.productTypes) ? payload.productTypes.map((pt: any) => ({
-                          id: Number(pt.productTypeId ?? pt.id),
-                          name: pt.name,
-                          isFragile: pt.isFragile,
-                          canStack: pt.canStack,
-                          description: pt.description ?? null,
-                        })) : (Array.isArray(payload?.productTypesList) ? payload.productTypesList : undefined);
+                        Array.isArray(payload?.productTypes)
+                          ? payload.productTypes.map((pt: any) => ({
+                              id: Number(pt.productTypeId ?? pt.id),
+                              name: pt.name,
+                              isFragile: pt.isFragile,
+                              canStack: pt.canStack,
+                              description: pt.description ?? null,
+                            }))
+                          : Array.isArray(payload?.productTypesList)
+                          ? payload.productTypesList
+                          : undefined;
 
                       const firstBox =
                         normalizedBoxes.length > 0
@@ -320,8 +376,10 @@ export default function BookingPage() {
                       handlers.save({
                         boxes: normalizedBoxes,
                         box: firstBox,
-                        boxPayload: payload, 
-                        productTypes: masterProductTypes ?? (data.productTypes ?? null),
+                        boxPayload: payload,
+                        productTypes:
+                          masterProductTypes ??
+                          (data.productTypes ?? null),
                       });
 
                       handlers.next();
@@ -329,7 +387,7 @@ export default function BookingPage() {
                   />
                 )}
 
-                {/* STEP 3: Info Form (box flow) */}
+                {/* STEP 3: INFO */}
                 {active === 2 && (
                   <Step3InfoForm
                     initial={{
@@ -339,7 +397,8 @@ export default function BookingPage() {
                       address: data.info?.address,
                       note: data.info?.note,
                       services:
-                        Array.isArray(data.services) && typeof data.services[0] === "number"
+                        Array.isArray(data.services) &&
+                        typeof data.services[0] === "number"
                           ? (data.services as number[])
                           : [],
                       selectedDate: data.selectedDate ?? null,
@@ -362,25 +421,28 @@ export default function BookingPage() {
                         rentalType: (form as any).rentalType ?? undefined,
                         rentalWeeks: (form as any).rentalWeeks ?? undefined,
                         rentalMonths: (form as any).rentalMonths ?? undefined,
+                        distanceInKm: (form as any).distanceInKm ?? null,
                       });
                       handlers.next();
                     }}
                   />
                 )}
 
-                {/* STEP 4: Summary */}
+                {/* STEP 4: SUMMARY */}
                 {active === 3 && (
                   <Step4Summary
                     data={data}
                     onBack={handlers.back}
-                    onConfirm={() => {
-                      console.log("BOOKING_PAYLOAD", data);
+                    onConfirm={(payload) => {
+                      if (payload?.pricing) {
+                        handlers.save({ pricing: payload.pricing });
+                      }
                       handlers.next();
                     }}
                   />
                 )}
 
-                {/* STEP 5: Success */}
+                {/* STEP 5: SUCCESS */}
                 {active === 4 && <Step5Success />}
               </React.Fragment>
             )}

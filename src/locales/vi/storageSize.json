@@ -40,7 +40,8 @@
       "tag": "PREMIUM"
     },
     "areaLabel": "Diện tích",
-    "priceLabel": "tháng"
+    "priceLabel": "tháng",
+    "decsLabel": "Gói dịch vụ"
   },
   "common": {
     "next": "Tiếp tục",

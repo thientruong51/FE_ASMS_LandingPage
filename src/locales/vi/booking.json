@@ -180,7 +180,19 @@
     "items_inferred_other": "Items khác (tự động tính)",
     "pay_shelf_label": "Giá kệ",
     "items_total_label": "Tổng giá items",
-    "servicesLabel": "Dịch vụ"
+    "servicesLabel": "Dịch vụ",
+    "items_explicit": "Giá hàng có giá rõ ràng",
+  "boxes_base": "Giá cơ bản thùng/kệ",
+  "surcharges_total": "Tổng phụ thu loại hàng",
+  "boxes_detail": "Chi tiết thùng / loại hàng",
+  "no_boxes_detail": "Không có thùng cụ thể",
+  "qty": "Số lượng",
+  "no_surcharge": "Không có phụ thu",
+  "surcharge_amount": "Số tiền phụ thu",
+  "shipping_fee": "Phí vận chuyển",
+  "shipping_detail": "Chi tiết vận chuyển",
+  "box_count": "Số thùng",
+  "distance": "Khoảng cách (km)"
   },
   "step5_success": {
     "title": "Đã Nhận Được Yêu Cầu Của Bạn!",

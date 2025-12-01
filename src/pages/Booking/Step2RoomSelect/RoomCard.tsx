@@ -50,6 +50,7 @@ export default function RoomCard({
   dimension,
   price,
   model,
+  desc,
   selected,
   onSelect,
   available,
@@ -59,6 +60,7 @@ export default function RoomCard({
   dimension: string;
   price: string;
   model: string;
+  desc?: string;
   selected: boolean;
   onSelect: () => void;
   available?: number;
@@ -87,7 +89,7 @@ export default function RoomCard({
   const name = t(`rooms.${type}.name`, { defaultValue: type });
   const areaLabel = t("rooms.areaLabel");
   const priceLabel = t("rooms.priceLabel");
-
+  const descLabel = t("rooms.decsLabel");
   return (
     <Paper
       ref={ref}
@@ -122,9 +124,8 @@ export default function RoomCard({
 
         {visible && (
           <Canvas
-            camera={{ position: [2, 2, 3], fov: 55 }}
+            camera={{ position: [2, 1, 3], fov: 60 }}
             onCreated={(state) => {
-
               (state.camera as any).controls = controlsRef.current;
             }}
           >
@@ -159,6 +160,13 @@ export default function RoomCard({
         <Typography variant="h6" fontWeight={700} color="primary.main">
           {name}
         </Typography>
+
+        {/* <-- added description display (if provided) --> */}
+        {desc && (
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+           {descLabel}: {desc}
+          </Typography>
+        )}
 
         <Typography variant="body2" color="text.secondary">
           {dimension}

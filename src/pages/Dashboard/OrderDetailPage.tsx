@@ -18,131 +18,122 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import TrackingTimeline from "./components/TrackingTimeline";
-import { fetchOrderDetails, fetchOrdersByCustomer } from "../../api/order.list"; // adjust path if needed
 import type { Order } from "./types";
-
+import { fetchOrderWithDetails } from "./components/api.helpers";
 
 const OrderDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation("dashboard");
 
   const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [openRenew, setOpenRenew] = React.useState(false);
-  const [openContact, setOpenContact] = React.useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [renewOpen, setRenewOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-    const load = async () => {
+
+    (async () => {
       setLoading(true);
-      setError(null);
-
       try {
-        if (!id) throw new Error("Order id is required");
-
-        // Option A: fetch list and find that order's summary (using customer token)
-        // then fetch details for the order. This avoids extra API endpoint call.
-        const page = await fetchOrdersByCustomer(1, 50); // try bigger pageSize to find the order if not in first 10
-        const found = page.data.find((o: any) => o.orderCode === id);
-        if (!found) throw new Error("Order not found");
-
-        const details = await fetchOrderDetails(id);
-        const items = (details ?? []).map((d: any, idx: number) => {
-          const qty =
-            d.containerQuantity ??
-            (typeof d.quantity === "string" ? Number(d.quantity) : d.quantity) ??
-            1;
-          return {
-            id: String(d.orderDetailId ?? idx),
-            name: d.containerCode ?? `Item ${d.orderDetailId ?? idx}`,
-            price: typeof d.price === "number" ? d.price : Number(d.price ?? 0),
-            qty: typeof qty === "number" ? qty : Number(qty || 1),
-            img: d.image ,
-          };
-        });
-
-        const mapped: Order = {
-          id: found.orderCode,
-          startDate: found.depositDate ?? found.orderDate ?? new Date().toISOString(),
-          endDate: found.returnDate ?? null,
-          status: found.status ?? "unknown",
-          kind: found.style === "self" ? "self" : "managed",
-          staff: undefined,
-          tracking: [],
-          items,
-        };
-
-        if (!mounted) return;
-        setOrder(mapped);
+        if (!id) throw new Error("OrderId missing");
+        const result = await fetchOrderWithDetails(id);
+        if (mounted) setOrder(result);
       } catch (err: any) {
-        console.error(err);
-        if (!mounted) return;
-        setError(err?.message ?? "Failed to load order");
+        if (mounted) setError(err?.message ?? "Failed to load order");
       } finally {
         if (mounted) setLoading(false);
       }
-    };
+    })();
 
-    load();
     return () => {
       mounted = false;
     };
   }, [id]);
 
-  if (loading) {
+  if (loading)
     return (
-      <Box py={6} textAlign="center">
+      <Box textAlign="center" py={6}>
         <CircularProgress />
       </Box>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
-      <Box py={4}>
-        <Typography color="error">{error}</Typography>
-      </Box>
+      <Typography color="error" py={3}>
+        {error}
+      </Typography>
     );
-  }
 
-  if (!order) {
-    return <Typography>Order not found</Typography>;
-  }
+  if (!order) return <Typography>Order not found</Typography>;
 
   return (
     <Stack spacing={3}>
-      <Paper sx={{ p: 3, borderRadius: 2 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
+      {/* Header */}
+      <Paper sx={{ p: 3 }}>
+        <Box display="flex" justifyContent="space-between">
           <Box>
             <Typography variant="h6" fontWeight={700}>
               {order.id}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography color="text.secondary">
               {order.kind === "managed" ? "Kho dịch vụ" : "Kho tự quản"}
             </Typography>
           </Box>
 
           <Box>
-            <Button variant="outlined" onClick={() => setOpenRenew(true)} sx={{ mr: 1 }}>
+            <Button variant="outlined" onClick={() => setRenewOpen(true)} sx={{ mr: 1 }}>
               {t("orderDetail.renewOrder")}
             </Button>
-            <Button variant="contained" onClick={() => setOpenContact(true)}>
+            <Button variant="contained" onClick={() => setContactOpen(true)}>
               {t("orderDetail.contactStaff")}
             </Button>
           </Box>
         </Box>
       </Paper>
 
+      {/* Tracking + Items */}
       <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-        <Paper sx={{ flex: 2, p: 3, borderRadius: 2 }}>
+        {/* Tracking */}
+        <Paper sx={{ flex: 2, p: 3 }}>
           <Typography variant="subtitle1" fontWeight={700} mb={2}>
             {t("orderDetail.tracking")}
           </Typography>
           <TrackingTimeline tracking={order.tracking} />
+
+          {/* Items */}
+          <Box mt={3}>
+            <Typography variant="subtitle1" fontWeight={700} mb={1}>
+              Items
+            </Typography>
+            <List>
+              {order.items.map((it) => (
+                <ListItem key={it.id} divider>
+                  <ListItemText
+                    primary={`${it.name} x${it.qty}`}
+                    secondary={
+                      <>
+                        <div>Price: {it.price}</div>
+                        {it.productTypeNames?.length ? (
+                          <div>Product Types: {it.productTypeNames.join(", ")}</div>
+                        ) : null}
+                        {it.serviceNames?.length ? (
+                          <div>Services: {it.serviceNames.join(", ")}</div>
+                        ) : null}
+                        <div>Placed: {it.isPlaced ? "Yes" : "No"}</div>
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </Paper>
 
-        <Paper sx={{ flex: 1, p: 3, borderRadius: 2 }}>
+        {/* Summary */}
+        <Paper sx={{ flex: 1, p: 3 }}>
           <Typography variant="subtitle1" fontWeight={700}>
             {t("orderDetail.summary")}
           </Typography>
@@ -154,39 +145,41 @@ const OrderDetailPage: React.FC = () => {
               <ListItemText primary={t("orderDetail.endDate")} secondary={order.endDate} />
             </ListItem>
             <ListItem>
-              <ListItemText primary={t("orderDetail.status")} secondary={order.status} />
+              <ListItemText
+                primary={t("orderDetail.status")}
+                secondary={order.displayStatus ?? order.status}
+              />
             </ListItem>
-            {order.staff && (
-              <ListItem>
-                <ListItemText
-                  primary={t("orderDetail.warehouseStaff")}
-                  secondary={`${order.staff.name} • ${order.staff.phone ?? "-"}`}
-                />
-              </ListItem>
-            )}
+            <ListItem>
+              <ListItemText primary="Total Price" secondary={order.rawSummary?.totalPrice ?? "-"} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Unpaid Amount" secondary={order.rawSummary?.unpaidAmount ?? "-"} />
+            </ListItem>
           </List>
         </Paper>
       </Stack>
 
-      {/* Dialogs */}
-      <Dialog open={openRenew} onClose={() => setOpenRenew(false)}>
+      {/* Dialog Renew */}
+      <Dialog open={renewOpen} onClose={() => setRenewOpen(false)}>
         <DialogTitle>{t("orderDetail.renewOrder")}</DialogTitle>
         <DialogContent>
-          <TextField label="Extend by (days)" type="number" fullWidth sx={{ mt: 1 }} />
+          <TextField fullWidth label="Extend by (days)" type="number" sx={{ mt: 1 }} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenRenew(false)}>{t("orderDetail.cancel")}</Button>
+          <Button onClick={() => setRenewOpen(false)}>{t("orderDetail.cancel")}</Button>
           <Button variant="contained">{t("orderDetail.send")}</Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={openContact} onClose={() => setOpenContact(false)}>
+      {/* Dialog Contact */}
+      <Dialog open={contactOpen} onClose={() => setContactOpen(false)}>
         <DialogTitle>{t("orderDetail.contactStaff")}</DialogTitle>
         <DialogContent>
-          <TextField label={t("orderDetail.messageLabel")} multiline minRows={4} fullWidth sx={{ mt: 1 }} />
+          <TextField multiline minRows={4} fullWidth sx={{ mt: 1 }} label={t("orderDetail.messageLabel")} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenContact(false)}>{t("orderDetail.cancel")}</Button>
+          <Button onClick={() => setContactOpen(false)}>{t("orderDetail.cancel")}</Button>
           <Button variant="contained">{t("orderDetail.send")}</Button>
         </DialogActions>
       </Dialog>

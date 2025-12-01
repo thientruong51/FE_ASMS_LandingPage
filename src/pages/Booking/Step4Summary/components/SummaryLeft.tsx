@@ -222,22 +222,39 @@ export default function SummaryLeft({
     return normalized;
   }
 
+  // ---- guarded effect: only call parent when we actually would change data.depositDate/returnDate ----
   useEffect(() => {
-    if (typeof onPayloadChange === "function") {
+    if (typeof onPayloadChange !== "function") return;
 
-      const depositDateExisting = (data as any).depositDate ?? (data as any).selectedDate ?? null;
-      const returnDateExisting = (data as any).returnDate ?? (data as any).endDate ?? null;
+    const depositDateExisting = (data as any).depositDate ?? (data as any).selectedDate ?? null;
+    const returnDateExisting = (data as any).returnDate ?? (data as any).endDate ?? null;
 
-      const depositDateToSet = depositDateExisting ?? se.startRaw ?? null;
-      const returnDateToSet = returnDateExisting ?? se.endRaw ?? null;
+    const depositDateToSet = depositDateExisting ?? se.startRaw ?? null;
+    const returnDateToSet = returnDateExisting ?? se.endRaw ?? null;
 
-      const patched: any = { ...data };
-      if (depositDateToSet != null) patched.depositDate = depositDateToSet;
-      if (returnDateToSet != null) patched.returnDate = returnDateToSet;
+    // Current values (explicitly read primitives)
+    const currentDeposit = (data as any).depositDate ?? null;
+    const currentReturn = (data as any).returnDate ?? null;
 
-      onPayloadChange(patched);
-    }
-  }, [data, se.startRaw, se.endRaw, onPayloadChange]);
+    const depositChanged = (depositDateToSet ?? null) !== (currentDeposit ?? null);
+    const returnChanged = (returnDateToSet ?? null) !== (currentReturn ?? null);
+
+    if (!depositChanged && !returnChanged) return;
+
+    const patched: any = { ...data };
+    if (depositDateToSet != null) patched.depositDate = depositDateToSet;
+    if (returnDateToSet != null) patched.returnDate = returnDateToSet;
+
+    onPayloadChange(patched);
+    // dependency array uses primitive fields to avoid running due to object identity changes
+  }, [
+    onPayloadChange,
+    (data as any).depositDate,
+    (data as any).returnDate,
+    (data as any).selectedDate,
+    se.startRaw,
+    se.endRaw,
+  ]);
 
   return (
     <TwoColWrap>
@@ -424,6 +441,31 @@ export default function SummaryLeft({
               </Typography>
             </Stack>
           )}
+
+          {/* ===== Contact block moved here (from SummaryRight) ===== */}
+          <Divider sx={{ mt: 2 }} />
+          <Stack spacing={0.4} mt={1}>
+  <Typography variant="subtitle2" fontWeight={700}>
+    {t("step4_summary.contactTitle")}
+  </Typography>
+
+  <Typography variant="body2">
+    <strong>{t("summary.name")}:</strong> {data.info?.name ?? "-"}
+  </Typography>
+  <Typography variant="body2">
+    <strong>{t("step3_info.fields.email")}:</strong> {data.info?.email ?? "-"}
+  </Typography>
+  <Typography variant="body2">
+    <strong>{t("summary.phone")}:</strong> {data.info?.phone ?? "-"}
+  </Typography>
+  <Typography variant="body2">
+    <strong>{t("step3_info.fields.address")}:</strong> {data.info?.address ?? "-"}
+  </Typography>
+  <Typography variant="body2">
+    <strong>{t("step3_info.fields.note")}:</strong> {data.info?.note ?? "-"}
+  </Typography>
+</Stack>
+          {/* ====================================================== */}
         </Stack>
       </LeftCard>
     </TwoColWrap>
