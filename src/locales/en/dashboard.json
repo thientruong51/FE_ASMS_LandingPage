@@ -1,75 +1,192 @@
 {
+  
+  "orderLabel": "Order #{{code}}",
+  "orderDate": "Order Date",
+  "returnDate": "Return Date",
+  "storage": "Storage",
+  "fullService": "Full service",
+  "selfService": "Self service",
+  "items": "Items",
+  "total": "Total",
+  "viewDetails": "View Details",
+  "pay": "Pay",
+  "checkoutTitle": "Checkout",
+  "noPaymentLink": "No payment link available.",
+  "close": "Close",
+  "moreItems": "+{{n}} more",
+  "floorLabel": "Floor: {{number}}",
+  "snack": {
+    "paymentCompleted": "Payment completed — updated.",
+    "pollingTimeout": "Payment polling timed out.",
+    "noOrderCodePayError": "No orderCode to create payment link.",
+    "openCheckout": "Opening checkout page.",
+    "createPayLinkError": "Error creating payment link."
+  },
+  "orderDetail": {
+    "summary": "Order summary",
+    "renewOrder": "Renew order",
+    "contactStaff": "Contact staff",
+    "tracking": "Tracking",
+    "orderInformation": "Order Information",
+    "pickupDate": "Pickup date",
+    "estimateDrop": "Estimate drop",
+    "returnAvailableTime": "Return available time",
+    "locations": "Locations",
+    "pickupLocation": "Pickup location",
+    "dropoffLocation": "Dropoff location",
+    "customerDetails": "Customer Details",
+    "fullName": "Full name",
+    "email": "E-mail",
+    "phoneNumber": "Phone number",
+    "itemList": "Item List",
+    "serviceWarehouse": "Service warehouse",
+    "selfStorage": "Self storage",
+    "allTotal": "ALL TOTAL",
+    "cancel": "Cancel",
+    "send": "Send",
+    "days": "Days",
+    "items": "Items",
+    "priceLabel": "Price",
+    "productTypes": "Product Types",
+    "services": "Services",
+    "placed": "Placed",
+    "yes": "Yes",
+    "no": "No",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "status": "Status",
+    "totalPrice": "Total Price",
+    "unpaidAmount": "Unpaid Amount",
+    "extendByDays": "Extend by (days)",
+    "messageLabel": "Message",
+    "notFound": "Order not found",
+    "errors": {
+      "missingOrderId": "OrderId missing",
+      "loadFailed": "Failed to load order"
+    }
+  },
+  "table": {
+    "no": "No",
+    "itemName": "Item Name",
+    "basePrice": "Base Price",
+    "quantity": "Quantity",
+    "total": "Total"
+  },
+  "loadingDetails": "Loading details...",
   "sidebar": {
     "dashboard": "Dashboard",
     "myOrders": "My Orders",
     "userInfo": "User Info",
-    "settings": "Settings",
     "contactWarehouse": "Contact Warehouse",
-    "goHome": "Go Home"
-
+    "goHome": "Go back Home",
+    "copyright": "© {{year}} ASMS"
   },
-  "dashboardPage": {
-    "welcome": "Welcome back, {{name}}!",
-    "activeOrders": "Active Orders",
-    "ordersInProgress": "Orders In Progress",
-    "nextExpiry": "Next Expiry",
-    "quickActions": "Quick Actions",
-    "newOrder": "New Order",
-    "callStaff": "Call Staff",
-    "renew": "Renew"
+  "notifications": {
+    "tooltip": "Notifications",
+    "aria": "notifications"
   },
-  "ordersPage": {
-    "title": "My Orders",
-    "filter": "Filter & Quick Actions",
-    "searchOrder": "Search Order",
-    "export": "Export",
-    "details": "Details",
-    "status": {
-      "created": "Created",
-      "pickup_scheduled": "Pickup Scheduled",
-      "picked": "Picked",
-      "in_warehouse": "In Warehouse",
-      "out_for_delivery": "Out For Delivery",
-      "delivered": "Delivered",
-      "expired": "Expired",
-      "cancelled": "Cancelled"
-    }
-  },
-  "orderDetail": {
-    "summary": "Order Summary",
-    "tracking": "Tracking",
-    "renewOrder": "Renew Order",
-    "contactStaff": "Contact Warehouse Staff",
-    "startDate": "Start Date",
-    
-    "endDate": "End Date",
-    "status": "Status",
-    "warehouseStaff": "Warehouse Staff",
-    "messageLabel": "Message",
-    "send": "Send",
-    "cancel": "Cancel"
-  },
-  "userInfo": {
-    "title": "User Info",
+  
+  "userMenu": {
     "profile": "Profile",
-    "name": "Name",
-    "email": "Email",
-    "phone": "Phone",
-    "history": "Order & Renewal History"
+    "logout": "Logout",
+    "open": "Open user menu"
   },
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "notification": "Notification Email",
-    "save": "Save Changes"
+    "defaultLanguage": "Vietnamese",
+    "notification": "Notification email",
+    "save": "Save"
   },
-  "contact": {
-    "title": "Contact Warehouse",
-    "formTitle": "Contact Form",
+  "ordersPage": {
+    "searchOrder": "Search orders",
+    "searchAria": "search orders",
+     "title": "Orders",
+    "filter": "Filter",
+    "all": "All",
+    "loadError": "Failed to load orders",
+    "noOrders": "No orders found"
+  },
+  "status": {
+    "Pending": "Pending",
+    "WaitPickUp": "Wait pick up",
+    "Verify": "Verify",
+    "Checkout": "Checkout",
+    "PickUp": "Pick up",
+    "Processing": "Processing",
+    "Stored": "Stored",
+    "Renting": "Renting",
+    "Overdue": "Overdue",
+    "ExpiredStorage": "Stored in expired storage",
+    "Retrieved": "Retrieved"
+  },
+  "tracking": {
+    "noTracking": "No tracking",
+    "payment": "Payment"
+  },
+   "contact": {
+    "title": "Contact",
+    "formTitle": "Send us a message",
     "subject": "Subject",
     "message": "Message",
     "send": "Send",
-    "onDuty": "On-Duty Staff",
-    "available": "Available 8:00 - 17:00"
+    "onDuty": "On-duty staff",
+    "personName": "{{name}}",
+    "available": "Available 24/7"
+  },
+  "dashboardPage": {
+    "loading": "Loading...",
+    "loadError": "Failed to load orders",
+    "activeOrders": "Active orders",
+    "activeOrdersDesc": "Total active orders",
+    "ordersInProgress": "Orders in progress",
+    "processingLabel": "Processing",
+    "nextExpiry": "Next expiry",
+    "expiresOn": "Expires",
+    "renew": "Renew",
+    "recentOrders": "Recent Orders",
+    "viewAll": "View all",
+    "noOrders": "No orders found",
+    "quickSummary": "Quick Summary",
+    "newOrder": "New Order",
+    "newOrderShort": "New"
+  },
+  "userInfo": {
+    "title": "Account Settings",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "location": "Location",
+      "customerCode": "Customer Code"
+    },
+    "actions": {
+      "save": "Save Changes",
+      "chooseImage": "Choose Image"
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm Password",
+      "action": "Change Password"
+    },
+    "messages": {
+      "updateSuccess": "Account updated successfully!",
+      "updateFailed": "Update failed. Please try again.",
+      "updateFailedWithDetails": "Update failed: {{details}}",
+      "serverReturned": "Server returned",
+      "serverError": "Server error",
+      "fillPasswords": "Please enter the current and new password.",
+      "passwordMismatch": "New password and confirmation do not match.",
+      "changePasswordSuccess": "Password changed successfully!",
+      "changePasswordFailed": "Change password failed"
+    },
+    "errors": {
+      "missingCustomerId": "Customer id missing. Cannot update."
+    }
   }
+   
+ 
+  
 }

@@ -1,4 +1,3 @@
-// src/pages/Dashboard/components/Topbar.tsx
 import React from "react";
 import {
   AppBar,
@@ -21,6 +20,8 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import AddIcon from "@mui/icons-material/Add";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { getAccessToken, logoutApi, clearTokens } from "../../../api/auth"; 
 
 type Props = {
   onMenu: () => void;
@@ -28,12 +29,108 @@ type Props = {
   searchPlaceholder?: string;
 };
 
+type UserInfo = {
+  name?: string | null;
+  email?: string | null;
+  picture?: string | null;
+};
+
+const parseJwtPayload = (token: string | null): any | null => {
+  if (!token) return null;
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) return null;
+    const payload = parts[1];
+    const b64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = b64.length % 4;
+    const padded = pad ? b64 + "=".repeat(4 - pad) : b64;
+    const json = atob(padded);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+};
+
+const makeInitials = (name?: string | null, email?: string | null) => {
+  if (name) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  if (email) return email.slice(0, 2).toUpperCase();
+  return "U";
+};
+
 const Topbar: React.FC<Props> = ({ onMenu, onNewOrder, searchPlaceholder }) => {
   const { t } = useTranslation("dashboard");
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+  const navigate = useNavigate();
 
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
+  const [user, setUser] = React.useState<UserInfo | null>(null);
+  const [loadingLogout, setLoadingLogout] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = getAccessToken();
+    const payload = parseJwtPayload(token);
+    if (payload) {
+      const name =
+        payload.name ??
+        payload.fullname ??
+        payload.preferred_username ??
+        payload.preferredName ??
+        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ??
+        null;
+
+      const email =
+        payload.email ??
+        payload.upn ??
+        payload.preferred_username ??
+        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] ??
+        null;
+
+      const picture =
+        payload.picture ??
+        payload.avatar ??
+        payload.photo ??
+        payload.profile_picture ??
+        null;
+
+      setUser({
+        name: typeof name === "string" ? name : null,
+        email: typeof email === "string" ? email : null,
+        picture: typeof picture === "string" ? picture : null,
+      });
+    } else {
+      setUser(null);
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    setLoadingLogout(true);
+    try {
+      await logoutApi();
+    } catch (err) {
+      console.error("logoutApi error:", err);
+    } finally {
+      clearTokens();
+      setLoadingLogout(false);
+      navigate("/");
+    }
+  };
+
+  const handleProfile = () => {
+    setAnchor(null);
+    navigate("/dashboard/userinfo");
+  };
+
+  const handleSettings = () => {
+    setAnchor(null);
+    navigate("/dashboard/settings");
+  };
+
+  const initials = makeInitials(user?.name, user?.email);
 
   return (
     <AppBar
@@ -76,15 +173,15 @@ const Topbar: React.FC<Props> = ({ onMenu, onNewOrder, searchPlaceholder }) => {
           <InputBase
             placeholder={searchPlaceholder ?? t("ordersPage.searchOrder")}
             sx={{ ml: 1, flex: 1, fontSize: { xs: 13, sm: 14 } }}
-            inputProps={{ "aria-label": "search orders" }}
+            inputProps={{ "aria-label": t("ordersPage.searchAria") }}
           />
         </Paper>
 
         <Box sx={{ flex: 1 }} />
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Tooltip title="Notifications">
-            <IconButton size={isSmUp ? "medium" : "small"}>
+          <Tooltip title={t("notifications.tooltip")}>
+            <IconButton size={isSmUp ? "medium" : "small"} aria-label={t("notifications.aria")}>
               <NotificationsNoneIcon />
             </IconButton>
           </Tooltip>
@@ -103,17 +200,37 @@ const Topbar: React.FC<Props> = ({ onMenu, onNewOrder, searchPlaceholder }) => {
               boxShadow: "0 8px 20px rgba(60,189,150,0.14)",
             }}
           >
-            {isSmUp ? t("dashboardPage.newOrder") : "New"}
+            {isSmUp ? t("dashboardPage.newOrder") : t("dashboardPage.newOrderShort")}
           </Button>
 
-          <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
-            <Avatar sx={{ bgcolor: theme.palette.primary.main, color: "#fff", width: 40, height: 40 }}>TK</Avatar>
+          <IconButton onClick={(e) => setAnchor(e.currentTarget)} aria-label={t("userMenu.open")}>
+            {user?.picture ? (
+              <Avatar src={user.picture} alt={user.name ?? user.email ?? "User"} sx={{ width: 40, height: 40 }} />
+            ) : (
+              <Avatar sx={{ bgcolor: theme.palette.primary.main, color: "#fff", width: 40, height: 40 }}>
+                {initials}
+              </Avatar>
+            )}
           </IconButton>
 
-          <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
-            <MenuItem>{t("userInfo.profile")}</MenuItem>
-            <MenuItem>{t("settings.title")}</MenuItem>
-            <MenuItem>Logout</MenuItem>
+          <Menu
+            anchorEl={anchor}
+            open={Boolean(anchor)}
+            onClose={() => setAnchor(null)}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem onClick={handleProfile}>{user?.name ?? user?.email ?? t("userMenu.profile")}</MenuItem>
+            <MenuItem onClick={handleSettings}>{t("settings.title")}</MenuItem>
+            <MenuItem
+              onClick={() => {
+                setAnchor(null);
+                handleLogout();
+              }}
+              disabled={loadingLogout}
+            >
+              {t("userMenu.logout")}
+            </MenuItem>
           </Menu>
         </Box>
       </Toolbar>

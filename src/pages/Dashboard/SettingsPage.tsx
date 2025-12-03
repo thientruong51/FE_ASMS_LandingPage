@@ -1,4 +1,3 @@
-// src/pages/Dashboard/SettingsPage.tsx
 import React from "react";
 import { Stack, Paper, Typography, TextField, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -14,9 +13,17 @@ const SettingsPage: React.FC = () => {
 
       <Paper sx={{ p: 3, borderRadius: 2, maxWidth: 640 }}>
         <Stack spacing={2}>
-          <TextField label={t("settings.language")} defaultValue="Tiếng Việt" />
-          <TextField label={t("settings.notification")} defaultValue="taosk@example.com" />
-          <Button variant="contained">{t("settings.save")}</Button>
+          <TextField
+            label={t("settings.language")}
+            defaultValue={t("settings.defaultLanguage")}
+          />
+          <TextField
+            label={t("settings.notification")}
+            defaultValue="taosk@example.com"
+          />
+          <Button variant="contained">
+            {t("settings.save")}
+          </Button>
         </Stack>
       </Paper>
     </Stack>

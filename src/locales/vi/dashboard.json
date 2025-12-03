@@ -1,73 +1,189 @@
 {
+  
+  "orderLabel": "Đơn hàng #{{code}}",
+  "orderDate": "Ngày đặt",
+  "returnDate": "Ngày trả",
+  "storage": "Hình thức lưu",
+  "fullService": "Dịch vụ trọn gói",
+  "selfService": "Kho tự quản",
+  "items": "Số món",
+  "total": "Tổng",
+  "viewDetails": "Xem chi tiết",
+  "pay": "Thanh toán",
+  "checkoutTitle": "Thanh toán",
+  "noPaymentLink": "Không có link thanh toán.",
+  "close": "Đóng",
+  "moreItems": "+{{n}} mục",
+  "floorLabel": "Tầng: {{number}}",
+  "snack": {
+    "paymentCompleted": "Thanh toán hoàn tất — cập nhật xong.",
+    "pollingTimeout": "Polling thanh toán đã hết thời gian.",
+    "noOrderCodePayError": "Không có orderCode để tạo link thanh toán.",
+    "openCheckout": "Mở trang thanh toán trong app.",
+    "createPayLinkError": "Lỗi khi tạo link thanh toán."
+  },
+   "orderDetail": {
+    "summary": "Tổng quan đơn hàng",
+    "renewOrder": "Gia hạn đơn",
+    "contactStaff": "Liên hệ nhân viên",
+    "tracking": "Theo dõi",
+    "orderInformation": "Thông tin đơn",
+    "pickupDate": "Ngày nhận",
+    "estimateDrop": "Thời gian ước tính",
+    "returnAvailableTime": "Thời gian trả dự kiến",
+    "locations": "Địa điểm",
+    "pickupLocation": "Địa điểm nhận",
+    "dropoffLocation": "Địa điểm trả",
+    "customerDetails": "Thông tin khách hàng",
+    "fullName": "Họ và tên",
+    "email": "E-mail",
+    "phoneNumber": "Số điện thoại",
+    "itemList": "Danh sách món",
+    "serviceWarehouse": "Kho dịch vụ",
+    "selfStorage": "Kho tự quản",
+    "allTotal": "TỔNG CỘNG",
+    "cancel": "Hủy",
+    "send": "Gửi",
+    "days": "ngày",
+    "items": "Danh sách món",
+    "priceLabel": "Giá",
+    "productTypes": "Loại sản phẩm",
+    "services": "Dịch vụ",
+    "placed": "Đã đặt",
+    "yes": "Có",
+    "no": "Không",
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "status": "Trạng thái",
+    "totalPrice": "Tổng tiền",
+    "unpaidAmount": "Số tiền chưa thanh toán",
+    "extendByDays": "Gia hạn (số ngày)",
+    "messageLabel": "Nội dung",
+    "notFound": "Không tìm thấy đơn hàng",
+    "errors": {
+      "missingOrderId": "Thiếu OrderId",
+      "loadFailed": "Tải đơn hàng thất bại"
+    }
+  },
+  "table": {
+    "no": "STT",
+    "itemName": "Tên mục",
+    "basePrice": "Giá cơ bản",
+    "quantity": "Số lượng",
+    "total": "Tổng"
+  },
+  "loadingDetails": "Đang tải chi tiết...",
   "sidebar": {
     "dashboard": "Bảng điều khiển",
     "myOrders": "Đơn hàng của tôi",
     "userInfo": "Thông tin người dùng",
-    "settings": "Cài đặt",
     "contactWarehouse": "Liên hệ kho",
-    "goHome": "Về trang chủ"
+    "goHome": "Về trang chủ",
+    "copyright": "© {{year}} ASMS"
   },
-  "dashboardPage": {
-    "welcome": "Chào mừng trở lại, {{name}}!",
-    "activeOrders": "Đơn hàng đang hoạt động",
-    "ordersInProgress": "Đơn đang xử lý",
-    "nextExpiry": "Đơn sắp hết hạn",
-    "quickActions": "Tác vụ nhanh",
-    "newOrder": "Tạo đơn mới",
-    "callStaff": "Gọi nhân viên",
-    "renew": "Gia hạn"
+   "notifications": {
+    "tooltip": "Thông báo",
+    "aria": "thông báo"
   },
-  "ordersPage": {
-    "title": "Đơn hàng của tôi",
-    "filter": "Lọc & hành động nhanh",
-    "searchOrder": "Tìm kiếm đơn hàng",
-    "export": "Xuất dữ liệu",
-    "details": "Chi tiết",
-    "status": {
-      "created": "Đã tạo",
-      "pickup_scheduled": "Đã lên lịch lấy hàng",
-      "picked": "Đã lấy hàng",
-      "in_warehouse": "Đang lưu kho",
-      "out_for_delivery": "Đang giao hàng",
-      "delivered": "Đã giao",
-      "expired": "Hết hạn",
-      "cancelled": "Đã hủy"
-    }
-  },
-  "orderDetail": {
-    "summary": "Tóm tắt đơn hàng",
-    "tracking": "Theo dõi trạng thái",
-    "renewOrder": "Gia hạn đơn",
-    "contactStaff": "Liên hệ nhân viên kho",
-    "startDate": "Ngày bắt đầu",
-    "endDate": "Ngày kết thúc",
-    "status": "Trạng thái",
-    "warehouseStaff": "Nhân viên phụ trách",
-    "messageLabel": "Tin nhắn",
-    "send": "Gửi",
-    "cancel": "Hủy"
-  },
-  "userInfo": {
-    "title": "Thông tin người dùng",
-    "profile": "Hồ sơ cá nhân",
-    "name": "Họ tên",
-    "email": "Email",
-    "phone": "Số điện thoại",
-    "history": "Lịch sử thuê kho"
+ 
+  "userMenu": {
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất",
+    "open": "Mở menu người dùng"
   },
   "settings": {
     "title": "Cài đặt",
     "language": "Ngôn ngữ",
-    "notification": "Email thông báo",
-    "save": "Lưu thay đổi"
+    "defaultLanguage": "Tiếng Việt",
+    "notification": "Email nhận thông báo",
+    "save": "Lưu"
   },
-  "contact": {
-    "title": "Liên hệ kho",
-    "formTitle": "Mẫu liên hệ",
+  "ordersPage": {
+    "searchOrder": "Tìm đơn",
+    "searchAria": "tìm đơn",
+    "title": "Đơn hàng",
+    "filter": "Bộ lọc",
+    "all": "Tất cả",
+    "loadError": "Tải đơn hàng thất bại",
+    "noOrders": "Không có đơn hàng"
+  },
+  "status": {
+    "Pending": "Chờ xử lý",
+    "WaitPickUp": "Chờ lấy",
+    "Verify": "Kiểm lại đơn",
+    "Checkout": "Thanh toán",
+    "PickUp": "Đã lấy",
+    "Processing": "Đang xử lý",
+    "Stored": "Đã lưu kho",
+    "Renting": "Đang thuê",
+    "Overdue": "Quá hạn",
+    "ExpiredStorage": "Lưu kho quá hạn",
+    "Retrieved": "Đã nhận lại"
+  },
+  "tracking": {
+    "noTracking": "Không có lịch sử",
+    "payment": "Thanh toán"
+  },
+   "contact": {
+    "title": "Liên hệ",
+    "formTitle": "Gửi tin nhắn cho chúng tôi",
     "subject": "Chủ đề",
-    "message": "Tin nhắn",
+    "message": "Nội dung",
     "send": "Gửi",
-    "onDuty": "Nhân viên trực ca",
-    "available": "Có mặt từ 8:00 - 17:00"
+    "onDuty": "Nhân viên trực",
+    "personName": "{{name}}",
+    "available": "Hỗ trợ 24/7"
+  },
+  "dashboardPage": {
+    "loading": "Đang tải...",
+    "loadError": "Tải đơn hàng thất bại",
+    "activeOrders": "Đơn đang hoạt động",
+    "activeOrdersDesc": "Tổng đơn đang hoạt động",
+    "ordersInProgress": "Đơn đang xử lý",
+    "processingLabel": "Đang xử lý",
+    "nextExpiry": "Đơn sắp hết hạn",
+    "expiresOn": "Hết hạn",
+    "renew": "Gia hạn",
+    "recentOrders": "Đơn gần đây",
+    "viewAll": "Xem tất cả",
+    "noOrders": "Không có đơn hàng",
+    "quickSummary": "Tóm tắt nhanh",
+     "newOrder": "Tạo đơn",
+    "newOrderShort": "Tạo"
+  },
+  "userInfo": {
+    "title": "Cài đặt tài khoản",
+    "fields": {
+      "name": "Họ và tên",
+      "email": "E-mail",
+      "phone": "Số điện thoại",
+      "location": "Địa chỉ",
+      "customerCode": "Mã khách hàng"
+    },
+    "actions": {
+      "save": "Lưu thay đổi",
+      "chooseImage": "Chọn ảnh"
+    },
+    "changePassword": {
+      "title": "Đổi mật khẩu",
+      "current": "Mật khẩu hiện tại",
+      "new": "Mật khẩu mới",
+      "confirm": "Xác nhận mật khẩu",
+      "action": "Đổi mật khẩu"
+    },
+    "messages": {
+      "updateSuccess": "Cập nhật thông tin thành công!",
+      "updateFailed": "Cập nhật thất bại. Vui lòng thử lại.",
+      "updateFailedWithDetails": "Cập nhật thất bại: {{details}}",
+      "serverReturned": "Server trả về",
+      "serverError": "Lỗi server",
+      "fillPasswords": "Vui lòng nhập mật khẩu hiện tại và mật khẩu mới.",
+      "passwordMismatch": "Mật khẩu mới và xác nhận không khớp.",
+      "changePasswordSuccess": "Đổi mật khẩu thành công!",
+      "changePasswordFailed": "Đổi mật khẩu thất bại"
+    },
+    "errors": {
+      "missingCustomerId": "Thiếu mã khách hàng. Không thể cập nhật."
+    }
   }
 }

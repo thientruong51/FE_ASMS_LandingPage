@@ -69,7 +69,7 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
       if (onSuccess) onSuccess();
 
       onClose();
-      navigate("/");
+      navigate("/dashboard");
 
     } else {
       setErr(res.errorMessage ?? (t("loginFailed") ?? "Đăng nhập thất bại"));

@@ -21,6 +21,13 @@ import TrackingTimeline from "./components/TrackingTimeline";
 import type { Order } from "./types";
 import { fetchOrderWithDetails } from "./components/api.helpers";
 
+const safeDate = (iso?: string | null) => {
+  if (!iso) return "-";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "-";
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+};
+
 const OrderDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation("dashboard");
@@ -38,11 +45,11 @@ const OrderDetailPage: React.FC = () => {
     (async () => {
       setLoading(true);
       try {
-        if (!id) throw new Error("OrderId missing");
+        if (!id) throw new Error(t("orderDetail.errors.missingOrderId"));
         const result = await fetchOrderWithDetails(id);
         if (mounted) setOrder(result);
       } catch (err: any) {
-        if (mounted) setError(err?.message ?? "Failed to load order");
+        if (mounted) setError(err?.message ?? t("orderDetail.errors.loadFailed"));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -51,7 +58,7 @@ const OrderDetailPage: React.FC = () => {
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [id, t]);
 
   if (loading)
     return (
@@ -67,19 +74,19 @@ const OrderDetailPage: React.FC = () => {
       </Typography>
     );
 
-  if (!order) return <Typography>Order not found</Typography>;
+  if (!order) return <Typography>{t("orderDetail.notFound")}</Typography>;
 
   return (
     <Stack spacing={3}>
       {/* Header */}
       <Paper sx={{ p: 3 }}>
-        <Box display="flex" justifyContent="space-between">
+        <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
           <Box>
             <Typography variant="h6" fontWeight={700}>
               {order.id}
             </Typography>
             <Typography color="text.secondary">
-              {order.kind === "managed" ? "Kho dịch vụ" : "Kho tự quản"}
+              {order.kind === "managed" ? t("orderDetail.serviceWarehouse") : t("orderDetail.selfStorage")}
             </Typography>
           </Box>
 
@@ -101,12 +108,12 @@ const OrderDetailPage: React.FC = () => {
           <Typography variant="subtitle1" fontWeight={700} mb={2}>
             {t("orderDetail.tracking")}
           </Typography>
-          <TrackingTimeline tracking={order.tracking} />
+          <TrackingTimeline tracking={order.tracking} order={order} />
 
           {/* Items */}
           <Box mt={3}>
             <Typography variant="subtitle1" fontWeight={700} mb={1}>
-              Items
+              {t("orderDetail.items")}
             </Typography>
             <List>
               {order.items.map((it) => (
@@ -115,14 +122,22 @@ const OrderDetailPage: React.FC = () => {
                     primary={`${it.name} x${it.qty}`}
                     secondary={
                       <>
-                        <div>Price: {it.price}</div>
+                        <div>
+                          {t("orderDetail.priceLabel")}: {it.price != null ? it.price : "-"}
+                        </div>
                         {it.productTypeNames?.length ? (
-                          <div>Product Types: {it.productTypeNames.join(", ")}</div>
+                          <div>
+                            {t("orderDetail.productTypes")}: {it.productTypeNames.join(", ")}
+                          </div>
                         ) : null}
                         {it.serviceNames?.length ? (
-                          <div>Services: {it.serviceNames.join(", ")}</div>
+                          <div>
+                            {t("orderDetail.services")}: {it.serviceNames.join(", ")}
+                          </div>
                         ) : null}
-                        <div>Placed: {it.isPlaced ? "Yes" : "No"}</div>
+                        <div>
+                          {t("orderDetail.placed")}: {it.isPlaced ? t("orderDetail.yes") : t("orderDetail.no")}
+                        </div>
                       </>
                     }
                   />
@@ -139,10 +154,10 @@ const OrderDetailPage: React.FC = () => {
           </Typography>
           <List>
             <ListItem>
-              <ListItemText primary={t("orderDetail.startDate")} secondary={order.startDate} />
+              <ListItemText primary={t("orderDetail.startDate")} secondary={safeDate(order.startDate)} />
             </ListItem>
             <ListItem>
-              <ListItemText primary={t("orderDetail.endDate")} secondary={order.endDate} />
+              <ListItemText primary={t("orderDetail.endDate")} secondary={safeDate(order.endDate)} />
             </ListItem>
             <ListItem>
               <ListItemText
@@ -151,10 +166,10 @@ const OrderDetailPage: React.FC = () => {
               />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Total Price" secondary={order.rawSummary?.totalPrice ?? "-"} />
+              <ListItemText primary={t("orderDetail.totalPrice")} secondary={order.rawSummary?.totalPrice ?? "-"} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Unpaid Amount" secondary={order.rawSummary?.unpaidAmount ?? "-"} />
+              <ListItemText primary={t("orderDetail.unpaidAmount")} secondary={order.rawSummary?.unpaidAmount ?? "-"} />
             </ListItem>
           </List>
         </Paper>
@@ -164,7 +179,7 @@ const OrderDetailPage: React.FC = () => {
       <Dialog open={renewOpen} onClose={() => setRenewOpen(false)}>
         <DialogTitle>{t("orderDetail.renewOrder")}</DialogTitle>
         <DialogContent>
-          <TextField fullWidth label="Extend by (days)" type="number" sx={{ mt: 1 }} />
+          <TextField fullWidth label={t("orderDetail.extendByDays")} type="number" sx={{ mt: 1 }} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setRenewOpen(false)}>{t("orderDetail.cancel")}</Button>
