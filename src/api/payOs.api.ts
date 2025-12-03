@@ -11,10 +11,13 @@ export type CreatePayLinkResult = {
   raw?: any;
 };
 
-type PayOsResultResponse = {
+export type PayOsResultResponse = {
   status?: string;
   paymentCode?: string;
+  orderCode?: string;
+  url?: string;
   amount?: number;
+  message?: string;
   raw?: any;
 };
 
@@ -39,8 +42,8 @@ export async function createPayLink(orderCode: string): Promise<CreatePayLinkRes
 
   const data = res.data;
 
-  // phù hợp với JSON bạn đưa: { paymentCode: ..., checkoutUrl: "..." }
-  const paymentCode = data?.paymentCode ?? data?.payment_id ?? data?.paymentCodeRaw ?? null;
+  // support multiple possible names from providers/backend
+  const paymentCode = data?.paymentCode ?? data?.payment_id ?? data?.payment_code ?? data?.paymentCodeRaw ?? null;
   const checkoutUrl = data?.checkoutUrl ?? data?.url ?? data?.paymentUrl ?? data?.link ?? null;
 
   if ((!checkoutUrl || typeof checkoutUrl !== "string") || (paymentCode == null)) {
@@ -53,6 +56,7 @@ export async function createPayLink(orderCode: string): Promise<CreatePayLinkRes
 
 /**
  * Get payment result by paymentCode.
+ * Normalizes various provider/backend shapes into PayOsResultResponse.
  */
 export async function getPaymentResult(paymentCode: string | number): Promise<PayOsResultResponse> {
   const url = `${BASE}/api/PayOs/result/${encodeURIComponent(String(paymentCode))}`;
@@ -64,5 +68,27 @@ export async function getPaymentResult(paymentCode: string | number): Promise<Pa
     },
   });
 
-  return res.data ?? { raw: res.data };
+  const data = res?.data ?? {};
+
+  // If the API returns a string (rare), try parse
+  const payload = typeof data === "string" ? (() => {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return { raw: data };
+    }
+  })() : data;
+
+  // Normalize
+  const normalized: PayOsResultResponse = {
+    status: payload?.status ?? payload?.paymentStatus ?? payload?.statusCode ?? undefined,
+    paymentCode: payload?.paymentCode ?? payload?.payment_id ?? payload?.payment_code ?? undefined,
+    orderCode: payload?.orderCode ?? payload?.order_code ?? payload?.order_id ?? undefined,
+    url: payload?.url ?? payload?.redirectUrl ?? payload?.paymentUrl ?? undefined,
+    amount: payload?.amount ?? payload?.total ?? undefined,
+    message: payload?.message ?? undefined,
+    raw: payload,
+  };
+
+  return normalized;
 }

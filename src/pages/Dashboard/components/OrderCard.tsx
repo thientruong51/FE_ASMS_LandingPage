@@ -1,5 +1,5 @@
 // src/components/OrderCard.tsx
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Paper,
   Box,
@@ -11,9 +11,16 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import type { Order as UIOrder, Item as UIItem } from "../types";
-import { createPayLink, getPaymentResult } from "../../../api/payOs.api";
+import { createPayLink } from "../../../api/payOs.api";
+import { fetchOrderByCode, fetchOrdersByCustomer } from "../../../api/order.list";
 
 /** minimal status meta for badge color/label */
 const statusMeta = (s?: string) => {
@@ -45,21 +52,37 @@ const formatMoney = (n?: number) => {
 interface OrderCardProps {
   order: UIOrder;
   onOpenDetail?: (order: UIOrder) => void;
-  // optional callback when paymentCode is created so parent store it if needed
-  onPaymentCodeCreated?: (orderId: string | number, paymentCode: string | number) => void;
+ 
+  pollIntervalMs?: number; 
+  pollTimeoutMs?: number; 
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCodeCreated }) => {
+const OrderCard: React.FC<OrderCardProps> = ({
+  order: initialOrder,
+  onOpenDetail,
+  pollIntervalMs = 2000,
+  pollTimeoutMs = 60000,
+}) => {
+  // local order state so we can reload it when payment completes
+  const [order, setOrder] = useState<any>(initialOrder);
+  useEffect(() => setOrder(initialOrder), [initialOrder]);
+
   const [loadingPay, setLoadingPay] = useState(false);
-  const [checkingPayment, setCheckingPayment] = useState(false);
-  const [snack, setSnack] = useState<{ open: boolean; severity?: "success" | "error" | "info"; message: string }>({
-    open: false,
-    severity: "info",
-    message: "",
-  });
+  const [snack, setSnack] = useState<{ open: boolean; severity?: "success" | "error" | "info"; message: string }>(
+    { open: false, severity: "info", message: "" }
+  );
+
+  // iframe/dialog state
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [iframeLoading, setIframeLoading] = useState(true);
+
+  // polling refs
+  const pollingRef = useRef<number | null>(null);
+  const pollStartRef = useRef<number | null>(null);
+  const closedByUserRef = useRef(false);
 
   // Normalize items (still map backend keys to UI-friendly shape)
-  const rawItems: any[] = Array.isArray((order as any).items) ? (order as any).items : [];
+  const rawItems: any[] = Array.isArray(order?.items) ? order.items : [];
   const items: UIItem[] = rawItems.map((it: any, idx: number) => {
     const qty = Number(it.quantity ?? it.qty ?? 1) || 1;
     const price = Number(it.price ?? it.basePrice ?? 0) || 0;
@@ -79,20 +102,154 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCod
   });
 
   // compact total (prefer backend if available)
-  const backendTotal = (order as any).rawSummary?.totalPrice ?? (order as any).totalPrice ?? null;
+  const backendTotal = order?.rawSummary?.totalPrice ?? order?.totalPrice ?? null;
   const total =
     backendTotal != null
       ? backendTotal
       : items.reduce((s: number, it: any) => s + (Number(it.price ?? 0) || 0) * (Number(it.qty ?? 1) || 1), 0);
 
-  const ds = (order as any).displayStatus ?? order.status;
+  const ds = order?.displayStatus ?? order?.status;
   const chip = statusMeta(ds);
 
-  // derive orderCode and paymentCode from order object (common keys)
-  const orderCode = (order as any).code ?? (order as any).orderCode ?? order.id;
-  // paymentCode may be on order already; we will also update local state if we create one
-  const initialPaymentCode = (order as any).paymentCode ?? (order as any).payment?.paymentCode ?? null;
-  const [paymentCode, setPaymentCode] = useState<string | number | null>(initialPaymentCode);
+  // derive orderCode
+  const orderCode = order?.orderCode ?? order?.code ?? order?.id;
+
+  // --- NEW: normalize paymentStatus and isPaid ---
+  const paymentStatusRaw = order?.paymentStatus ?? order?.payment?.paymentStatus ?? order?.status ?? null;
+  const paymentStatus = paymentStatusRaw != null ? String(paymentStatusRaw) : null;
+  const isPaid = paymentStatus?.toUpperCase() === "PAID";
+
+  // reloadOrder: prefer GET /api/Order/{orderCode}, fallback to list search
+  const reloadOrder = async (): Promise<any> => {
+    try {
+      if (!orderCode) {
+        console.debug("[OrderCard] reloadOrder: no orderCode");
+        return null;
+      }
+
+      console.debug("[OrderCard] reloadOrder: try fetchOrderByCode", orderCode);
+
+      // 1) try endpoint GET /api/Order/{orderCode}
+      try {
+        const fresh = await fetchOrderByCode(String(orderCode));
+        if (fresh) {
+          console.debug("[OrderCard] reloadOrder: fetched by code", fresh);
+          setOrder((prev: any) => ({ ...prev, ...fresh }));
+          try { window.dispatchEvent(new CustomEvent("order:updated", { detail: fresh })); } catch {}
+          return fresh;
+        }
+      } catch (err) {
+        console.warn("[OrderCard] fetchOrderByCode failed, fallback to list", err);
+      }
+
+      // 2) fallback: fetchOrdersByCustomer and find the order in list
+      try {
+        console.debug("[OrderCard] reloadOrder: fallback fetchOrdersByCustomer");
+        const page = 1;
+        const pageSize = 100;
+        const res = await fetchOrdersByCustomer(page, pageSize);
+        const fresh = (res?.data ?? []).find(
+          (o: any) =>
+            o.orderCode === orderCode ||
+            o.orderCode === order?.orderCode ||
+            o.orderCode === String(order?.id)
+        );
+        if (!fresh) {
+          console.warn("[OrderCard] reloadOrder: not found in list fallback");
+          return null;
+        }
+        console.debug("[OrderCard] reloadOrder: found in list fallback", fresh);
+        setOrder((prev: any) => ({ ...prev, ...fresh }));
+        try { window.dispatchEvent(new CustomEvent("order:updated", { detail: fresh })); } catch {}
+        return fresh;
+      } catch (err) {
+        console.error("[OrderCard] reloadOrder fallback error", err);
+        return null;
+      }
+    } catch (e) {
+      console.error("[OrderCard] reloadOrder error", e);
+      return null;
+    }
+  };
+
+  // Polling - checks server for PAID
+  const startPollingForPaid = () => {
+    if (!orderCode) {
+      console.debug("[OrderCard] startPollingForPaid: no orderCode");
+      return;
+    }
+    stopPolling();
+    pollStartRef.current = Date.now();
+    closedByUserRef.current = false;
+
+    console.debug("[OrderCard] PAY POLL START", { orderCode, pollIntervalMs, pollTimeoutMs });
+
+    const doPoll = async () => {
+      try {
+        const fresh = await reloadOrder();
+        const freshPaymentStatus =
+          fresh?.paymentStatus ?? fresh?.payment?.paymentStatus ?? fresh?.status ?? null;
+        const normalized = freshPaymentStatus != null ? String(freshPaymentStatus).toUpperCase() : null;
+
+        console.debug("[OrderCard] poll check", { normalized });
+
+        if (normalized === "PAID") {
+          console.debug("[OrderCard] detected PAID -> will auto-close in 3s");
+          stopPolling();
+          if (fresh) setOrder((prev: any) => ({ ...prev, ...fresh }));
+          setTimeout(() => {
+            if (!closedByUserRef.current) {
+              setCheckoutUrl(null);
+              setSnack({ open: true, severity: "success", message: "Thanh toán hoàn tất — cập nhật xong." });
+            }
+          }, 3000);
+        } else {
+          const started = pollStartRef.current ?? 0;
+          if (Date.now() - started > pollTimeoutMs) {
+            stopPolling();
+            console.debug("[OrderCard] PAY POLL TIMEOUT");
+            setSnack({ open: true, severity: "info", message: "Polling thanh toán đã hết thời gian." });
+          }
+        }
+      } catch (e) {
+        console.error("[OrderCard] poll error", e);
+      }
+    };
+
+    // immediate + interval
+    void doPoll();
+    const id = window.setInterval(doPoll, pollIntervalMs);
+    pollingRef.current = id;
+  };
+
+  const stopPolling = () => {
+    if (pollingRef.current != null) {
+      window.clearInterval(pollingRef.current);
+      pollingRef.current = null;
+      console.debug("[OrderCard] PAY POLL STOP");
+    }
+    pollStartRef.current = null;
+  };
+
+  useEffect(() => {
+    return () => {
+      stopPolling();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (checkoutUrl) {
+      startPollingForPaid();
+    } else {
+      closedByUserRef.current = true;
+      stopPolling();
+      setIframeLoading(true);
+      // final refresh when dialog closed
+      void reloadOrder();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkoutUrl]);
 
   // --- Payment handler ---
   const handlePay = async () => {
@@ -103,26 +260,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCod
 
     setLoadingPay(true);
     try {
-      const { checkoutUrl, paymentCode: createdPaymentCode } = await createPayLink(orderCode);
+      const { checkoutUrl: url } = await createPayLink(orderCode);
 
-      // open payment page in new tab
-      window.open(checkoutUrl, "_blank", "noopener");
-
-      // set paymentCode into local state so Check Payment becomes available
-      setPaymentCode(createdPaymentCode);
-
-      // notify parent (optional) to persist paymentCode to order model / server-side, if provided
-      try {
-        onPaymentCodeCreated?.((order as any).id ?? orderCode, createdPaymentCode);
-      } catch (e) {
-        // ignore errors from callback
-        console.debug("onPaymentCodeCreated callback error", e);
-      }
+      // open checkout inside in-app dialog via iframe
+      setCheckoutUrl(url ?? null);
+      setIframeLoading(true);
 
       setSnack({
         open: true,
         severity: "success",
-        message: `Link thanh toán đã mở. paymentCode=${createdPaymentCode}`,
+        message: `Mở trang thanh toán trong app.`,
       });
     } catch (err: any) {
       console.error("createPayLink error:", err);
@@ -133,27 +280,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCod
     }
   };
 
-  const handleCheckPayment = async () => {
-    if (!paymentCode) {
-      setSnack({ open: true, severity: "info", message: "Không có paymentCode trong đơn để kiểm tra." });
-      return;
-    }
-
-    setCheckingPayment(true);
-    try {
-      const result = await getPaymentResult(paymentCode);
-      const status = result?.status ?? (result as any).paymentStatus ?? "unknown";
-      const amount = result?.amount ?? null;
-      const msg = `PaymentCode: ${paymentCode} — status: ${status}` + (amount ? ` — amount: ${amount}` : "");
-      setSnack({ open: true, severity: "success", message: msg });
-      console.debug("PayOs result:", result);
-    } catch (err: any) {
-      console.error("getPaymentResult error:", err);
-      const msg = err?.response?.data?.message ?? err?.message ?? "Lỗi khi lấy kết quả thanh toán.";
-      setSnack({ open: true, severity: "error", message: msg });
-    } finally {
-      setCheckingPayment(false);
-    }
+  const closeCheckoutDialog = () => {
+    closedByUserRef.current = true;
+    setCheckoutUrl(null);
+    setIframeLoading(true);
   };
 
   return (
@@ -185,21 +315,21 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCod
             </Box>
 
             <Typography variant="subtitle2" fontWeight={700}>
-              #{order.id}
+              #{order?.orderCode ?? order?.id}
             </Typography>
 
             <Box display="flex" gap={2} mt={1} flexWrap="wrap">
               <Box>
                 <Typography variant="caption" color="text.secondary">Order Date</Typography>
                 <Typography variant="body2" sx={{ mt: 0.2 }}>
-                  {order.startDate ? new Date(order.startDate).toLocaleDateString() : "-"}
+                  {order?.orderDate ? new Date(order.orderDate).toLocaleDateString() : "-"}
                 </Typography>
               </Box>
 
               <Box>
                 <Typography variant="caption" color="text.secondary">Return Date</Typography>
                 <Typography variant="body2" sx={{ mt: 0.2 }}>
-                  {order.endDate ? new Date(order.endDate).toLocaleDateString() : "-"}
+                  {order?.returnDate ? new Date(order.returnDate).toLocaleDateString() : "-"}
                 </Typography>
               </Box>
             </Box>
@@ -208,7 +338,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCod
               <Box>
                 <Typography variant="caption" color="text.secondary">Storage</Typography>
                 <Typography variant="body2" sx={{ mt: 0.2 }}>
-                  {order.kind === "managed" ? "Full service" : "Self service"}
+                  {order?.style === "managed" || order?.kind === "managed" ? "Full service" : "Self service"}
                 </Typography>
               </Box>
 
@@ -262,21 +392,54 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onOpenDetail, onPaymentCod
             View Details
           </Button>
 
-          <Button size="small" variant="contained" onClick={handlePay} disabled={loadingPay}>
-            {loadingPay ? <CircularProgress size={18} /> : "Pay"}
-          </Button>
-
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={handleCheckPayment}
-            disabled={checkingPayment || !paymentCode}
-            title={!paymentCode ? "No paymentCode attached to order" : undefined}
-          >
-            {checkingPayment ? <CircularProgress size={18} /> : "Check Payment"}
-          </Button>
+          {/* Pay button only when not paid */}
+          {!isPaid && (
+            <Button size="small" variant="contained" onClick={handlePay} disabled={loadingPay}>
+              {loadingPay ? <CircularProgress size={18} /> : "Pay"}
+            </Button>
+          )}
         </Box>
       </Paper>
+
+      {/* Checkout dialog with iframe */}
+      <Dialog
+        open={Boolean(checkoutUrl)}
+        onClose={closeCheckoutDialog}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{ sx: { height: { xs: "80vh", md: "80vh" } } }}
+      >
+        <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pr: 1 }}>
+          Thanh toán
+          <IconButton size="small" onClick={closeCheckoutDialog}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent sx={{ p: 0, height: "100%", position: "relative" }}>
+          {checkoutUrl ? (
+            <iframe
+              title="checkout"
+              src={checkoutUrl}
+              style={{ width: "100%", height: "100%", border: 0 }}
+              onLoad={() => setIframeLoading(false)}
+            />
+          ) : (
+            <Box p={2}>
+              <Typography>Không có link thanh toán.</Typography>
+            </Box>
+          )}
+          {iframeLoading && checkoutUrl && (
+            <Box sx={{ position: "absolute", left: 0, right: 0, top: 56, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <CircularProgress />
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={closeCheckoutDialog}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snack.open}

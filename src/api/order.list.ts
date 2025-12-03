@@ -121,6 +121,15 @@ export const fetchOrdersByCustomer = async (
   return res.data as PagedResult<OrderSummary>;
 };
 
+export const fetchOrderByCode = async (orderCode: string): Promise<any> => {
+  if (!orderCode) throw new Error("orderCode is required");
+  const res = await api.get(`/api/Order/${encodeURIComponent(orderCode)}`);
+  const payload = res.data ?? null;
+  if (!payload) return null;
+  if (payload.data && typeof payload.data === "object") return payload.data;
+  return payload;
+};
+
 export const fetchOrderDetails = async (orderCode: string): Promise<OrderDetailApi[]> => {
   if (!orderCode) throw new Error("orderCode is required");
 
