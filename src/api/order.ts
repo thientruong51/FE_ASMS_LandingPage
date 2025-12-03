@@ -379,8 +379,7 @@ export async function buildOrderPayloadFromBooking(
     depositDate: bookingData?.depositDate ?? bookingData?.selectedDate ?? null,
     returnDate: bookingData?.returnDate ?? bookingData?.endDate ?? null,
     status: extras?.status ?? bookingData?.status ?? "",
-    paymentStatus:
-      extras?.paymentStatus ?? bookingData?.paymentStatus ?? (extras?.paymentMethod === "card" ? "Paid" : "Pending"),
+    paymentStatus:extras?.paymentStatus ?? bookingData?.paymentStatus ?? "UnPaid",
 
     storageTypeId: toNumberSafe(bookingData?.storageTypeId) ?? mapRoomToStorageTypeId(bookingData?.room) ?? null,
     shelfTypeId: 1,

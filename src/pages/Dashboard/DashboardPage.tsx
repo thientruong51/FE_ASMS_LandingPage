@@ -1,4 +1,3 @@
-// src/pages/DashboardPage.tsx
 import React, { useEffect, useState } from "react";
 import {
   Box, Paper, Typography, Stack, Button,
@@ -19,7 +18,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // modal state
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
   const [open, setOpen] = React.useState(false);
 
@@ -28,18 +26,18 @@ export default function DashboardPage() {
     (async () => {
       setLoading(true);
       try {
-        const data = await fetchOrdersWithDetails(1, 50); // page, pageSize
+        const data = await fetchOrdersWithDetails(1, 50); 
         if (!mounted) return;
         setOrders(data);
       } catch (err: any) {
         if (!mounted) return;
-        setError(err?.message ?? "Failed to load orders");
+        setError(err?.message ?? t("dashboardPage.loadError"));
       } finally {
         if (mounted) setLoading(false);
       }
     })();
     return () => { mounted = false; };
-  }, []);
+  }, [t]);
 
   const activeOrders = orders.filter((o) => !["delivered", "expired", "cancelled"].includes(o.status ?? ""));
   const ordersInProgress = orders.filter((o) => ["pickup_scheduled", "picked", "in_warehouse", "out_for_delivery"].includes(o.status ?? ""));
@@ -51,7 +49,7 @@ export default function DashboardPage() {
   return (
     <Stack spacing={3}>
       {loading ? (
-        <Box textAlign="center" py={6}><Typography>Loading...</Typography></Box>
+        <Box textAlign="center" py={6}><Typography>{t("dashboardPage.loading")}</Typography></Box>
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : null}
@@ -60,14 +58,14 @@ export default function DashboardPage() {
         <Paper sx={{ p: 2, borderRadius: 2 }}>
           <Typography variant="caption" color="text.secondary">{t("dashboardPage.activeOrders")}</Typography>
           <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>{activeOrders.length}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>Tổng đơn đang hoạt động</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{t("dashboardPage.activeOrdersDesc")}</Typography>
         </Paper>
 
         <Paper sx={{ p: 2, borderRadius: 2 }}>
-          <Typography variant="caption" color="text.secondary">{t("dashboardPage.ordersInProgress") ?? "Orders in progress"}</Typography>
+          <Typography variant="caption" color="text.secondary">{t("dashboardPage.ordersInProgress")}</Typography>
           <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>{ordersInProgress.length}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Đang xử lý: {ordersInProgress.map((o) => o.id).slice(0, 3).join(", ")}
+            {t("dashboardPage.processingLabel")}: {ordersInProgress.map((o) => o.id).slice(0, 3).join(", ")}
             {ordersInProgress.length > 3 ? ` +${ordersInProgress.length - 3}` : ""}
           </Typography>
         </Paper>
@@ -76,7 +74,7 @@ export default function DashboardPage() {
           <Typography variant="caption" color="text.secondary">{t("dashboardPage.nextExpiry")}</Typography>
           <Typography variant="body1" fontWeight={700} sx={{ mt: 1 }}>{nextExpiry ? `${nextExpiry.id}` : "—"}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-            {nextExpiry ? `Expires ${new Date(nextExpiry.endDate ?? "").toLocaleDateString()}` : ""}
+            {nextExpiry ? `${t("dashboardPage.expiresOn")} ${new Date(nextExpiry.endDate ?? "").toLocaleDateString()}` : ""}
           </Typography>
 
           <Button startIcon={<AddIcon />} variant="text" sx={{ mt: 1, color: theme.palette.primary.main }}>{t("dashboardPage.renew")}</Button>
@@ -86,8 +84,8 @@ export default function DashboardPage() {
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" }, gap: 2 }}>
         <Paper sx={{ p: 2.5, borderRadius: 2 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexDirection={{ xs: "column", sm: "row" }} gap={1}>
-            <Typography variant="h6" fontWeight={700}>Recent Orders</Typography>
-            <Button size="small" variant="outlined" onClick={() => {}}>View all</Button>
+            <Typography variant="h6" fontWeight={700}>{t("dashboardPage.recentOrders")}</Typography>
+            <Button size="small" variant="outlined" onClick={() => {}}>{t("dashboardPage.viewAll")}</Button>
           </Box>
 
           <Stack spacing={2}>
@@ -96,12 +94,12 @@ export default function DashboardPage() {
                 <OrderCard order={o} onOpenDetail={handleOpen} />
               </Box>
             ))}
+            {orders.length === 0 && !loading && <Typography color="text.secondary">{t("dashboardPage.noOrders")}</Typography>}
           </Stack>
         </Paper>
 
         <Paper sx={{ p: 2.5, borderRadius: 2 }}>
-          <Typography variant="h6" fontWeight={700} mb={1}>Quick Summary</Typography>
-          {/* ... giữ nguyên nội dung summary của bạn ... */}
+          <Typography variant="h6" fontWeight={700} mb={1}>{t("dashboardPage.quickSummary")}</Typography>
         </Paper>
       </Box>
 

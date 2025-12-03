@@ -121,13 +121,21 @@ export const fetchOrdersByCustomer = async (
   return res.data as PagedResult<OrderSummary>;
 };
 
+export const fetchOrderByCode = async (orderCode: string): Promise<any> => {
+  if (!orderCode) throw new Error("orderCode is required");
+  const res = await api.get(`/api/Order/${encodeURIComponent(orderCode)}`);
+  const payload = res.data ?? null;
+  if (!payload) return null;
+  if (payload.data && typeof payload.data === "object") return payload.data;
+  return payload;
+};
+
 export const fetchOrderDetails = async (orderCode: string): Promise<OrderDetailApi[]> => {
   if (!orderCode) throw new Error("orderCode is required");
 
   const res = await api.get(`/api/Order/${encodeURIComponent(orderCode)}/details`);
 
   const payload = res.data ?? {};
-  // payload may be { success, data: [...] } or directly array
   const detailsRaw = Array.isArray(payload.data) ? payload.data : Array.isArray(payload) ? payload : [];
 
   return detailsRaw.map((d: any) => ({
@@ -145,13 +153,10 @@ export const fetchOrderDetails = async (orderCode: string): Promise<OrderDetailA
     storageTypeId: d.storageTypeId ?? null,
     shelfTypeId: d.shelfTypeId ?? null,
     shelfQuantity: d.shelfQuantity ?? null,
-    // keep ids if present
     productTypeIds: Array.isArray(d.productTypeIds) ? d.productTypeIds : null,
     serviceIds: Array.isArray(d.serviceIds) ? d.serviceIds : null,
-    // IMPORTANT: include names if backend returns them
     productTypeNames: Array.isArray(d.productTypeNames) ? d.productTypeNames : Array.isArray(d.productTypes) ? d.productTypes : [],
     serviceNames: Array.isArray(d.serviceNames) ? d.serviceNames : Array.isArray(d.services) ? d.services : [],
-    // some backends return 'isPlaced' or 'is_placed'
     isPlaced: d.isPlaced ?? d.is_placed ?? false,
   }));
 };

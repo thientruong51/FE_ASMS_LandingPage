@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Box, Avatar, Typography, useTheme } from "@mui/material";
 import type { TrackingRecord, Order } from "../types";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   tracking?: TrackingRecord[];
@@ -9,21 +10,6 @@ type Props = {
 
 const BASE_FULL = ["Pending", "Verify", "Checkout", "Processing", "Stored"];
 const BASE_SELF = ["Pending", "Verify", "Checkout", "Renting"];
-
-// labels
-const LABELS: Record<string, string> = {
-  Pending: "Pending",
-  WaitPickUp: "Wait pick up",
-  Verify: "Verify",
-  Checkout: "Checkout",
-  PickUp: "Pick up",
-  Processing: "Processing",
-  Stored: "Stored",
-  Renting: "Renting",
-  Overdue: "Overdue",
-  ExpiredStorage: "Stored in expired storage",
-  Retrieved: "Retrieved",
-};
 
 const fmtDate = (iso?: string) =>
   iso && iso.length ? new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "-";
@@ -54,17 +40,21 @@ const buildSteps = (tracking?: TrackingRecord[], order?: Order | null): string[]
   const isSelf = order?.kind === "self";
   const base = (isSelf ? BASE_SELF.slice() : BASE_FULL.slice());
 
-  // If managed and has delivery => insert WaitPickUp + PickUp after Pending
-  if (!isSelf && hasDeliveryService(order)) {
-    base.splice(1, 0, "WaitPickUp", "PickUp");
+  if ( hasDeliveryService(order)) {
+  const checkoutIdx = base.indexOf("Checkout");
+  if (checkoutIdx >= 0) {
+    base.splice(checkoutIdx + 1, 0, "PickUp");
   }
 
-  // Only append Overdue and ExpiredStorage when overdue (returnDate passed)
+  const pendingIdx = base.indexOf("Pending");
+  const insertAt = pendingIdx >= 0 ? pendingIdx + 1 : 1;
+  base.splice(insertAt, 0, "WaitPickUp");
+  }
+
   if (overdue) {
     base.push("Overdue", "ExpiredStorage");
   }
 
-  // Retrieved could be after expired storage (optional)
   base.push("Retrieved");
 
   return base;
@@ -89,7 +79,6 @@ const determineIndex = (steps: string[], tracking?: TrackingRecord[], order?: Or
     if (lastIdx >= 0) return lastIdx;
   }
 
-  // if overdue but display not present, maybe mark Overdue (last) as active
   if (isOverdue(order)) {
     const oi = steps.indexOf("Overdue");
     if (oi >= 0) return oi;
@@ -101,11 +90,11 @@ const determineIndex = (steps: string[], tracking?: TrackingRecord[], order?: Or
 export default function TrackingTimeline({ tracking = [], order = null }: Props) {
   const theme = useTheme();
   const GREEN = "#3CBD96";
+  const { t } = useTranslation("dashboard");
 
   const steps = useMemo(() => buildSteps(tracking, order), [tracking, order]);
   const current = useMemo(() => determineIndex(steps, tracking, order), [steps, tracking, order]);
 
-  // Derived records ensuring ts is string
   const derived: TrackingRecord[] = useMemo(() => {
     if (Array.isArray(tracking) && tracking.length > 0) {
       const map = new Map<string, TrackingRecord>();
@@ -115,7 +104,6 @@ export default function TrackingTimeline({ tracking = [], order = null }: Props)
       return steps.map((s) => map.get(s) ?? ({ ts: "", status: s }));
     }
 
-    // derive minimal info from rawSummary
     const s = (order?.rawSummary ?? {}) as any;
     const orderDate = s.orderDate ?? s.depositDate ?? "";
     const returnDate = s.returnDate ?? order?.endDate ?? "";
@@ -125,12 +113,12 @@ export default function TrackingTimeline({ tracking = [], order = null }: Props)
       let note: string | undefined;
       if (step === "Pending") ts = String(orderDate || "");
       if (step === "Overdue") ts = String(returnDate || "");
-      if (step === "Pending" && s.paymentStatus) note = `Payment: ${s.paymentStatus}`;
+      if (step === "Pending" && s.paymentStatus) note = `${t("tracking.payment")}: ${s.paymentStatus}`;
       return { ts, status: step, note } as TrackingRecord;
     });
-  }, [steps, tracking, order]);
+  }, [steps, tracking, order, t]);
 
-  if (!derived.length) return <Typography variant="body2" color="text.secondary">No tracking</Typography>;
+  if (!derived.length) return <Typography variant="body2" color="text.secondary">{t("tracking.noTracking")}</Typography>;
 
   return (
     <Box sx={{ px: 2, overflowX: "auto" }}>
@@ -181,7 +169,7 @@ export default function TrackingTimeline({ tracking = [], order = null }: Props)
       <Box sx={{ display: "flex", alignItems: "flex-start", minWidth: { xs: 600, md: 900 }, gap: 1.5, py: 0.5 }}>
         {derived.map((step, i) => {
           const active = i === current;
-          const label = LABELS[step.status] ?? step.status;
+          const label = t(`status.${step.status}`, step.status);
           return (
             <React.Fragment key={i}>
               <Box sx={{ minWidth: 92, display: "flex", flexDirection: "column", alignItems: "center" }}>

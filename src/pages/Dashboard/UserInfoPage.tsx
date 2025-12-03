@@ -1,4 +1,3 @@
-// src/pages/Dashboard/UserInfoPage.tsx
 import React from "react";
 import {
   Box,
@@ -18,6 +17,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 /** Safe JWT decode: base64url -> base64 + UTF-8 */
 function parseJwt(token: string | null): Record<string, any> | null {
@@ -51,6 +51,7 @@ const api = axios.create({
 });
 
 export default function UserInfoPage() {
+  const { t } = useTranslation("dashboard");
   const theme = useTheme();
   const primary = theme.palette.primary.main;
 
@@ -113,8 +114,6 @@ export default function UserInfoPage() {
 
     setAccount((prev) => ({
       id: payload.Id ?? prev.id,
-      // token used PascalCase; swagger expects customerCode (camelCase) in body,
-      // so store both: transform to camelCase for sending
       customerCode: payload.CustomerCode ?? prev.customerCode ?? "",
       name: payload.Name ?? payload.name ?? prev.name,
       email: payload.Email ?? payload.email ?? prev.email,
@@ -133,94 +132,81 @@ export default function UserInfoPage() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  /**
-   * SAVE account -> PUT /api/Customer/{id}
-   * According to Swagger: request body example uses camelCase keys:
-   * { "customerCode": "...", "phone": "...", "name":"...", "address":"..." }
-   *
-   * We only send the allowed fields + customerCode (required).
-   */
-  // Thay thế hàm handleSaveAccount hiện tại bằng đoạn này
-const handleSaveAccount = async (e?: React.FormEvent) => {
-  e?.preventDefault();
-  if (!account.id) {
-    setSnack({ open: true, severity: "error", message: "Customer id missing. Không thể cập nhật." });
-    return;
-  }
-
-  // Try to get extra claims (email, isActive) from token so we send full object backend may expect
-  const token = localStorage.getItem("accessToken");
-  const tokenPayload = parseJwt(token);
-
-  // Normalize isActive claim (token might store "True" as string)
-  let isActiveVal: boolean | undefined = undefined;
-  if (tokenPayload) {
-    const raw = tokenPayload.IsActive ?? tokenPayload.isActive ?? tokenPayload.IsActiveString ?? null;
-    if (raw !== null && raw !== undefined) {
-      if (typeof raw === "boolean") isActiveVal = raw;
-      else if (typeof raw === "string") isActiveVal = raw.toLowerCase() === "true";
+  // Save account
+  const handleSaveAccount = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!account.id) {
+      setSnack({ open: true, severity: "error", message: t("userInfo.errors.missingCustomerId") });
+      return;
     }
-  }
 
-  const payload: Record<string, any> = {
-    customerCode: account.customerCode ?? "",
-    name: account.name ?? "",
-    address: account.location ?? "",
-    phone: account.phone ?? "",
+    const token = localStorage.getItem("accessToken");
+    const tokenPayload = parseJwt(token);
+
+    let isActiveVal: boolean | undefined = undefined;
+    if (tokenPayload) {
+      const raw = tokenPayload.IsActive ?? tokenPayload.isActive ?? tokenPayload.IsActiveString ?? null;
+      if (raw !== null && raw !== undefined) {
+        if (typeof raw === "boolean") isActiveVal = raw;
+        else if (typeof raw === "string") isActiveVal = raw.toLowerCase() === "true";
+      }
+    }
+
+    const payload: Record<string, any> = {
+      customerCode: account.customerCode ?? "",
+      name: account.name ?? "",
+      address: account.location ?? "",
+      phone: account.phone ?? "",
+    };
+
+    if (tokenPayload?.Email || account.email) payload.email = tokenPayload?.Email ?? account.email;
+    if (typeof isActiveVal === "boolean") payload.isActive = isActiveVal;
+
+    try {
+      const res = await api.put(`/api/Customer/${encodeURIComponent(String(account.id))}`, payload, {
+        headers: { "Content-Type": "application/json", ...buildAuthHeaders() },
+      });
+
+      console.log("PUT /api/Customer success:", res.data);
+      setSnack({ open: true, severity: "success", message: t("userInfo.messages.updateSuccess") });
+    } catch (err: any) {
+      console.error("Update customer failed", err);
+      const resp = err?.response?.data;
+      let message = t("userInfo.messages.updateFailed");
+
+      if (resp) {
+        if (resp.errors && typeof resp.errors === "object") {
+          const msgs: string[] = [];
+          for (const k of Object.keys(resp.errors)) {
+            const v = resp.errors[k];
+            if (Array.isArray(v)) msgs.push(`${k}: ${v.join(", ")}`);
+            else msgs.push(`${k}: ${String(v)}`);
+          }
+          message = t("userInfo.messages.updateFailedWithDetails", { details: msgs.join(" ; ") });
+        } else if (resp.title || resp.message) {
+          message = resp.title ? `${resp.title} ${resp.message ?? ""}` : resp.message;
+        } else {
+          message = `${t("userInfo.messages.serverReturned")}: ${JSON.stringify(resp)}`;
+        }
+      } else if (err?.response) {
+        message = `${t("userInfo.messages.serverError")}: ${err.response.status} ${err.response.statusText}`;
+      } else if (err?.message) {
+        message = err.message;
+      }
+
+      setSnack({ open: true, severity: "error", message });
+    }
   };
 
-  // include email & isActive if available (avoids server null/ref)
-  if (tokenPayload?.Email || account.email) payload.email = tokenPayload?.Email ?? account.email;
-  if (typeof isActiveVal === "boolean") payload.isActive = isActiveVal;
-
-  try {
-    const res = await api.put(`/api/Customer/${encodeURIComponent(String(account.id))}`, payload, {
-      headers: { "Content-Type": "application/json", ...(localStorage.getItem("accessToken") ? { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } : {}) },
-    });
-
-    console.log("PUT /api/Customer success:", res.data);
-    setSnack({ open: true, severity: "success", message: "Cập nhật thông tin thành công!" });
-  } catch (err: any) {
-    console.error("Update customer failed", err);
-    // show server response body if present
-    const resp = err?.response?.data;
-    let message = "Cập nhật thất bại. Vui lòng thử lại.";
-
-    if (resp) {
-      // If swagger-style validation object { errors: { field: [..] } }
-      if (resp.errors && typeof resp.errors === "object") {
-        const msgs: string[] = [];
-        for (const k of Object.keys(resp.errors)) {
-          const v = resp.errors[k];
-          if (Array.isArray(v)) msgs.push(`${k}: ${v.join(", ")}`);
-          else msgs.push(`${k}: ${String(v)}`);
-        }
-        message = `Cập nhật thất bại: ${msgs.join(" ; ")}`;
-      } else if (resp.title || resp.message) {
-        message = resp.title ? `${resp.title} ${resp.message ?? ""}` : resp.message;
-      } else {
-        message = `Server trả: ${JSON.stringify(resp)}`;
-      }
-    } else if (err?.response) {
-      message = `Server lỗi: ${err.response.status} ${err.response.statusText}`;
-    } else if (err?.message) {
-      message = err.message;
-    }
-
-    setSnack({ open: true, severity: "error", message });
-  }
-};
-
-
-  /** Change password -> POST /api/Password/change-password */
+  // Change password
   const handleChangePassword = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!passwords.current || !passwords.newPass) {
-      setSnack({ open: true, severity: "error", message: "Vui lòng nhập mật khẩu hiện tại và mật khẩu mới." });
+      setSnack({ open: true, severity: "error", message: t("userInfo.messages.fillPasswords") });
       return;
     }
     if (passwords.newPass !== passwords.confirm) {
-      setSnack({ open: true, severity: "error", message: "Mật khẩu mới và xác nhận không khớp." });
+      setSnack({ open: true, severity: "error", message: t("userInfo.messages.passwordMismatch") });
       return;
     }
 
@@ -236,13 +222,13 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
         headers: { "Content-Type": "application/json", ...buildAuthHeaders() },
       });
 
-      setSnack({ open: true, severity: "success", message: "Đổi mật khẩu thành công!" });
+      setSnack({ open: true, severity: "success", message: t("userInfo.messages.changePasswordSuccess") });
       setPasswords({ current: "", newPass: "", confirm: "" });
     } catch (err: any) {
       console.error("Change password failed", err);
       const resp = err?.response?.data;
-      let message = "Đổi mật khẩu thất bại. Vui lòng thử lại.";
-      if (resp?.message) message = `Đổi mật khẩu thất bại: ${resp.message}`;
+      let message = t("userInfo.messages.changePasswordFailed");
+      if (resp?.message) message = `${t("userInfo.messages.changePasswordFailed")}: ${resp.message}`;
       setSnack({ open: true, severity: "error", message });
     }
   };
@@ -259,7 +245,7 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
     <>
       <Stack spacing={3}>
         <Typography variant="h5" fontWeight={700}>
-          Account Settings
+          {t("userInfo.title")}
         </Typography>
 
         {/* Account Settings Card */}
@@ -277,16 +263,16 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
             {/* left: inputs */}
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Stack spacing={2}>
-                <TextField label="Name" size="small" value={account.name} onChange={handleAccountChange("name")} fullWidth />
+                <TextField label={t("userInfo.fields.name")} size="small" value={account.name} onChange={handleAccountChange("name")} fullWidth />
 
                 <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", md: "row" } }}>
-                  <TextField label="Email" size="small" type="email" value={account.email} disabled fullWidth />
-                  <TextField label="Phone Number" size="small" value={account.phone} onChange={handleAccountChange("phone")} fullWidth />
+                  <TextField label={t("userInfo.fields.email")} size="small" type="email" value={account.email} disabled fullWidth />
+                  <TextField label={t("userInfo.fields.phone")} size="small" value={account.phone} onChange={handleAccountChange("phone")} fullWidth />
                 </Box>
 
                 <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", md: "row" } }}>
-                  <TextField label="Location" size="small" value={account.location} onChange={handleAccountChange("location")} fullWidth />
-                  <TextField label="Customer Code" size="small" value={account.customerCode} disabled fullWidth />
+                  <TextField label={t("userInfo.fields.location")} size="small" value={account.location} onChange={handleAccountChange("location")} fullWidth />
+                  <TextField label={t("userInfo.fields.customerCode")} size="small" value={account.customerCode} disabled fullWidth />
                 </Box>
               </Stack>
 
@@ -305,7 +291,7 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
                     "&:hover": { bgcolor: primary },
                   }}
                 >
-                  Save Changes
+                  {t("userInfo.actions.save")}
                 </Button>
               </Box>
             </Box>
@@ -328,7 +314,7 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
               <input ref={fileInputRef} type="file" accept="image/*" onChange={onPickAvatar} style={{ display: "none" }} />
 
               <Button variant="outlined" onClick={triggerFile} startIcon={<PhotoCameraIcon />} sx={{ borderColor: primary, color: primary, textTransform: "none", px: 2, borderRadius: 3 }}>
-                Choose Image
+                {t("userInfo.actions.chooseImage")}
               </Button>
             </Box>
           </Box>
@@ -337,12 +323,12 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
         {/* Change Password */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
           <Typography variant="subtitle1" fontWeight={700} mb={2}>
-            Change Password
+            {t("userInfo.changePassword.title")}
           </Typography>
 
           <Box component="form" onSubmit={handleChangePassword} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
-              label="Current Password"
+              label={t("userInfo.changePassword.current")}
               size="small"
               type={show.current ? "text" : "password"}
               value={passwords.current}
@@ -361,7 +347,7 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
 
             <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", md: "row" } }}>
               <TextField
-                label="New Password"
+                label={t("userInfo.changePassword.new")}
                 size="small"
                 type={show.newPass ? "text" : "password"}
                 value={passwords.newPass}
@@ -379,7 +365,7 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
               />
 
               <TextField
-                label="Confirm Password"
+                label={t("userInfo.changePassword.confirm")}
                 size="small"
                 type={show.confirm ? "text" : "password"}
                 value={passwords.confirm}
@@ -399,7 +385,7 @@ const handleSaveAccount = async (e?: React.FormEvent) => {
 
             <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 1 }}>
               <Button type="submit" variant="contained" sx={{ bgcolor: primary, color: "#fff", px: 4, py: 1, borderRadius: 3, textTransform: "none", boxShadow: "0 6px 18px rgba(60,189,150,0.12)", "&:hover": { bgcolor: primary } }}>
-                Change Password
+                {t("userInfo.changePassword.action")}
               </Button>
             </Box>
           </Box>

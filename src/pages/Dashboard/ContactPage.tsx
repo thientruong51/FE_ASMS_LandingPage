@@ -1,4 +1,3 @@
-// src/pages/Dashboard/ContactPage.tsx
 import React from "react";
 import { Stack, Typography, Paper, TextField, Button, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -35,7 +34,7 @@ const ContactPage: React.FC = () => {
               <ListItemIcon>
                 <PhoneIcon />
               </ListItemIcon>
-              <ListItemText primary="Nguyễn Văn A" secondary="+84 912 345 678" />
+              <ListItemText primary={t("contact.personName", { name: "Nguyễn Văn A" })} secondary="+84 912 345 678" />
             </ListItem>
 
             <ListItem>

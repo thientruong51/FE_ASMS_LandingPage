@@ -1,4 +1,3 @@
-// src/pages/Dashboard/components/Sidebar.tsx
 import React from "react";
 import {
   Drawer,
@@ -17,7 +16,6 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import PersonIcon from "@mui/icons-material/Person";
-import SettingsIcon from "@mui/icons-material/Settings";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import HomeIcon from "@mui/icons-material/Home";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
@@ -43,7 +41,6 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
     { to: "/dashboard", label: t("sidebar.dashboard"), icon: <DashboardIcon /> },
     { to: "/dashboard/orders", label: t("sidebar.myOrders"), icon: <Inventory2Icon /> },
     { to: "/dashboard/userinfo", label: t("sidebar.userInfo"), icon: <PersonIcon /> },
-    { to: "/dashboard/settings", label: t("sidebar.settings"), icon: <SettingsIcon /> },
     { to: "/dashboard/contact", label: t("sidebar.contactWarehouse"), icon: <ContactPhoneIcon /> },
   ];
 
@@ -54,14 +51,15 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
     if (!isMdUp) onClose();
   };
 
+  const effectiveOpen = isMdUp ? true : open;
+  const variant = isMdUp ? "permanent" : "temporary";
+
   return (
     <Drawer
-      variant={isMdUp ? "persistent" : "temporary"}
-      open={open}
+      variant={variant}
+      open={effectiveOpen}
       onClose={onClose}
-      ModalProps={{
-        keepMounted: true, 
-      }}
+      ModalProps={{ keepMounted: true }}
       sx={{
         width: drawerWidth,
         flexShrink: 0,
@@ -73,14 +71,17 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
         },
       }}
     >
-      {/* Header nhỏ trong sidebar */}
       <Toolbar sx={{ px: isMdUp ? 3 : 2, py: isMdUp ? 2 : 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar sx={{ bgcolor: "primary.main", color: "#fff" }}>TK</Avatar>
+          <Avatar
+            src="https://res.cloudinary.com/dkfykdjlm/image/upload/v1762190192/LOGO-remove_1_1_wj05gw.png"
+            alt="Logo"
+            sx={{ bgcolor: "transparent" }}
+          />
           {isMdUp ? (
             <Box>
               <Typography variant="subtitle1" fontWeight={700}>
-                Your Brand
+                ASMS
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {t("sidebar.dashboard")}
@@ -88,7 +89,7 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
             </Box>
           ) : (
             <Typography variant="subtitle2" fontWeight={700}>
-              Your Brand
+              ASMS
             </Typography>
           )}
         </Box>
@@ -96,7 +97,6 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
 
       <Divider />
 
-      {/* Navigation list */}
       <List sx={{ mt: 1 }}>
         {nav.map((n) => {
           const selected = location.pathname === n.to;
@@ -123,10 +123,7 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
               }}
             >
               <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>{n.icon}</ListItemIcon>
-              <ListItemText
-                primary={n.label}
-                primaryTypographyProps={{ noWrap: true, fontSize: isMdUp ? 14 : 13 }}
-              />
+              <ListItemText primary={n.label} primaryTypographyProps={{ noWrap: true, fontSize: isMdUp ? 14 : 13 }} />
             </ListItemButton>
           );
         })}
@@ -134,7 +131,6 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
 
       <Box sx={{ flex: 1 }} />
 
-      {/* Nút "Về trang chủ" */}
       <Box sx={{ px: isMdUp ? 3 : 2, py: 1.5 }}>
         <Button
           fullWidth
@@ -142,15 +138,9 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
           color="primary"
           startIcon={<HomeIcon />}
           onClick={handleGoHome}
-          sx={{
-            justifyContent: "flex-start",
-            textTransform: "none",
-            fontWeight: 600,
-            borderRadius: 2,
-            py: 1,
-          }}
+          sx={{ justifyContent: "flex-start", textTransform: "none", fontWeight: 600, borderRadius: 2, py: 1 }}
         >
-          {t("sidebar.goHome") || "Về trang chủ"}
+          {t("sidebar.goHome")}
         </Button>
       </Box>
 
@@ -158,7 +148,7 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
 
       <Box sx={{ px: isMdUp ? 3 : 2, py: 2 }}>
         <Typography variant="caption" color="text.secondary">
-          © {new Date().getFullYear()} Your Brand
+          {t("sidebar.copyright", { year: new Date().getFullYear() })}
         </Typography>
       </Box>
     </Drawer>
