@@ -1,0 +1,22 @@
+{
+  "title": "Lịch sử thanh toán",
+  "search": "Tìm kiếm theo mã / đơn hàng / nền tảng",
+  "refresh": "Làm mới",
+  "reload": "Tải lại",
+  "forCustomer": "Đang hiển thị lịch sử thanh toán cho khách hàng:",
+  
+  "columns": {
+    "paymentHistoryCode": "Mã thanh toán",
+    "orderCode": "Mã đơn hàng",
+    "method": "Phương thức",
+    "platform": "Nền tảng",
+    "amount": "Số tiền"
+  },
+
+  "noRecords": "Không có lịch sử thanh toán.",
+  
+  "errorNoCustomer": "Không tìm thấy mã khách hàng trong token.",
+  "errorUnauthorized": "Không có quyền truy cập (401).",
+  "errorServer": "Lỗi máy chủ, vui lòng thử lại sau.",
+  "errorFetch": "Không thể tải lịch sử thanh toán."
+}

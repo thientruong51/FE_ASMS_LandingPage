@@ -16,8 +16,8 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import PersonIcon from "@mui/icons-material/Person";
-import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import HomeIcon from "@mui/icons-material/Home";
+import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
@@ -40,8 +40,8 @@ const Sidebar: React.FC<Props> = ({ open, onClose }) => {
   const nav = [
     { to: "/dashboard", label: t("sidebar.dashboard"), icon: <DashboardIcon /> },
     { to: "/dashboard/orders", label: t("sidebar.myOrders"), icon: <Inventory2Icon /> },
+    { to: "/dashboard/paymentHistorys", label: t("sidebar.paymentHistorys"), icon: <RequestQuoteIcon /> },
     { to: "/dashboard/userinfo", label: t("sidebar.userInfo"), icon: <PersonIcon /> },
-    { to: "/dashboard/contact", label: t("sidebar.contactWarehouse"), icon: <ContactPhoneIcon /> },
   ];
 
   const drawerWidth = isMdUp ? DRAWER_WIDTH : DRAWER_WIDTH_SM;

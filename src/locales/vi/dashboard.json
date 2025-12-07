@@ -63,7 +63,14 @@
     "errors": {
       "missingOrderId": "Thiếu OrderId",
       "loadFailed": "Tải đơn hàng thất bại"
-    }
+    },
+    "contactFrom": "Thông tin người liên hệ (lấy từ tài khoản của bạn):",
+    "customerCode": "Mã khách hàng",
+    "name": "Họ và tên",
+    "phone": "Số điện thoại",
+    "sending": "Đang gửi...",
+    "contactSentSuccess": "Gửi liên hệ thành công. Nhân viên sẽ liên hệ lại sớm.",
+    "contactSentFailed": "Gửi liên hệ thất bại. Vui lòng thử lại sau."
   },
   "table": {
     "no": "STT",
@@ -78,6 +85,7 @@
     "myOrders": "Đơn hàng của tôi",
     "userInfo": "Thông tin người dùng",
     "contactWarehouse": "Liên hệ kho",
+    "paymentHistorys": "Lịch sử thanh toán",
     "goHome": "Về trang chủ",
     "copyright": "© {{year}} ASMS"
   },

@@ -21,6 +21,12 @@ export type OrderDetailPayload = {
   storageTypeId?: number | null;
   shelfTypeId?: number | null;
   shelfQuantity?: number | null;
+
+  // ADDED: oversize flat fields (meters)
+  length?: number | null;
+  width?: number | null;
+  height?: number | null;
+  isOversize?: boolean | null;
 };
 
 export type OrderWithDetailsPayload = {
@@ -127,6 +133,31 @@ export async function createOrderWithDetails(payload: OrderWithDetailsPayload) {
   const url = `${BASE}/api/Order/with-details`;
   const res = await axios.post<ApiResponse<any>>(url, payload);
   return res.data;
+}
+
+// -------------------- utils for oversize extraction --------------------
+function extractOversizeMeters(b: any): { length?: number | null; width?: number | null; height?: number | null } {
+  // Prefer explicit flat fields (assumed meters). Fall back to dims (cm -> m) if present.
+  let lengthM: number | undefined = undefined;
+  let widthM: number | undefined = undefined;
+  let heightM: number | undefined = undefined;
+
+  if (typeof b.length === "number") lengthM = b.length;
+  if (typeof b.width === "number") widthM = b.width;
+  if (typeof b.height === "number") heightM = b.height;
+
+  if ((lengthM === undefined || widthM === undefined || heightM === undefined) && b.dims) {
+    const dims = b.dims;
+    if (typeof dims.length === "number" && lengthM === undefined) lengthM = dims.length / 100;
+    if (typeof dims.width === "number" && widthM === undefined) widthM = dims.width / 100;
+    if (typeof dims.height === "number" && heightM === undefined) heightM = dims.height / 100;
+  }
+
+  return {
+    length: typeof lengthM === "number" ? Number(lengthM) : null,
+    width: typeof widthM === "number" ? Number(widthM) : null,
+    height: typeof heightM === "number" ? Number(heightM) : null,
+  };
 }
 
 // -------------------- buildOrderPayloadFromBooking --------------------
@@ -243,6 +274,11 @@ export async function buildOrderPayloadFromBooking(
       storageTypeId: chosenStorageTypeId ?? null,
       shelfTypeId: null,
       shelfQuantity: null,
+      // oversize fields not applicable for room line
+      length: null,
+      width: null,
+      height: null,
+      isOversize: null,
     });
 
     // shelf lines (if any) — containerCode null
@@ -261,6 +297,10 @@ export async function buildOrderPayloadFromBooking(
         serviceIds: null,
         shelfTypeId,
         shelfQuantity: Number(shelfQuantity),
+        length: null,
+        width: null,
+        height: null,
+        isOversize: null,
       });
     }
 
@@ -289,6 +329,10 @@ export async function buildOrderPayloadFromBooking(
         serviceIds: null,
         shelfTypeId: null,
         shelfQuantity: null,
+        length: null,
+        width: null,
+        height: null,
+        isOversize: null,
       });
     }
   }
@@ -315,9 +359,14 @@ export async function buildOrderPayloadFromBooking(
         perBoxDefault ??
         0;
 
-      // Current behaviour: push one orderDetail per box instance with price = unit price and quantity="1".
-      // We'll keep that (backend summation will work), but our total computation later will multiply price * quantity.
+      // detect oversize
+      const isOversize = Boolean(b.isOversize === true || String(b.id ?? "").startsWith("oversize-"));
+
+      // For each unit produce an orderDetail (existing behaviour)
       for (let i = 0; i < quantity; i++) {
+        // extract oversize meters if applicable
+        const oversizeDims = isOversize ? extractOversizeMeters(b) : { length: null, width: null, height: null };
+
         orderDetails.push({
           storageCode: null,
           containerCode: null, // always null
@@ -331,6 +380,11 @@ export async function buildOrderPayloadFromBooking(
           storageTypeId: null,
           shelfTypeId: null,
           shelfQuantity: null,
+          // attach oversize fields (meters) or null
+          length: oversizeDims.length ?? null,
+          width: oversizeDims.width ?? null,
+          height: oversizeDims.height ?? null,
+          isOversize: isOversize ? true : null,
         });
       }
     }
@@ -379,7 +433,7 @@ export async function buildOrderPayloadFromBooking(
     depositDate: bookingData?.depositDate ?? bookingData?.selectedDate ?? null,
     returnDate: bookingData?.returnDate ?? bookingData?.endDate ?? null,
     status: extras?.status ?? bookingData?.status ?? "",
-    paymentStatus:extras?.paymentStatus ?? bookingData?.paymentStatus ?? "UnPaid",
+    paymentStatus: extras?.paymentStatus ?? bookingData?.paymentStatus ?? "UnPaid",
 
     storageTypeId: toNumberSafe(bookingData?.storageTypeId) ?? mapRoomToStorageTypeId(bookingData?.room) ?? null,
     shelfTypeId: 1,

@@ -63,7 +63,14 @@
     "errors": {
       "missingOrderId": "OrderId missing",
       "loadFailed": "Failed to load order"
-    }
+    },
+    "contactFrom": "Contact information (taken from your account):",
+    "customerCode": "Customer code",
+    "name": "Name",
+    "phone": "Phone",
+    "sending": "Sending...",
+    "contactSentSuccess": "Contact request sent. Staff will get back to you shortly.",
+    "contactSentFailed": "Failed to send contact. Please try again later."
   },
   "table": {
     "no": "No",
@@ -78,6 +85,7 @@
     "myOrders": "My Orders",
     "userInfo": "User Info",
     "contactWarehouse": "Contact Warehouse",
+    "paymentHistorys": "Payment Historys",
     "goHome": "Go back Home",
     "copyright": "© {{year}} ASMS"
   },

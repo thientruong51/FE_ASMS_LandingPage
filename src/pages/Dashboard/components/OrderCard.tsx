@@ -31,6 +31,7 @@ import {
   resolveContainerName,
 } from "../../../api/typeLookup";
 import { useTranslation } from "react-i18next";
+import ContactDialog from "./ContactDialog"; 
 
 const formatMoney = (n?: number) => {
   if (n == null) return "-";
@@ -237,7 +238,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   useEffect(() => {
     return () => { stopPolling(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -248,7 +248,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
       setIframeLoading(true);
       void reloadOrder();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkoutUrl]);
 
   const handlePay = async () => {
@@ -276,6 +275,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
     setCheckoutUrl(null);
     setIframeLoading(true);
   };
+
+  // --- Contact dialog local state
+  const [contactOpen, setContactOpen] = useState(false);
+  const openContactDialog = () => setContactOpen(true);
+  const closeContactDialog = () => setContactOpen(false);
 
   return (
     <>
@@ -395,6 +399,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
         <Box display="flex" justifyContent="flex-end" mt={2} gap={1}>
           <Button size="small" variant="outlined" onClick={() => onOpenDetail?.(order)}>{t("viewDetails")}</Button>
+
+          {/* Contact button placed next to ViewDetails */}
+          <Button size="small" variant="outlined" onClick={openContactDialog}>
+            {t("orderDetail.contactStaff") ?? "Liên hệ"}
+          </Button>
+
           {!isPaid && (
             <Button size="small" variant="contained" onClick={handlePay} disabled={loadingPay}>
               {loadingPay ? <CircularProgress size={18} /> : t("pay")}
@@ -416,6 +426,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
         <DialogActions><Button onClick={closeCheckoutDialog}>{t("close")}</Button></DialogActions>
       </Dialog>
+
+      {/* Contact dialog instance */}
+      <ContactDialog open={contactOpen} onClose={closeContactDialog} orderCode={orderCode} onSent={() => { /* optional reload */ }} />
 
       <Snackbar open={snack.open} autoHideDuration={6000} onClose={() => setSnack((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
         <Alert onClose={() => setSnack((prev) => ({ ...prev, open: false }))} severity={snack.severity} sx={{ width: "100%" }}>{snack.message}</Alert>

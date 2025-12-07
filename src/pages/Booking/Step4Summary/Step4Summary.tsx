@@ -1,3 +1,4 @@
+// Step4Summary.tsx
 import { useState, useCallback, useMemo } from "react";
 import { Box, Stack, Typography, styled, Divider, Snackbar, Alert } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -114,9 +115,56 @@ export default function Step4Summary({
         paymentStatus: currentBooking.paymentStatus,
       };
 
-      // Attach computed pricing into bookingForOrder
+      // --- build boxesForOrder: ensure oversize items include length/width/height (meters) ---
+      const boxesForOrder = (currentBooking.boxes ?? []).map((b: any) => {
+        const isOversize = Boolean(b.isOversize === true || String(b.id ?? "").startsWith("oversize-"));
+
+        // If oversize, prefer flat meter fields; fallback convert dims (cm -> m) if present.
+        let lengthM: number | undefined = undefined;
+        let widthM: number | undefined = undefined;
+        let heightM: number | undefined = undefined;
+
+        if (isOversize) {
+          if (typeof b.length === "number") lengthM = b.length;
+          if (typeof b.width === "number") widthM = b.width;
+          if (typeof b.height === "number") heightM = b.height;
+
+          // fallback using dims (assumed cm): convert to meters
+          if ((lengthM === undefined || widthM === undefined || heightM === undefined) && b.dims) {
+            const dims = b.dims;
+            if (typeof dims.length === "number" && lengthM === undefined) lengthM = dims.length / 100;
+            if (typeof dims.width === "number" && widthM === undefined) widthM = dims.width / 100;
+            if (typeof dims.height === "number" && heightM === undefined) heightM = dims.height / 100;
+          }
+
+          // OPTIONAL: enforce presence of all three fields and throw if missing
+          // if ([lengthM, widthM, heightM].some((v) => typeof v !== "number")) {
+          //   throw new Error("Oversize item missing length/width/height (meters).");
+          // }
+        }
+
+        const copy: any = { ...b };
+
+        if (isOversize) {
+          if (typeof lengthM === "number") copy.length = Number(lengthM);
+          if (typeof widthM === "number") copy.width = Number(widthM);
+          if (typeof heightM === "number") copy.height = Number(heightM);
+          copy.isOversize = true;
+        } else {
+          // remove flat fields from normal boxes if present
+          delete copy.length;
+          delete copy.width;
+          delete copy.height;
+          delete copy.isOversize;
+        }
+
+        return copy;
+      });
+
+      // Attach computed pricing into bookingForOrder and ensure boxes replaced
       const bookingForOrder: BookingPayload = {
         ...currentBooking,
+        boxes: boxesForOrder,
         depositDate: (currentBooking as any).depositDate ?? (currentBooking as any).selectedDate ?? null,
         returnDate: (currentBooking as any).returnDate ?? (currentBooking as any).endDate ?? null,
         paymentMethod,
@@ -144,7 +192,7 @@ export default function Step4Summary({
         severity: "success",
       });
 
-      // pass bookingForOrder (contains pricing) back to parent so it can save
+      // pass bookingForOrder (contains pricing and normalized boxes) back to parent so it can save
       onConfirm?.(bookingForOrder);
     } catch (err: any) {
       console.error("Order error:", err);

@@ -11,8 +11,15 @@ type Props = {
 const BASE_FULL = ["Pending", "Verify", "Checkout", "Processing", "Stored"];
 const BASE_SELF = ["Pending", "Verify", "Checkout", "Renting"];
 
-const fmtDate = (iso?: string) =>
-  iso && iso.length ? new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "-";
+const fmtDate = (iso?: string) => {
+  if (!iso || !iso.length) return "-";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "-";
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+};
 
 const hasDeliveryService = (order?: Order | null) => {
   if (!order?.items) return false;

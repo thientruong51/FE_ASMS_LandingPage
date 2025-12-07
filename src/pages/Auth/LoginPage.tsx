@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { customerLogin } from "../../api/auth";
 import { motion } from "framer-motion";
 
-
 const BG_WAVE =
   "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762962577/wave-haikei_skn4to.svg";
 const ILLUSTRATION =
@@ -41,46 +40,97 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [err, setErr] = useState("");
 
- const handleLogin = async () => {
-  setErr("");
-  if (!email || !password) {
-    setErr(t("pleaseFill") ?? "Vui lòng nhập email và mật khẩu");
-    return;
-  }
+  const [emailErr, setEmailErr] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
 
-  try {
-    setLoading(true);
-    const res = await customerLogin({ email, password });
+  const resetErrors = () => {
+    setErr("");
+    setEmailErr("");
+    setPasswordErr("");
+  };
 
-    if (res.success) {
+  const validateFields = (): boolean => {
+    let hasError = false;
+    setEmailErr("");
+    setPasswordErr("");
+    setErr("");
 
-      if (res.data?.accessToken) {
-        localStorage.setItem("accessToken", res.data.accessToken);
-      }
-      if (res.data?.refreshToken) {
-        localStorage.setItem("refreshToken", res.data.refreshToken);
-      }
-      if (res.data?.userId) {
-        localStorage.setItem("userId", res.data.userId);
-      }
+    const value = email.trim();
 
-      if (onSuccess) onSuccess();
-
-      onClose();
-      navigate("/dashboard");
-
+    if (!value) {
+      setEmailErr(t("errorEmptyEmail") ?? "Vui lòng nhập email hoặc số điện thoại");
+      hasError = true;
     } else {
-      setErr(res.errorMessage ?? (t("loginFailed") ?? "Đăng nhập thất bại"));
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[0-9]{9,11}$/;
+      if (!emailRegex.test(value) && !phoneRegex.test(value)) {
+        setEmailErr(t("errorInvalidEmail") ?? "Email hoặc số điện thoại không hợp lệ");
+        hasError = true;
+      }
     }
-  } catch {
-    setErr(t("loginError") ?? "Lỗi kết nối");
-  } finally {
-    setLoading(false);
-  }
-};
 
+    if (!password.trim()) {
+      setPasswordErr(t("errorEmptyPassword") ?? "Vui lòng nhập mật khẩu");
+      hasError = true;
+    } else if (password.length < 6) {
+      setPasswordErr(t("errorPasswordShort") ?? "Mật khẩu phải có ít nhất 6 kí tự");
+      hasError = true;
+    }
+
+    return !hasError;
+  };
+
+  const handleLogin = async () => {
+    resetErrors();
+
+    if (!validateFields()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res: any = await customerLogin({ email, password });
+
+      if (res?.success) {
+        if (res.data?.accessToken) {
+          localStorage.setItem("accessToken", res.data.accessToken);
+        }
+        if (res.data?.refreshToken) {
+          localStorage.setItem("refreshToken", res.data.refreshToken);
+        }
+        if (res.data?.userId) {
+          localStorage.setItem("userId", res.data.userId);
+        }
+
+        onSuccess?.();
+        onClose();
+        navigate("/dashboard");
+      } else {
+        setErr(t("loginFailed") ?? "Đăng nhập thất bại");
+      }
+    } catch (error: any) {
+      const status = error?.response?.status;
+      if (status === 401) {
+        setErr(t("wrongCredentials") ?? "Sai tài khoản hoặc mật khẩu");
+      } else if (status === 403) {
+        setErr(t("accountLocked") ?? "Tài khoản bị khóa hoặc không được phép");
+      } else if (status >= 500) {
+        setErr(t("serverError") ?? "Lỗi máy chủ, vui lòng thử lại sau");
+      } else {
+        setErr(t("loginError") ?? "Lỗi kết nối");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleLogin();
+  };
 
   return (
     <Dialog
@@ -97,10 +147,13 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
           m: { xs: 1, md: 6 },
         },
       }}
+      aria-labelledby="login-dialog-title"
     >
-      {/* Close */}
       <IconButton
-        onClick={onClose}
+        onClick={() => {
+          resetErrors();
+          onClose();
+        }}
         sx={{
           position: "absolute",
           right: 12,
@@ -135,7 +188,7 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* LEFT: Illustration + logo pushed left */}
+          {/* LEFT: Illustration + logo */}
           <Box
             sx={{
               position: "relative",
@@ -147,7 +200,6 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
               minHeight: { xs: 220, md: 480 },
             }}
           >
-           
             <Box
               sx={{
                 display: "flex",
@@ -190,7 +242,7 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
             </Box>
           </Box>
 
-          {/* RIGHT: Form — glass overlay so form reads clearly over wave */}
+          {/* RIGHT: Form */}
           <Box
             sx={{
               position: "relative",
@@ -198,10 +250,9 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-
             }}
           >
-            {/* glass overlay background (covers entire form area) */}
+            {/* glass overlay background */}
             <Box
               sx={{
                 position: "absolute",
@@ -211,125 +262,139 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
               }}
             />
 
-            <Box sx={{ width: "100%", maxWidth: 360, position: "relative", zIndex: 2, ml:10 }}>
+            <Box sx={{ width: "100%", maxWidth: 360, position: "relative", zIndex: 2, ml: 10 }}>
               <Stack spacing={2.5} sx={{ color: "#fff" }}>
-
                 <Typography
+                  id="login-dialog-title"
                   variant="h5"
                   fontWeight={700}
                   textAlign="center"
-                  sx={{ color: "#fff" }}   
+                  sx={{ color: "#fff" }}
                 >
                   {t("login") ?? "Đăng nhập"}
                 </Typography>
 
-                <Typography
-                  variant="body2"
-                  textAlign="center"
-                  sx={{ color: "rgba(255,255,255,0.85)" }}   
-                >
+                <Typography variant="body2" textAlign="center" sx={{ color: "rgba(255,255,255,0.85)" }}>
                   {t("subtitle") ?? "Nhập thông tin tài khoản để truy cập hệ thống."}
                 </Typography>
 
-                {/* --- USERNAME --- */}
-                <TextField
-                  fullWidth
-                  label={t("username") ?? "Số điện thoại"}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  InputLabelProps={{
-                    sx: {
-                      color: "rgba(255,255,255,0.85)",
-                      "&.Mui-focused": { color: "#fff" },
-                    },
-                  }}
-                  InputProps={{
-                    sx: {
-                      borderRadius: 2,
-                      color: "#fff",
-                      backgroundColor: "rgba(255,255,255,0.15)",
-                      backdropFilter: "blur(4px)",
-                      "& input": { color: "#fff" },
-                      "& fieldset": { borderColor: "rgba(255,255,255,0.4)" },
-                      "&:hover fieldset": { borderColor: "#fff" },
-                      "&.Mui-focused fieldset": { borderColor: "#fff" },
-                    },
-                  }}
-                />
+                {/* Form - sử dụng form để bắt Enter */}
+                <Box component="form" onSubmit={handleSubmit} noValidate>
+                  <Stack spacing={2.5}>
+                    <TextField
+                      fullWidth
+                      label={t("username") ?? "Số điện thoại hoặc Email"}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                      error={Boolean(emailErr)}
+                      helperText={emailErr || " "}
+                      FormHelperTextProps={{
+                        sx: { color: "#ffb3b3", mt: -1, mb: 0.5 },
+                      }}
+                      InputLabelProps={{
+                        sx: {
+                          color: "rgba(255,255,255,0.85)",
+                          "&.Mui-focused": { color: "#fff" },
+                        },
+                      }}
+                      InputProps={{
+                        sx: {
+                          borderRadius: 2,
+                          color: "#fff",
+                          backgroundColor: "rgba(255,255,255,0.12)",
+                          backdropFilter: "blur(4px)",
+                          "& input": { color: "#fff" },
+                          "& fieldset": { borderColor: "rgba(255,255,255,0.4)" },
+                          "&:hover fieldset": { borderColor: "#fff" },
+                          "&.Mui-focused fieldset": { borderColor: "#fff" },
+                          "&.Mui-error fieldset": { borderColor: "#ff8080 !important" },
+                        },
+                      }}
+                    />
 
-                {/* --- PASSWORD --- */}
-                <TextField
-                  fullWidth
-                  label={t("password") ?? "Mật khẩu"}
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  InputLabelProps={{
-                    sx: {
-                      color: "rgba(255,255,255,0.85)",
-                      "&.Mui-focused": { color: "#fff" },
-                    },
-                  }}
-                  InputProps={{
-                    sx: {
-                      borderRadius: 2,
-                      backgroundColor: "rgba(255,255,255,0.15)",
-                      backdropFilter: "blur(4px)",
-                      color: "#fff",
-                      "& input": { color: "#fff" },
-                      "& fieldset": { borderColor: "rgba(255,255,255,0.4)" },
-                      "&:hover fieldset": { borderColor: "#fff" },
-                      "&.Mui-focused fieldset": { borderColor: "#fff" },
-                    },
-                  }}
-                />
+                    <TextField
+                      fullWidth
+                      label={t("password") ?? "Mật khẩu"}
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      error={Boolean(passwordErr)}
+                      helperText={passwordErr || " "}
+                      FormHelperTextProps={{
+                        sx: { color: "#ffb3b3", mt: -1, mb: 0.5 },
+                      }}
+                      InputLabelProps={{
+                        sx: {
+                          color: "rgba(255,255,255,0.85)",
+                          "&.Mui-focused": { color: "#fff" },
+                        },
+                      }}
+                      InputProps={{
+                        sx: {
+                          borderRadius: 2,
+                          backgroundColor: "rgba(255,255,255,0.12)",
+                          backdropFilter: "blur(4px)",
+                          color: "#fff",
+                          "& input": { color: "#fff" },
+                          "& fieldset": { borderColor: "rgba(255,255,255,0.4)" },
+                          "&:hover fieldset": { borderColor: "#fff" },
+                          "&.Mui-focused fieldset": { borderColor: "#fff" },
+                          "&.Mui-error fieldset": { borderColor: "#ff8080 !important" },
+                        },
+                      }}
+                    />
 
-                {err && (
-                  <Typography sx={{ color: "#ffb3b3" }} variant="body2">
-                    {err}
-                  </Typography>
-                )}
+                    {/* Display API / global error */}
+                    {err && (
+                      <Box
+                        sx={{
+                          p: 1.2,
+                          borderRadius: 2,
+                          bgcolor: "rgba(255,80,80,0.12)",
+                          border: "1px solid rgba(255,80,80,0.3)",
+                          color: "#ffbebe",
+                          fontSize: 14,
+                          textAlign: "center",
+                        }}
+                      >
+                        {err}
+                      </Box>
+                    )}
 
-                {/* BUTTON */}
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={handleLogin}
-                  disabled={loading}
-                  sx={{
-                    py: 1.2,
-                    borderRadius: 3,
-                    bgcolor: "#3CBD96",
-                    "&:hover": { bgcolor: "#2E9E7C" },
-                    fontWeight: 700,
-                    color: "#fff",  
-                  }}
-                >
-                  {loading ? <CircularProgress size={20} color="inherit" /> : (t("loginButton") ?? "Đăng nhập")}
-                </Button>
-
-                {/* LINKS + FOOTER */}
-                <Box display="flex" justifyContent="space-between" sx={{ color: "#fff" }}>
-                  <Link underline="hover" sx={{ color: "#fff" }}>
-                    {t("forgot") ?? "Quên mật khẩu?"}
-                  </Link>
-                  <Link underline="hover" sx={{ color: "#fff" }}>
-                    {t("register") ?? "Đăng ký"}
-                  </Link>
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      disabled={loading}
+                      sx={{
+                        py: 1.2,
+                        borderRadius: 3,
+                        bgcolor: "#3CBD96",
+                        "&:hover": { bgcolor: "#2E9E7C" },
+                        fontWeight: 700,
+                        color: "#fff",
+                        mt: 0.5,
+                      }}
+                    >
+                      {loading ? <CircularProgress size={20} color="inherit" /> : t("loginButton") ?? "Đăng nhập"}
+                    </Button>
+                  </Stack>
                 </Box>
 
-                <Typography
-                  variant="caption"
-                  textAlign="center"
-                  sx={{ color: "rgba(255,255,255,0.7)", mt: 1 }}
-                >
+                {/* Links + footer */}
+                <Box display="flex" justifyContent="space-between" sx={{ color: "#fff" }}>
+                  <Link underline="hover" sx={{ color: "#fff", cursor: "pointer" }}>
+                    {t("forgot") ?? "Quên mật khẩu?"}
+                  </Link>
+                  
+                </Box>
+
+                <Typography variant="caption" textAlign="center" sx={{ color: "rgba(255,255,255,0.7)", mt: 1 }}>
                   © 2025 ASMS
                 </Typography>
-
               </Stack>
-
             </Box>
           </Box>
         </Box>

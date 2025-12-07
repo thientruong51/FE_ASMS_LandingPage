@@ -19,32 +19,26 @@ function ModelViewer({ url }: { url: string }) {
   useEffect(() => {
     if (!model?.scene) return;
 
-    // compute bbox
     const box = new THREE.Box3().setFromObject(model.scene);
     const size = new THREE.Vector3();
     const center = new THREE.Vector3();
     box.getSize(size);
     box.getCenter(center);
 
-    // move model so its center is at origin
     model.scene.position.x += -center.x;
     model.scene.position.y += -center.y;
     model.scene.position.z += -center.z;
 
-    // cast camera to perspective so TS knows about fov
     const cam = camera as THREE.PerspectiveCamera;
-
-    // pick camera offsets based on model size
     const maxDim = Math.max(size.x, size.y, size.z, 1e-4);
     const fov = (cam.fov || 70) * (Math.PI / 180);
-    const camZ = (maxDim / 2) / Math.tan(fov / 2) * 1.5; // slight padding
+    const camZ = (maxDim / 2) / Math.tan(fov / 2) * 1.5;
     const camY = size.y * 0.35 + Math.max(0.2, maxDim * 0.05) - 0.3;
 
     cam.position.set(0, camY, camZ);
     cam.lookAt(new THREE.Vector3(0, camY * 0.2, 0));
     cam.updateProjectionMatrix();
 
-    // update OrbitControls target if ref available
     if (controlsRef.current && typeof controlsRef.current.target?.set === "function") {
       controlsRef.current.target.set(0, camY * 0.2, 0);
       controlsRef.current.update();
@@ -54,10 +48,20 @@ function ModelViewer({ url }: { url: string }) {
   return (
     <>
       <primitive object={model.scene} />
-      {/* Provide controls inside the viewer so we can target them via ref */}
       <OrbitControls ref={controlsRef} enablePan={false} enableZoom={true} />
     </>
   );
+}
+
+function renderPrice(p?: string | number) {
+  if (p === undefined || p === null || p === "") return "";
+  if (typeof p === "number") return `${p.toLocaleString()} đ`;
+  return String(p);
+}
+
+function isImageUrl(url?: string) {
+  if (!url) return false;
+  return /\.(png|jpe?g|webp|svg|gif)(\?.*)?$/i.test(url);
 }
 
 export default function BoxCard({
@@ -71,14 +75,13 @@ export default function BoxCard({
 }: {
   label: string;
   size: string;
-  priceMonth: string;
-  priceWeek: string;
+  priceMonth?: string | number;
+  priceWeek?: string | number;
   selected: boolean;
   onSelect: () => void;
   id?: string;
   modelUrl?: string;
 }) {
-  // IntersectionObserver to defer rendering heavy canvas until in view
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -97,14 +100,14 @@ export default function BoxCard({
     return () => observer.disconnect();
   }, []);
 
-  // preload model for snappier UX
+  // preload GLTF if modelUrl looks like GLTF (not an image)
   useEffect(() => {
-    if (modelUrl) {
+    if (!modelUrl) return;
+    if (!isImageUrl(modelUrl)) {
       try {
-        // useGLTF.preload is a static helper provided by drei
         (useGLTF as any).preload?.(modelUrl);
-      } catch (e) {
-        // ignore preload errors
+      } catch {
+        // ignore
       }
     }
   }, [modelUrl]);
@@ -113,85 +116,71 @@ export default function BoxCard({
     <Paper
       onClick={() => onSelect()}
       sx={{
-        p: 3,
+        p: 2.2,
         borderRadius: 4,
         textAlign: "center",
-        border: selected ? "2px solid #3CBD96" : "1px solid #ddd",
-        boxShadow: selected
-          ? "0 0 0 2px rgba(60,189,150,0.3)"
-          : "0 4px 12px rgba(0,0,0,0.04)",
+        border: selected ? "2px solid #3CBD96" : "1px solid #eee",
+        boxShadow: selected ? "0 0 0 2px rgba(60,189,150,0.08)" : "0 4px 18px rgba(0,0,0,0.03)",
         cursor: "pointer",
-        transition: "all 0.25s ease",
-        "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-        },
+        transition: "transform .16s ease, box-shadow .16s ease",
+        "&:hover": { transform: "translateY(-6px)" },
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <Stack spacing={1.2} alignItems="center">
-        <Typography variant="h6" fontWeight={700} color="primary.main">
+      <Stack spacing={1} alignItems="center">
+        <Typography variant="subtitle2" fontWeight={700} color="primary.main">
           {label}
         </Typography>
 
         <MuiBox
           ref={ref}
           sx={{
-            width: 240,
-            height: 140,
+            width: "100%",
+            height: 120,
             position: "relative",
-            bgcolor: "#f5f5f5",
+            bgcolor: "#fafafa",
             borderRadius: 1,
             overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           {!visible && (
-            <MuiBox
-              sx={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress size={24} />
+            <MuiBox sx={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <CircularProgress size={20} />
             </MuiBox>
           )}
 
-          {visible && modelUrl ? (
-            <Canvas camera={{ position: [2, 2, 3], fov: 45 }} gl={{ toneMappingExposure: 0.3 }}>
+          {visible && modelUrl && isImageUrl(modelUrl) ? (
+            <img src={modelUrl} alt={label} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+          ) : visible && modelUrl && !isImageUrl(modelUrl) ? (
+            <Canvas camera={{ position: [2, 2, 3], fov: 45 }} style={{ width: "100%", height: "100%" }} gl={{ toneMappingExposure: 0.3 }}>
               <Suspense fallback={null}>
                 <ModelViewer url={modelUrl} />
               </Suspense>
               <Environment preset="studio" />
             </Canvas>
           ) : visible && !modelUrl ? (
-            <MuiBox
-              sx={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography variant="caption" color="text.secondary">
-                No preview
-              </Typography>
-            </MuiBox>
+            <Typography variant="caption" color="text.secondary">
+              No preview
+            </Typography>
           ) : null}
         </MuiBox>
 
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="caption" color="text.secondary">
           {size}
         </Typography>
 
         <Stack spacing={0.3}>
           <Typography variant="h6" fontWeight={700} color="text.primary">
-            {priceMonth}
+            {renderPrice(priceMonth)}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {priceWeek}
+            {renderPrice(priceWeek)}
           </Typography>
         </Stack>
       </Stack>

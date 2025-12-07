@@ -1,3 +1,4 @@
+// Step2BoxSelect.tsx
 import { useEffect, useState } from "react";
 import {
   Container,
@@ -65,7 +66,7 @@ export default function Step2BoxSelect({
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     let mounted = true;
@@ -89,7 +90,7 @@ export default function Step2BoxSelect({
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [t]);
 
   const totalMonthly = selectedBoxes.reduce(
     (s: number, b: any) => s + (b.price ?? b.priceMonthValue ?? 0) * (b.quantity ?? 1),
@@ -101,17 +102,21 @@ export default function Step2BoxSelect({
   const handleNext = () => {
     if (selectedBoxes.length === 0) return;
 
+    // map selectedBoxes -> boxesPayload
     const boxesPayload = selectedBoxes.map((b) => {
-
+      // normalize product type ids
       let ids: number[] = [];
       if (Array.isArray(b.productTypeIds) && b.productTypeIds.length > 0) {
-        ids = b.productTypeIds.map((x: any) => Number(x));
+        ids = b.productTypeIds.map((x: any) => Number(x)).filter((x: unknown) => !Number.isNaN(x));
       } else if (Array.isArray(b.productTypes) && b.productTypes.length > 0) {
-        ids = b.productTypes.map((p: any) => Number(p.id ?? p.productTypeId)).filter((x: any) => !Number.isNaN(x));
+        ids = b.productTypes
+          .map((p: any) => Number(p.id ?? p.productTypeId))
+          .filter((x: any) => !Number.isNaN(x));
       } else {
         ids = [];
       }
 
+      // normalize productTypes array
       const normalizedProductTypes =
         Array.isArray(b.productTypes) && b.productTypes.length > 0
           ? b.productTypes.map((p: any) => ({
@@ -121,11 +126,22 @@ export default function Step2BoxSelect({
               canStack: p.canStack ?? false,
             }))
           : ids.map((id: number) => {
-              const found = (productTypes ?? []).find((pt) => Number(pt.productTypeId) === Number(id) || Number(pt.id) === Number(id));
-              return { id: Number(id), name: found?.name ?? `#${id}`, isFragile: found?.isFragile ?? false, canStack: found?.canStack ?? false };
+              const found = (productTypes ?? []).find(
+                (pt) => Number(pt.productTypeId) === Number(id) || Number(pt.id) === Number(id)
+              );
+              return {
+                id: Number(id),
+                name: found?.name ?? `#${id}`,
+                isFragile: found?.isFragile ?? false,
+                canStack: found?.canStack ?? false,
+              };
             });
 
-      return {
+      // detect oversize (either explicit flag or id prefix)
+      const isOversize = Boolean(b.isOversize === true || String(b.id ?? "").startsWith("oversize-"));
+
+      // base payload
+      const base = {
         id: String(b.id ?? b.containerTypeId ?? ""),
         label: b.label ?? b.name ?? "",
         quantity: Number(b.quantity ?? 1),
@@ -134,6 +150,19 @@ export default function Step2BoxSelect({
         productTypeIds: ids,
         productTypes: normalizedProductTypes,
       };
+
+      // attach oversize flat fields (in meters) only when oversize
+      if (isOversize) {
+        return {
+          ...base,
+          isOversize: true,
+          length: typeof b.length === "number" ? b.length : b.length ? Number(b.length) : undefined,
+          width: typeof b.width === "number" ? b.width : b.width ? Number(b.width) : undefined,
+          height: typeof b.height === "number" ? b.height : b.height ? Number(b.height) : undefined,
+        };
+      }
+
+      return base;
     });
 
     const masterProductTypes = Array.isArray(productTypes)
@@ -154,8 +183,6 @@ export default function Step2BoxSelect({
       totalTypes,
       totalItems,
     };
-
-
 
     onNext(payload);
   };
