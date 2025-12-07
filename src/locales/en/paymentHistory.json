@@ -1,0 +1,22 @@
+{
+  "title": "Payment History",
+  "search": "Search by code / order / platform",
+  "refresh": "Refresh",
+  "reload": "Reload",
+  "forCustomer": "Showing payment records for customer:",
+  
+  "columns": {
+    "paymentHistoryCode": "Payment ID",
+    "orderCode": "Order Code",
+    "method": "Method",
+    "platform": "Platform",
+    "amount": "Amount"
+  },
+
+  "noRecords": "No payment history found.",
+  
+  "errorNoCustomer": "CustomerCode not found in access token.",
+  "errorUnauthorized": "Unauthorized (401).",
+  "errorServer": "Server error, please try again later.",
+  "errorFetch": "Failed to fetch payment history."
+}

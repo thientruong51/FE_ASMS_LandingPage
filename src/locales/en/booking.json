@@ -246,5 +246,19 @@
       "weeksRange": "Weeks must be between 1 and 4.",
       "monthsPositive": "Please enter a valid number of months (> 0)."
     }
-  }
+  },
+  "chooseBox": "Choose a box",
+  "chooseBoxDesc": "Select the box type you want to rent and the quantity. Then choose item types.",
+  "none": "None",
+  "noProductTypes": "No item types available.",
+
+  "oversizeTitle": "Oversized items",
+  "oversizeAdd": "Add oversized item",
+  "oversizeLabel": "Oversized ({{volume}} m³)",
+  "oversizeSizeLabel": "Dimensions (cm)",
+  "oversizeDimensionD": "L",
+  "oversizeDimensionR": "W",
+  "oversizeDimensionC": "H",
+  "oversizeVolume": "Volume",
+  "oversizePrice": "Price"
 }

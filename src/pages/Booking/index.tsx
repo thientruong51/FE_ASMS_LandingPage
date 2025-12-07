@@ -1,3 +1,4 @@
+// BookingPage.tsx
 import { useState, useMemo } from "react";
 import { Box, Container, Paper } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -50,6 +51,11 @@ export type BoxInfo = {
 export type BoxInfoExtended = BoxInfo & {
   productTypes?: ProductTypeSelection[];
   productTypeIds?: number[];
+  // optional oversize fields in meters
+  length?: number;
+  width?: number;
+  height?: number;
+  isOversize?: boolean;
 };
 
 export type PriceBreakdown = {
@@ -238,7 +244,7 @@ export default function BookingPage() {
                   />
                 )}
 
-                {/* STEP 6: Info Form */}
+                {/* STEP 6: INFO FORM */}
                 {active === 5 && (
                   <Step3InfoForm
                     initial={{
@@ -317,8 +323,7 @@ export default function BookingPage() {
                       const normalizedBoxes: BoxInfoExtended[] = rawBoxes.map(
                         (b: any) => {
                           const ptIdsFromTypes =
-                            Array.isArray(b.productTypes) &&
-                              b.productTypes.length > 0
+                            Array.isArray(b.productTypes) && b.productTypes.length > 0
                               ? b.productTypes
                                 .map((pt: any) => pt.id ?? pt.productTypeId)
                                 .filter((x: any) => x != null)
@@ -330,46 +335,44 @@ export default function BookingPage() {
                               ? b.productTypeIds.map((x: any) => Number(x))
                               : ptIdsFromTypes.map((x: any) => Number(x));
 
-                          return {
-                            id: String(
-                              b.id ?? b.containerTypeId ?? b.boxId ?? ""
-                            ),
+                          const normalized: any = {
+                            id: String(b.id ?? b.containerTypeId ?? b.boxId ?? ""),
                             label: b.label ?? b.name ?? "",
-                            price: Number(
-                              b.price ?? b.priceMonthValue ?? 0
-                            ),
+                            price: Number(b.price ?? b.priceMonthValue ?? 0),
                             quantity: Number(b.quantity ?? 1),
                             imageUrl: b.imageUrl ?? b.modelUrl ?? null,
                             productTypes: Array.isArray(b.productTypes)
                               ? b.productTypes.map((pt: any) => ({
-                                id: Number(
-                                  pt.id ?? pt.productTypeId
-                                ),
-                                name:
-                                  pt.name ??
-                                  pt.title ??
-                                  String(
-                                    pt.id ?? pt.productTypeId
-                                  ),
-                                isFragile: pt.isFragile,
-                                canStack: pt.canStack,
-                                description: pt.description ?? null,
-                              }))
+                                  id: Number(pt.id ?? pt.productTypeId),
+                                  name:
+                                    pt.name ?? pt.title ?? String(pt.id ?? pt.productTypeId),
+                                  isFragile: pt.isFragile,
+                                  canStack: pt.canStack,
+                                  description: pt.description ?? null,
+                                }))
                               : undefined,
                             productTypeIds: ids ?? [],
-                          } as BoxInfoExtended;
+                          };
+
+                          // preserve oversize flat fields (in meters) if present
+                          if (typeof b.length !== "undefined") normalized.length = Number(b.length);
+                          if (typeof b.width !== "undefined") normalized.width = Number(b.width);
+                          if (typeof b.height !== "undefined") normalized.height = Number(b.height);
+                          if (b.isOversize) normalized.isOversize = true;
+
+                          return normalized as BoxInfoExtended;
                         }
                       );
 
                       const masterProductTypes =
                         Array.isArray(payload?.productTypes)
                           ? payload.productTypes.map((pt: any) => ({
-                            id: Number(pt.productTypeId ?? pt.id),
-                            name: pt.name,
-                            isFragile: pt.isFragile,
-                            canStack: pt.canStack,
-                            description: pt.description ?? null,
-                          }))
+                              id: Number(pt.productTypeId ?? pt.id),
+                              name: pt.name,
+                              isFragile: pt.isFragile,
+                              canStack: pt.canStack,
+                              description: pt.description ?? null,
+                            }))
                           : Array.isArray(payload?.productTypesList)
                             ? payload.productTypesList
                             : undefined;
@@ -377,11 +380,11 @@ export default function BookingPage() {
                       const firstBox =
                         normalizedBoxes.length > 0
                           ? {
-                            id: normalizedBoxes[0].id,
-                            label: normalizedBoxes[0].label,
-                            price: normalizedBoxes[0].price,
-                            quantity: normalizedBoxes[0].quantity,
-                          }
+                              id: normalizedBoxes[0].id,
+                              label: normalizedBoxes[0].label,
+                              price: normalizedBoxes[0].price,
+                              quantity: normalizedBoxes[0].quantity,
+                            }
                           : null;
 
                       handlers.save({
@@ -389,8 +392,7 @@ export default function BookingPage() {
                         box: firstBox,
                         boxPayload: payload,
                         productTypes:
-                          masterProductTypes ??
-                          (data.productTypes ?? null),
+                          masterProductTypes ?? (data.productTypes ?? null),
                       });
 
                       handlers.next();

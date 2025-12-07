@@ -244,5 +244,21 @@
       "weeksRange": "Số tuần phải từ 1 đến 4.",
       "monthsPositive": "Vui lòng nhập số tháng hợp lệ (> 0)."
     }
-  }
+  },
+  "chooseBox": "Chọn hộp",
+  "chooseBoxDesc": "Chọn loại hộp bạn muốn thuê và số lượng. Sau đó chọn loại hàng hóa.",
+  "chooseGoodsPerBox": "Chọn loại hàng",
+  "none": "Không chọn",
+  "noProductTypes": "Không có loại hàng để chọn.",
+
+
+  "oversizeTitle": "Hàng quá cỡ",
+  "oversizeAdd": "Thêm hàng quá cỡ",
+  "oversizeLabel": "Hàng quá cỡ ({{volume}} m³)",
+  "oversizeSizeLabel": "Kích thước (cm)",
+  "oversizeDimensionD": "D",
+  "oversizeDimensionR": "R",
+  "oversizeDimensionC": "C",
+  "oversizeVolume": "Thể tích",
+  "oversizePrice": "Giá"
 }

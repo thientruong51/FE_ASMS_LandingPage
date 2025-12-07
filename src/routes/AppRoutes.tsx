@@ -14,6 +14,7 @@ import ThreeDTour from "../pages/3DTour";
 import Booking from "../pages/Booking";
 import { ContactPage, DashboardPage, Layout, OrderDetailPage, OrdersPage, SettingsPage, UserInfoPage } from "../pages/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
+import PaymentHistoryPage from "../pages/Dashboard/PaymentHistoryPage";
 
 export default function AppRoutes() {
   return (
@@ -40,6 +41,7 @@ export default function AppRoutes() {
         <Route path="userinfo" element={<UserInfoPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="contact" element={<ContactPage />} />
+        <Route path="paymentHistorys" element={<PaymentHistoryPage />} />
       </Route>
     </Routes>
 

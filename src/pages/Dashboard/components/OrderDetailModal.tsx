@@ -214,11 +214,14 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
     return items.reduce((s: number, it: any) => s + (Number(it.subTotal ?? it.raw?.subTotal ?? it.price * it.qty) || 0), 0);
   })();
 
-  const fmtDate = (iso?: string | null) => {
-    const d = safeDate(iso);
-    if (!d) return "-";
-    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-  };
+ const fmtDate = (iso?: string | null) => {
+  const d = safeDate(iso);
+  if (!d) return "-";
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+};
 
   const calcDays = () => {
     const s = safeDate(order.startDate);
