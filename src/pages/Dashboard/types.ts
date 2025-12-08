@@ -85,6 +85,7 @@ export type Item = {
 // ==============================
 
 export type Order = {
+  orderCode: any;
   id: string;
   kind: WarehouseType;
 

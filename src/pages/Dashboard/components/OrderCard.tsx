@@ -31,7 +31,7 @@ import {
   resolveContainerName,
 } from "../../../api/typeLookup";
 import { useTranslation } from "react-i18next";
-import ContactDialog from "./ContactDialog"; 
+import ContactDialog from "./ContactDialog";
 
 const formatMoney = (n?: number) => {
   if (n == null) return "-";
@@ -171,7 +171,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
       const fresh = await fetchOrderByCode(String(orderCode));
       if (fresh) {
         setOrder((prev: any) => ({ ...prev, ...fresh }));
-        try { window.dispatchEvent(new CustomEvent("order:updated", { detail: fresh })); } catch {}
         return fresh;
       }
     } catch {}
@@ -185,7 +184,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
       );
       if (fresh) {
         setOrder((prev: any) => ({ ...prev, ...fresh }));
-        try { window.dispatchEvent(new CustomEvent("order:updated", { detail: fresh })); } catch {}
         return fresh;
       }
     } catch {}
@@ -270,10 +268,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   };
 
-  const closeCheckoutDialog = () => {
+  // Modified: closeCheckoutDialog now reloads order and notifies parent via onOpenDetail
+  const closeCheckoutDialog = async () => {
     closedByUserRef.current = true;
     setCheckoutUrl(null);
     setIframeLoading(true);
+
+    try {
+      const fresh = await reloadOrder();
+      if (fresh && onOpenDetail) {
+        try {
+          onOpenDetail(fresh);
+        } catch {
+          // ignore errors from parent handler
+        }
+      }
+    } catch {
+      // ignore
+    }
   };
 
   // --- Contact dialog local state
@@ -428,7 +440,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
       </Dialog>
 
       {/* Contact dialog instance */}
-      <ContactDialog open={contactOpen} onClose={closeContactDialog} orderCode={orderCode} onSent={() => { /* optional reload */ }} />
+      <ContactDialog
+        open={contactOpen}
+        onClose={() => {
+          closeContactDialog();
+          void reloadOrder();
+        }}
+        orderCode={orderCode}
+        onSent={() => {
+          void reloadOrder();
+          closeContactDialog();
+        }}
+      />
 
       <Snackbar open={snack.open} autoHideDuration={6000} onClose={() => setSnack((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
         <Alert onClose={() => setSnack((prev) => ({ ...prev, open: false }))} severity={snack.severity} sx={{ width: "100%" }}>{snack.message}</Alert>

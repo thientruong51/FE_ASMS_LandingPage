@@ -120,7 +120,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
     return order.orderCode ?? order.orderId ?? order.id ?? null;
   }, [order]);
 
-  // If items look like summary, fetch details and override items
+  // If items look like summary, fetch details and override items (existing behavior)
   useEffect(() => {
     if (!orderCode) {
       setFetchedDetails(null);
@@ -141,6 +141,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
     );
 
     if (hasFullDetail) {
+      // keep existing behavior (no automatic override) — note: we still add an extra effect below to always refetch on `order` change
       setFetchedDetails(null);
       setDetailsLoading(false);
       return;
@@ -159,6 +160,28 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
 
     return () => { mounted = false; };
   }, [orderCode, order]);
+
+
+  // ---------- NEW: always refresh details when parent passes a new `order` prop ----------
+  // This ensures modal updates when parent replaces the order object (e.g. after payment)
+  useEffect(() => {
+    if (!orderCode) return;
+    let mounted = true;
+    (async () => {
+      try {
+        setDetailsLoading(true);
+        const details = await fetchOrderDetails(String(orderCode));
+        if (!mounted) return;
+        if (Array.isArray(details) && details.length > 0) setFetchedDetails(details);
+        else setFetchedDetails(null);
+      } catch {
+        if (mounted) setFetchedDetails(null);
+      } finally {
+        if (mounted) setDetailsLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [order]); // runs whenever `order` prop reference changes
 
   if (!order) return null;
 
@@ -214,14 +237,14 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
     return items.reduce((s: number, it: any) => s + (Number(it.subTotal ?? it.raw?.subTotal ?? it.price * it.qty) || 0), 0);
   })();
 
- const fmtDate = (iso?: string | null) => {
-  const d = safeDate(iso);
-  if (!d) return "-";
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
-};
+  const fmtDate = (iso?: string | null) => {
+    const d = safeDate(iso);
+    if (!d) return "-";
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  };
 
   const calcDays = () => {
     const s = safeDate(order.startDate);
@@ -232,7 +255,20 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
+    <Dialog
+      // NEW: force remount when a different orderCode is passed
+      key={orderCode ?? "order-detail"}
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth={false}
+      PaperProps={{
+        sx: {
+          width: "1400px",
+          maxWidth: "90vw",
+        },
+      }}
+    >
       <DialogTitle sx={{ px: 3, py: 2 }}>
         <Box display="flex" alignItems="center" justifyContent="space-between" gap={2}>
           <Box>
@@ -245,7 +281,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
           </Box>
 
           <Box display="flex" alignItems="center" gap={1}>
-            <Button variant="outlined" size="small" onClick={() => {}}>
+            <Button variant="outlined" size="small" onClick={() => { }}>
               {t("orderDetail.renewOrder")}
             </Button>
             <Button variant="contained" size="small">

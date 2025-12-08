@@ -1,7 +1,6 @@
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-// Removed useNavigate since it was unused
 import Header from "../../components/Header";
 import Footer from "../Home/Footer";
 import Hero from "../Home/Hero";
