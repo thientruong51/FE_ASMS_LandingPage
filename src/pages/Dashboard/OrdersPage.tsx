@@ -27,6 +27,10 @@ const FILTERS = [
   "Stored",
   "Renting",
   "Overdue",
+  "ExpiredStorage",
+  "Retrieved",
+  "Delivered",
+  "Completed",
 ] as const;
 
 const OrdersPage: React.FC = () => {
@@ -70,6 +74,32 @@ const OrdersPage: React.FC = () => {
     setFilter(e.target.value as string);
   };
 
+  const keyOf = (o: any) => (o?.orderCode ?? o?.orderId ?? o?.id ?? null);
+  const getOrderKey = (o: any) => keyOf(o) ?? JSON.stringify(o);
+
+  const handleOpenDetailFromCard = (freshOrder?: any, fallbackOrder?: Order) => {
+    const orderToUse = freshOrder ?? fallbackOrder;
+    if (!orderToUse) {
+      setOpen(true);
+      return;
+    }
+
+    setOrders((prev) => {
+      try {
+        const replaced = prev.map((p) =>
+          keyOf(p) === keyOf(orderToUse) ? { ...p, ...orderToUse } : p
+        );
+        const found = replaced.some((p) => keyOf(p) === keyOf(orderToUse));
+        return found ? replaced : [orderToUse, ...prev];
+      } catch {
+        return prev;
+      }
+    });
+
+    setSelected(orderToUse);
+    setOpen(true);
+  };
+
   return (
     <Stack spacing={3}>
       <Typography variant="h5" fontWeight={700}>
@@ -104,8 +134,11 @@ const OrdersPage: React.FC = () => {
       ) : (
         <Stack spacing={3}>
           {filtered.map((o) => (
-            <Box key={o.id}>
-              <OrderCard order={o} onOpenDetail={(o) => { setSelected(o); setOpen(true); }} />
+            <Box key={getOrderKey(o)}>
+              <OrderCard
+                order={o}
+                onOpenDetail={(freshOrder) => handleOpenDetailFromCard(freshOrder ?? undefined, o)}
+              />
             </Box>
           ))}
 
@@ -117,7 +150,12 @@ const OrdersPage: React.FC = () => {
         </Stack>
       )}
 
-      <OrderDetailModal open={open} order={selected ?? undefined} onClose={() => setOpen(false)} />
+      <OrderDetailModal
+        key={getOrderKey(selected ?? {})}
+        open={open}
+        order={selected ?? undefined}
+        onClose={() => setOpen(false)}
+      />
     </Stack>
   );
 };

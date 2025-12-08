@@ -126,7 +126,9 @@
     "Renting": "Đang thuê",
     "Overdue": "Quá hạn",
     "ExpiredStorage": "Lưu kho quá hạn",
-    "Retrieved": "Đã nhận lại"
+    "Retrieved": "Nhận lại hàng",
+    "Delivered": "Đã vận chuyển",
+    "Completed":"Hoàn thành"
   },
   "tracking": {
     "noTracking": "Không có lịch sử",

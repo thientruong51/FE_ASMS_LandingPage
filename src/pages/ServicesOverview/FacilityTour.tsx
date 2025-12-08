@@ -12,7 +12,7 @@ const MODEL_URL =
 export default function FacilityTour() {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<any>(null);
-  const [bounds, setBounds] = useState<THREE.Box3 | null>(null);
+  const [, setBounds] = useState<THREE.Box3 | null>(null);
 const { t } = useTranslation("servicesOverview");
   return (
     <Box sx={{ width: "100%", bgcolor: "#f9fafc" }}>

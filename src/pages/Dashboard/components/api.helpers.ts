@@ -13,13 +13,18 @@ const parseQty = (d: any) => {
   return 1;
 };
 
-export const mapOrder = async (summary: any) => {
-  const details = await fetchOrderDetails(summary.orderCode);
+export const mapOrder = async (summary: any): Promise<Order> => {
+  let details: any[] = [];
+  try {
+    details = await fetchOrderDetails(summary.orderCode);
+  } catch {
+    details = [];
+  }
 
   const items = (details ?? []).map((d: any) => {
     const qty = parseQty(d);
     return {
-      id: String(d.orderDetailId ?? summary.orderCode),
+      id: String(d.orderDetailId ?? summary.orderCode ?? summary.id ?? ""),
       name: d.containerCode ?? `Item ${d.orderDetailId ?? ""}`,
       price: toNumber(d.price, 0),
       qty,
@@ -34,25 +39,25 @@ export const mapOrder = async (summary: any) => {
   const kind = normalizeStyle(summary.style);
   const displayStatus = deriveStatus(summary.status, summary.style, summary.returnDate);
 
-  return {
-    id: summary.orderCode,
+  const mapped: Order = {
+    id: summary.orderCode ?? String(summary.id ?? ""),
+    orderCode: summary.orderCode ?? String(summary.id ?? ""),
     startDate: summary.depositDate ?? summary.orderDate ?? null,
     endDate: summary.returnDate ?? null,
     status: summary.status,
     displayStatus,
-
     kind,
     staff: undefined,
     tracking: [],
-
     items,
     rawSummary: summary,
     rawDetails: details,
-
     totalPrice: summary.totalPrice ?? null,
     unpaidAmount: summary.unpaidAmount ?? null,
     boxes: items.reduce((acc: number, it: any) => acc + (it.qty || 0), 0),
   } as Order;
+
+  return mapped;
 };
 
 export const fetchOrdersWithDetails = async (page = 1, pageSize = 10) => {

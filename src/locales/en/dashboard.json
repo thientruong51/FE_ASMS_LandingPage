@@ -126,7 +126,9 @@
     "Renting": "Renting",
     "Overdue": "Overdue",
     "ExpiredStorage": "Stored in expired storage",
-    "Retrieved": "Retrieved"
+    "Retrieved": "Retrieved",
+    "Delivered": "Delivered",
+    "Completed":"Completed"
   },
   "tracking": {
     "noTracking": "No tracking",
