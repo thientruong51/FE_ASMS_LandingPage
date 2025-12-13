@@ -23,6 +23,7 @@ import {
   fetchOrderByCode,
   fetchOrdersByCustomer,
   fetchOrderDetails,
+  cancelOrder
 } from "../../../api/order.list";
 import {
   loadTypeLookup,
@@ -32,7 +33,9 @@ import {
 } from "../../../api/typeLookup";
 import { useTranslation } from "react-i18next";
 import ContactDialog from "./ContactDialog";
-
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import UpdatePasskeyDialog from "./UpdatePasskeyDialog";
 const formatMoney = (n?: number) => {
   if (n == null) return "-";
   return n.toLocaleString("vi-VN") + " đ";
@@ -96,7 +99,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
     let mounted = true;
     void loadTypeLookup()
       .then(() => { if (mounted) setTypesLoaded(true); })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => { mounted = false; });
   }, []);
 
@@ -159,7 +162,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         const finalItems = merged.length > 0 ? merged : details;
         setOrder((prev: any) => ({ ...prev, items: finalItems }));
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => { if (mounted) setDetailsLoading(false); });
 
     return () => { mounted = false; };
@@ -173,7 +176,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         setOrder((prev: any) => ({ ...prev, ...fresh }));
         return fresh;
       }
-    } catch {}
+    } catch { }
 
     try {
       const page = 1;
@@ -186,7 +189,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         setOrder((prev: any) => ({ ...prev, ...fresh }));
         return fresh;
       }
-    } catch {}
+    } catch { }
 
     return null;
   };
@@ -218,7 +221,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             setSnack({ open: true, severity: "info", message: t("snack.pollingTimeout") });
           }
         }
-      } catch {}
+      } catch { }
     };
 
     void doPoll();
@@ -288,11 +291,48 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   };
 
-  // --- Contact dialog local state
   const [contactOpen, setContactOpen] = useState(false);
   const openContactDialog = () => setContactOpen(true);
   const closeContactDialog = () => setContactOpen(false);
+  const [showPasskey, setShowPasskey] = useState(false);
+  const [updatePasskeyOpen, setUpdatePasskeyOpen] = useState(false);
+  const isPending =
+    String(ds ?? "")
+      .toLowerCase() === "pending";
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const handleCancelOrder = async () => {
+    if (!orderCode) return;
 
+    setCancelLoading(true);
+    try {
+      await cancelOrder({
+        orderCode: String(orderCode),
+        cancelReason: "Customer cancel",
+      });
+
+      setSnack({
+        open: true,
+        severity: "success",
+        message: t("snack.cancelSuccess") ?? "Hủy đơn hàng thành công",
+      });
+
+      await reloadOrder();
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ??
+        err?.message ??
+        t("snack.cancelError") ??
+        "Không thể hủy đơn hàng";
+
+      setSnack({
+        open: true,
+        severity: "error",
+        message: msg,
+      });
+    } finally {
+      setCancelLoading(false);
+    }
+  };
   return (
     <>
       <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 0, border: "1px solid", borderColor: "divider" }}>
@@ -306,6 +346,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             <Typography variant="subtitle2" fontWeight={700}>
               {t("orderLabel", { code: order?.orderCode ?? order?.id ?? "-" })}
             </Typography>
+
 
             <Box display="flex" gap={2} mt={1} flexWrap="wrap">
               <Box>
@@ -331,14 +372,59 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <Typography variant="caption" color="text.secondary">{t("items")}</Typography>
                 <Typography variant="body2" sx={{ mt: 0.2 }}>{items.length}</Typography>
               </Box>
+
             </Box>
+            {/* Passkey */}
+            {order?.passkey != null && (
+              <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
+                <Typography variant="body2">
+                  {t("passkey")}:
+                  <strong style={{ marginLeft: 4 }}>
+                    {showPasskey ? order.passkey : "••••••"}
+                  </strong>
+                </Typography>
+
+                <IconButton
+                  size="small"
+                  onClick={() => setShowPasskey((v) => !v)}
+                  sx={{ p: 0.5 }}
+                >
+                  {showPasskey ? (
+                    <VisibilityOffIcon fontSize="small" />
+                  ) : (
+                    <VisibilityIcon fontSize="small" />
+                  )}
+
+                </IconButton>
+              </Box>
+            )}
 
             <Box mt={1.5}>
               <Divider />
+
               <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+
                 <Typography variant="body2" color="text.secondary">{t("total")}</Typography>
                 <Typography variant="subtitle1" fontWeight={700}>{formatMoney(total)}</Typography>
+
               </Box>
+              {/* Refund */}
+              {order?.refund != null && order.refund > 0 && (
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mt={0.5}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    {t("refund")}
+                  </Typography>
+                  <Typography variant="subtitle1" fontWeight={700} color="success.main">
+                    {formatMoney(order.refund)}
+                  </Typography>
+                </Box>
+              )}
+
             </Box>
           </Box>
 
@@ -373,6 +459,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
                   return (
                     <Box key={itAny.id ?? idx} display="flex" gap={2} alignItems="flex-start">
+
                       <Avatar src={itAny.img ?? (r.image as string) ?? undefined} variant="rounded" sx={{ width: 56, height: 56, bgcolor: "#F5F5F5", flexShrink: 0 }}>
                         {!itAny.img && String(idx + 1)}
                       </Avatar>
@@ -396,7 +483,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
                           <Box textAlign="right" sx={{ ml: 1 }}>
                             <Typography variant="body2" fontWeight={700}>{formatMoney(subtotal)}</Typography>
-                            
+
                           </Box>
                         </Box>
                       </Box>
@@ -416,6 +503,33 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <Button size="small" variant="outlined" onClick={openContactDialog}>
             {t("orderDetail.contactStaff") ?? "Liên hệ"}
           </Button>
+          {order?.passkey != null && (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setUpdatePasskeyOpen(true)}
+              sx={{ ml: 1 }}
+            >
+              {t("updatePasskey") ?? "Cập nhật passkey"}
+            </Button>
+          )}
+          {/* 👉 Cancel order (Pending only) */}
+          {isPending && (
+            <Button
+              size="small"
+              variant="outlined"
+              color="error"
+              onClick={handleCancelOrder}
+              disabled={cancelLoading}
+            >
+              {cancelLoading ? (
+                <CircularProgress size={18} />
+              ) : (
+                t("cancelOrder") ?? "Hủy đơn"
+              )}
+            </Button>
+          )}
+
 
           {!isPaid && (
             <Button size="small" variant="contained" onClick={handlePay} disabled={loadingPay}>
@@ -450,6 +564,26 @@ const OrderCard: React.FC<OrderCardProps> = ({
         onSent={() => {
           void reloadOrder();
           closeContactDialog();
+        }}
+      />
+      <UpdatePasskeyDialog
+        open={updatePasskeyOpen}
+        orderCode={String(orderCode)}
+        onClose={() => setUpdatePasskeyOpen(false)}
+        onSuccess={() => {
+          setSnack({
+            open: true,
+            severity: "success",
+            message: t("snack.updatePasskeySuccess") ?? "Cập nhật passkey thành công",
+          });
+          void reloadOrder();
+        }}
+        onError={(msg) => {
+          setSnack({
+            open: true,
+            severity: "error",
+            message: msg,
+          });
         }}
       />
 

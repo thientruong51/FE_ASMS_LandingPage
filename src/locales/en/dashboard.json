@@ -20,7 +20,12 @@
     "pollingTimeout": "Payment polling timed out.",
     "noOrderCodePayError": "No orderCode to create payment link.",
     "openCheckout": "Opening checkout page.",
-    "createPayLinkError": "Error creating payment link."
+    "createPayLinkError": "Error creating payment link.",
+    "updatePasskeySuccess": "Passkey updated successfully",
+    "updatePasskeyError": "Failed to update passkey",
+     "cancelSuccess": "Order cancelled successfully",
+    "cancelError": "Unable to cancel order"
+  
   },
   "orderDetail": {
     "summary": "Order summary",
@@ -195,8 +200,16 @@
     "errors": {
       "missingCustomerId": "Customer id missing. Cannot update."
     }
-  }
-   
+  },
+  "passkey": "Passkey",
+  "updatePasskey": "Update passkey",
+  "oldPasskey": "Current passkey",
+  "newPasskey": "New passkey",
+
+  "refund": "Refund",
+  "cancel":"Cancel",
+  "update":"Update",
+   "cancelOrder": "Cancel order"
  
-  
+   
 }

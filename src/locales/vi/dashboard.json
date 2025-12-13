@@ -20,7 +20,11 @@
     "pollingTimeout": "Polling thanh toán đã hết thời gian.",
     "noOrderCodePayError": "Không có orderCode để tạo link thanh toán.",
     "openCheckout": "Mở trang thanh toán trong app.",
-    "createPayLinkError": "Lỗi khi tạo link thanh toán."
+    "createPayLinkError": "Lỗi khi tạo link thanh toán.",
+    "updatePasskeySuccess": "Cập nhật mất khẩu phòng thành công",
+    "updatePasskeyError": "Cập nhật mất khẩu phòng thất bại",
+    "cancelSuccess": "Hủy đơn hàng thành công",
+    "cancelError": "Không thể hủy đơn hàng"
   },
    "orderDetail": {
     "summary": "Tổng quan đơn hàng",
@@ -195,5 +199,15 @@
     "errors": {
       "missingCustomerId": "Thiếu mã khách hàng. Không thể cập nhật."
     }
-  }
+  },
+  "passkey": "Mất khẩu phòng",
+  "updatePasskey": "Cập nhật mất khẩu phòng",
+  "oldPasskey": "Mất khẩu phòng hiện tại",
+  "newPasskey": "Mất khẩu phòng mới",
+  "refund": "Hoàn tiền",
+  "cancel":"Hủy",
+  "update":"Cập nhật",
+  "cancelOrder": "Hủy đơn"
+ 
+  
 }
