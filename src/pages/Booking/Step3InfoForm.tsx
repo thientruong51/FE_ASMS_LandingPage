@@ -82,7 +82,7 @@ export default function Step3InfoForm({
   const [error, setError] = useState<string | null>(null);
   const [loadingDistance, setLoadingDistance] = useState(false);
 
-  const ALLOWED_SERVICE_IDS = [2, 3, 4]; 
+  const ALLOWED_SERVICE_IDS = [2, 3, 4];
 
   useEffect(() => {
     let mounted = true;
@@ -216,234 +216,226 @@ export default function Step3InfoForm({
     }
   };
 
- return (
-  <Box
-    sx={{
-      maxHeight: "85vh",         
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      bgcolor: "#F9FAFB",
-      py: { xs: 3, md: 6 },       
-      boxSizing: "border-box",
-    }}
-  >
-    <Container
-      maxWidth="md"
+  return (
+    <Box
       sx={{
-        height: "100%",            
+        width: "100%",
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
-        px: { xs: 2, md: 0 },
-        boxSizing: "border-box",
+        bgcolor: "#F9FAFB",
+        py: { xs: 2, md: 3 },
+        px: { xs: 1, sm: 2 },
       }}
     >
-      <Paper
-        variant="outlined"
+      <Container
+        maxWidth="md"
         sx={{
           width: "100%",
-          maxHeight: "calc(100vh - 48px)", 
-          p: { xs: 3, md: 4 },
-          borderRadius: 3,
-          boxSizing: "border-box",
-          overflow: "visible",
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
-        <Stack spacing={2} sx={{ flex: 1, minHeight: 0 }}>
-          <Typography
-            variant="h5"
-            fontWeight={700}
-            color="primary.main"
-            textAlign="center"
-            sx={{ mb: 0 }}
-          >
-            {t("infoForm.title")}
-          </Typography>
+        <Paper
+          variant="outlined"
+          sx={{
+            width: "100%",
+            borderRadius: 3,
+            p: { xs: 2, md: 3 },
+            height: "auto",
+            overflow: "visible",
+          }}
+        >
+          <Stack spacing={1.2}>
+            <Typography variant="h5" fontWeight={700} textAlign="center">
+              {t("infoForm.title")}
+            </Typography>
 
-          <Typography variant="body2" textAlign="center" color="text.secondary" sx={{ mb: 0 }}>
-            {t("infoForm.desc")}
-          </Typography>
+            <Typography variant="body2" textAlign="center" color="text.secondary">
+              {t("infoForm.desc")}
+            </Typography>
 
-          {error && <Alert severity="error">{error}</Alert>}
+            {error && <Alert severity="error">{error}</Alert>}
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ flex: "1 1 auto", overflow: "visible" }}>
-            <Stack spacing={1.5}>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={1.5}
-                sx={{ alignItems: "stretch" }}
-              >
-                <TextField
-                  name="name"
-                  label={t("infoForm.name")}
-                  value={form.name}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-                <TextField
-                  name="phone"
-                  label={t("infoForm.phone")}
-                  value={form.phone}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Stack>
+            {/* FORM */}
+            <Box component="form" onSubmit={handleSubmit}>
+              <Stack spacing={1.2}>
 
-              {/* Email + Address */}
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                <TextField
-                  name="email"
-                  label={t("infoForm.email")}
-                  value={form.email ?? ""}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-                <TextField
-                  name="address"
-                  label={t("infoForm.address")}
-                  value={form.address ?? ""}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Stack>
-
-              {/* Note */}
-              <TextField
-                name="note"
-                label={t("infoForm.note")}
-                value={form.note ?? ""}
-                onChange={handleChange}
-                fullWidth
-                multiline
-                minRows={2}
-              />
-
-              {/* Date Picker */}
-              <Box>
-                <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                  {t("startDate.title")}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" mb={1}>
-                  {t("startDate.desc")}
-                </Typography>
-
-                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={localeToUse}>
-                  <DatePicker
-                    label={t("startDate.chooseDate", "Chọn ngày bắt đầu")}
-                    value={form.selectedDate ? new Date(form.selectedDate) : null}
-                    onChange={handleDateSelectIso}
-                    disablePast
-                    minDate={minDate}
-                    maxDate={maxDate}
-                    format={inputFormat}
-                    slotProps={{
-                      textField: { fullWidth: true },
-                      popper: {
-                        sx: {
-                          "& .MuiPaper-root": {
-                            borderRadius: 3,
-                          },
-                        },
-                      },
-                    }}
+                {/* Name + Phone */}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                >
+                  <TextField
+                    name="name"
+                    label={t("infoForm.name")}
+                    value={form.name}
+                    onChange={handleChange}
+                    fullWidth
+                    required
                   />
-                </LocalizationProvider>
-              </Box>
+                  <TextField
+                    name="phone"
+                    label={t("infoForm.phone")}
+                    value={form.phone}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                  />
+                </Stack>
 
-              {/* Rental period */}
-              <Box>
-                <FormControl component="fieldset" fullWidth>
-                  <FormLabel component="legend" sx={{ mb: 1 }}>
-                    {t("rental.period.title", "Chọn thời gian thuê")}
-                  </FormLabel>
+                {/* Email + Address */}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                >
+                  <TextField
+                    name="email"
+                    label={t("infoForm.email")}
+                    value={form.email ?? ""}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    name="address"
+                    label={t("infoForm.address")}
+                    value={form.address ?? ""}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                  />
+                </Stack>
 
-                  <RadioGroup
-                    value={form.rentalType ?? "month"}
-                    onChange={(e) => handleRentalTypeChange(e.target.value as "week" | "month" | "custom")}
-                    row
+                <TextField
+                  name="note"
+                  label={t("infoForm.note")}
+                  value={form.note ?? ""}
+                  onChange={handleChange}
+                  fullWidth
+                  multiline
+                  minRows={2}
+                />
+
+                {/* DATE PICKER */}
+                <Box>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight={600}
+                    mb={0.5}
                   >
-                    <FormControlLabel value="week" control={<Radio />} label={t("rental.period.week", "Theo tuần")} />
-                    <FormControlLabel value="month" control={<Radio />} label={t("rental.period.month", "Theo tháng")} />
-                    <FormControlLabel value="custom" control={<Radio />} label={t("rental.period.custom", "Tùy chỉnh (số tháng)")} />
-                  </RadioGroup>
+                    {t("startDate.title")}
+                  </Typography>
+                  <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={localeToUse}>
+                    <DatePicker
+                      label={t("startDate.chooseDate")}
+                      value={form.selectedDate ? new Date(form.selectedDate) : null}
+                      onChange={handleDateSelectIso}
+                      disablePast
+                      minDate={minDate}
+                      maxDate={maxDate}
+                      format={inputFormat}
+                      slotProps={{
+                        textField: { fullWidth: true },
+                      }}
+                    />
+                  </LocalizationProvider>
+                </Box>
 
-                  {form.rentalType === "week" && (
-                    <Box sx={{ mt: 1, maxWidth: 260 }}>
+                {/* RENTAL PERIOD */}
+                <Box>
+                  <FormControl fullWidth>
+                    <FormLabel>{t("rental.period.title")}</FormLabel>
+                    <RadioGroup
+                      value={form.rentalType ?? "month"}
+                      onChange={(e) =>
+                        handleRentalTypeChange(e.target.value as "week" | "month" | "custom")
+                      }
+                    >
+                      <FormControlLabel value="week" control={<Radio />} label={t("rental.period.week")} />
+                      <FormControlLabel value="month" control={<Radio />} label={t("rental.period.month")} />
+                      <FormControlLabel
+                        value="custom"
+                        control={<Radio />}
+                        label={t("rental.period.custom")}
+                      />
+                    </RadioGroup>
+
+                    {form.rentalType === "week" && (
                       <TextField
-                        label={t("rental.period.weeksLabel", "Số tuần")}
+                        label={t("rental.period.weeksLabel")}
                         type="number"
                         inputProps={{ min: 1, max: 4 }}
-                        value={form.rentalWeeks ?? ""}
+                        fullWidth
+                        sx={{ mt: 1 }}
+                        value={form.rentalWeeks ?? 1}
                         onChange={(e) => handleRentalWeeksChange(e.target.value)}
-                        helperText={t("rental.period.weeksHelp", "Chọn từ 1 đến 4 tuần. Giá = giá tháng × 0.3 × số tuần")}
-                        fullWidth
                       />
-                    </Box>
-                  )}
+                    )}
 
-                  {form.rentalType === "custom" && (
-                    <Box sx={{ mt: 1, maxWidth: 220 }}>
+                    {form.rentalType === "custom" && (
                       <TextField
-                        label={t("rental.period.monthsLabel", "Số tháng")}
+                        label={t("rental.period.monthsLabel")}
                         type="number"
-                        inputProps={{ min: 1 }}
-                        value={form.rentalMonths ?? ""}
-                        onChange={(e) => handleRentalMonthsChange(e.target.value)}
                         fullWidth
+                        sx={{ mt: 1 }}
+                        value={form.rentalMonths ?? 1}
+                        onChange={(e) => handleRentalMonthsChange(e.target.value)}
                         InputProps={{
-                          endAdornment: <InputAdornment position="end">{t("rental.period.monthSuffix", "tháng")}</InputAdornment>,
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {t("rental.period.monthSuffix")}
+                            </InputAdornment>
+                          ),
                         }}
                       />
+                    )}
+                  </FormControl>
+                </Box>
+
+                {/* SERVICES */}
+                <Box>
+                  <Typography variant="subtitle1" fontWeight={600} mb={1}>
+                    {t("infoForm.chooseServices")}
+                  </Typography>
+
+                  {loadingServices ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+                      <CircularProgress size={22} />
                     </Box>
+                  ) : (
+                    <Stack spacing={0.5}>
+                      {allServices.map((s) => (
+                        <FormControlLabel
+                          key={s.serviceId}
+                          control={
+                            <Checkbox
+                              checked={form.services.includes(s.serviceId)}
+                              onChange={() => toggleService(s.serviceId)}
+                            />
+                          }
+                          label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
+                        />
+                      ))}
+                    </Stack>
                   )}
-                </FormControl>
-              </Box>
+                </Box>
 
-              {/* Services */}
-              <Box>
-                <Typography variant="subtitle1" fontWeight={600} mb={1}>
-                  {t("infoForm.chooseServices")}
-                </Typography>
-
-                {loadingServices ? (
-                  <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-                    <CircularProgress size={24} />
-                  </Box>
-                ) : (
-                  <Stack spacing={0.5}>
-                    {allServices.map((s) => (
-                      <FormControlLabel
-                        key={s.serviceId}
-                        control={<Checkbox checked={form.services.includes(s.serviceId)} onChange={() => toggleService(s.serviceId)} />}
-                        label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
-                      />
-                    ))}
-                  </Stack>
-                )}
-              </Box>
-
-              {/* Buttons */}
-              <Stack direction="row" spacing={2} justifyContent="center" mt={1}>
-                <Button variant="outlined" onClick={onBack} disabled={loadingDistance}>
-                  {t("actions.back")}
-                </Button>
-                <Button variant="contained" type="submit" disabled={loadingDistance}>
-                  {loadingDistance ? <CircularProgress size={20} /> : t("actions.next")}
-                </Button>
+                {/* BUTTONS */}
+                <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
+                  <Button variant="outlined" onClick={onBack}>
+                    {t("actions.back")}
+                  </Button>
+                  <Button variant="contained" type="submit">
+                    {loadingDistance ? <CircularProgress size={20} /> : t("actions.next")}
+                  </Button>
+                </Stack>
               </Stack>
-            </Stack>
-          </Box>
-        </Stack>
-      </Paper>
-    </Container>
-  </Box>
-);
+            </Box>
+          </Stack>
+        </Paper>
+      </Container>
+    </Box>
+  );
+
 
 }

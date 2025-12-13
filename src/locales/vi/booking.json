@@ -223,7 +223,8 @@
   },
   "startDate": {
     "title": "Ngày Bắt Đầu Lưu Trữ",
-    "desc": "Ngày nào tiện để chuyển đồ vào nhất?"
+    "desc": "Ngày nào tiện để chuyển đồ vào nhất?",
+    "chooseDate":"Chọn ngày"
   },
   "endDate": {
     "title": "Ngày Kết Thúc Lưu Trữ",

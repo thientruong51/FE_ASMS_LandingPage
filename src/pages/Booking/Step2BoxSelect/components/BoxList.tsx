@@ -1,4 +1,3 @@
-// BoxList.tsx
 import { useEffect, useRef, useState } from "react";
 import {
   Box,
@@ -32,9 +31,8 @@ type SelectedItem = {
   imageUrl?: string | null;
   productTypeIds?: number[];
   productTypeNames?: string[];
-  dims?: { length: number; width: number; height: number }; // in cm for UI
-  volume?: number; // in m^3
-  // flat oversize fields (only present for oversize items) in meters
+  dims?: { length: number; width: number; height: number };
+  volume?: number; 
   length?: number;
   width?: number;
   height?: number;
@@ -44,8 +42,8 @@ type SelectedItem = {
 
 type OversizeEntry = {
   id: string;
-  dims: { length: number; width: number; height: number }; // cm
-  volume: number; // m^3
+  dims: { length: number; width: number; height: number }; 
+  volume: number; 
   price: number;
   quantity: number;
   productTypeIds: number[];
@@ -65,15 +63,12 @@ export default function BoxList({
 }) {
   const { t } = useTranslation("booking");
 
-  // ---------------- constants for layout ----------------
-  const CARD_W = 190; // fixed card width in px
+  const CARD_W = 190; 
   const GAP_PX = 18;
 
-  // the temporary image you provided for oversize
   const OVERSIZE_IMG =
     "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762190192/LOGO-remove_1_1_wj05gw.png";
 
-  // ---------------- price / volume helpers ----------------
   const priceMonthFromVolume = (vol: number) => {
     if (vol >= 0.5 && vol <= 1.5) return 180000;
     if (vol >= 1.6 && vol <= 3.5) return 350000;
@@ -83,11 +78,9 @@ export default function BoxList({
     if (vol > 10.0) return Math.round(320000 * vol);
     return 180000;
   };
-  // dims are in cm -> convert to m^3 by dividing by 1_000_000
   const volumeFromDims = (d: { length: number; width: number; height: number }) =>
     Math.max(0, (d.length * d.width * d.height) / 1_000_000);
 
-  // ---------------- base choices (normal boxes) ----------------
   const baseChoices = (boxes ?? []).map((b) => ({
     id: String(b.containerTypeId),
     label: b.type || `Box ${b.containerTypeId}`,
@@ -100,25 +93,21 @@ export default function BoxList({
     priceMonth: b.price ?? 0,
     priceWeek: "",
     modelUrl: b.imageUrl ?? undefined,
-    dims: { length: b.length, width: b.width, height: b.height }, // kept for reference (cm)
+    dims: { length: b.length, width: b.width, height: b.height }, 
+    qtyAc: b.availableQuantityInAc,
+  qtyNor: b.availableQuantityInNor,
   }));
 
-  // ---------------- oversize state (multiple entries) ----------------
   const [oversizes, setOversizes] = useState<OversizeEntry[]>([]);
   const idCounterRef = useRef(1);
   const makeOversizeId = () => `oversize-${idCounterRef.current++}`;
 
-  // create a default oversize on first mount if none exist
   useEffect(() => {
-    // corrected condition: when none exist, create a default oversize
     if (oversizes.length === -1) {
-      // default dims 100x100x100 cm => 1.000 m3
       addOversize({ length: 100, width: 100, height: 100 });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // run once
+  }, []); 
 
-  // ---------------- selection state (boxes + oversizes selected) ----------------
   const makeInit = (initProp?: SelectedItem[] | Record<string, SelectedItem>) => {
     const init: Record<string, SelectedItem> = {};
     const arr: SelectedItem[] = Array.isArray(initProp)
@@ -129,12 +118,9 @@ export default function BoxList({
 
     arr.forEach((s) => {
       if (s && s.id) {
-        // detect oversize by id prefix or explicit flag
         const isOversize = String(s.id).startsWith("oversize-") || s.isOversize === true;
 
-        // Create dims (cm) for UI:
-        // - prefer s.dims if provided (assume in cm)
-        // - otherwise if it's oversize and flat fields length/width/height exist assume they are in meters -> convert to cm
+       
         const dims =
           s.dims ??
           (isOversize && (typeof s.length === "number" || typeof s.width === "number" || typeof s.height === "number")
@@ -145,7 +131,6 @@ export default function BoxList({
               }
             : undefined);
 
-        // compute volume (m^3): prefer provided volume, otherwise compute from dims (cm)
         const computedVolume =
           typeof s.volume === "number" ? s.volume : dims ? volumeFromDims(dims) : undefined;
 
@@ -154,13 +139,12 @@ export default function BoxList({
           productTypeIds: s.productTypeIds ?? s.productTypes?.map((p: any) => p.id) ?? [],
           productTypeNames:
             s.productTypeNames ?? (s.productTypes ? s.productTypes.map((p: any) => p.name) : []),
-          dims: dims ? { ...dims } : undefined, // cm for UI
+          dims: dims ? { ...dims } : undefined, 
           volume: typeof computedVolume === "number" ? Number(computedVolume.toFixed(6)) : undefined,
           price: s.price ?? (typeof computedVolume === "number" ? priceMonthFromVolume(computedVolume) : 0),
           imageUrl: s.imageUrl ?? null,
           label: s.label,
           ...s,
-          // only include flat length/width/height (in meters) for oversize items
           ...(isOversize && dims
             ? { length: (dims.length / 100), width: (dims.width / 100), height: (dims.height / 100), isOversize: true }
             : {}),
@@ -175,7 +159,6 @@ export default function BoxList({
     makeInit(initialSelected)
   );
 
-  // sync guards to avoid infinite loops
   const lastEmittedRef = useRef<string>("");
   const lastInitialJsonRef = useRef<string | null>(null);
 
@@ -185,7 +168,6 @@ export default function BoxList({
       setSelected(makeInit(initialSelected));
       lastInitialJsonRef.current = incomingJson;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(initialSelected)]);
 
   useEffect(() => {
@@ -201,7 +183,6 @@ export default function BoxList({
     }
   }, [selected, onChange]);
 
-  // ---------------- actions for normal boxes ----------------
   const toggleSelect = (choice: any) =>
     setSelected((prev) => {
       const copy = { ...prev };
@@ -215,7 +196,6 @@ export default function BoxList({
           imageUrl: choice.modelUrl ?? null,
           productTypeIds: [],
           productTypeNames: [],
-          // keep dims reference but DO NOT add flat length/width/height for base boxes
           dims: choice.dims ?? undefined,
         };
       return copy;
@@ -246,8 +226,8 @@ export default function BoxList({
     });
 
   const addOversize = (initialDims?: { length: number; width: number; height: number }) => {
-    const dims = initialDims ?? { length: 100, width: 100, height: 100 }; // cm
-    const vol = volumeFromDims(dims); // m^3
+    const dims = initialDims ?? { length: 100, width: 100, height: 100 }; 
+    const vol = volumeFromDims(dims); 
     const price = priceMonthFromVolume(vol);
     const id = makeOversizeId();
     const entry: OversizeEntry = {
@@ -261,7 +241,6 @@ export default function BoxList({
     };
     setOversizes((prev) => [...prev, entry]);
 
-    // only oversize items get flat length/width/height (in meters)
     setSelected((prev) => ({
       ...prev,
       [id]: {
@@ -272,9 +251,8 @@ export default function BoxList({
         imageUrl: OVERSIZE_IMG,
         productTypeIds: [],
         productTypeNames: [],
-        dims: entry.dims, // cm for UI
+        dims: entry.dims, 
         volume: entry.volume,
-        // convert cm -> m for flat fields to send in payload
         length: entry.dims.length / 100,
         width: entry.dims.width / 100,
         height: entry.dims.height / 100,
@@ -313,11 +291,10 @@ export default function BoxList({
       const price = priceMonthFromVolume(vol);
       const updated = {
         ...cur,
-        dims, // cm for UI
+        dims, 
         volume: Number(vol.toFixed(6)),
         price,
         label: t("oversizeLabel", { volume: Number(vol.toFixed(6)) }),
-        // update flat fields (convert cm -> m)
         length: dims.length / 100,
         width: dims.width / 100,
         height: dims.height / 100,
@@ -342,7 +319,6 @@ export default function BoxList({
     });
   };
 
-  // ---------------- build choices: base + oversize (for display) ----------------
 
   const totalMonthly = Object.values(selected).reduce(
     (s: number, it: any) => s + Number(it.price ?? 0) * Number(it.quantity ?? 1),
@@ -352,16 +328,13 @@ export default function BoxList({
   const getSelectValue = (isSelected: boolean, selectedIds?: number[]) =>
     isSelected ? selectedIds ?? [] : [];
 
-  // ref to oversize strip for auto scroll
   const oversizeStripRef = useRef<HTMLDivElement | null>(null);
 
-  // auto-scroll oversize strip to end when new oversize added
   useEffect(() => {
     if (!oversizeStripRef.current) return;
     oversizeStripRef.current.scrollTo({ left: oversizeStripRef.current.scrollWidth, behavior: "smooth" });
   }, [oversizes.length]);
 
-  // ---------------- Render ----------------
   return (
     <Box sx={{ width: "100%", boxSizing: "border-box", px: 2 }}>
       {/* Title */}
