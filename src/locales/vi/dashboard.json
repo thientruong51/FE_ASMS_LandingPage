@@ -28,6 +28,10 @@
   },
    "orderDetail": {
     "summary": "Tổng quan đơn hàng",
+    "orderDetailId": "Mã chi tiết đơn",
+    "viewQr": "Xem mã QR",
+    "qrTitle": "Mã QR đơn hàng",
+    "container": "Container",
     "renewOrder": "Gia hạn đơn",
     "contactStaff": "Liên hệ nhân viên",
     "tracking": "Theo dõi",
@@ -91,7 +95,8 @@
     "contactWarehouse": "Liên hệ kho",
     "paymentHistorys": "Lịch sử thanh toán",
     "goHome": "Về trang chủ",
-    "copyright": "© {{year}} ASMS"
+    "copyright": "© {{year}} ASMS",
+    "contacts": "Liên hệ"
   },
    "notifications": {
     "tooltip": "Thông báo",
@@ -228,9 +233,30 @@
     "completed": "Hoàn thành",
      "waiting_refund":"Chờ hoàn tiền",
   "cancelled":"Đã bị hủy"
+  },
+  "shelfTypeNames": {
+    "shelf_storage": "Kệ kho tự quản",
+    "shelf_logistics": "Kệ kho dịch vụ",
+    "pallet_rack": "Kệ pallet",
+    "cantilever": "Kệ cantilever",
+    "mezzanine": "Tầng mezzanine"
+  },
+   "storageTypeNames": {
+    "small": "Phòng Nhỏ",
+    "medium": "Phòng Vừa",
+    "large": "Phòng Lớn",
+    "small_ac": "Phòng Nhỏ (Có điều hòa)",
+    "medium_ac": "Phòng Vừa (Có điều hòa)",
+    "large_ac": "Phòng Lớn (Có điều hòa)" ,
+    "warehouse": "Kho",
+    "warehouse_ac": "Kho (Có điều hòa)",
+    "warehouse_expired": "Kho hết hạn",
+    "warehouse_oversize": "Kho quá cỡ"
+   
+  },
+  "actions": {
+    "copy": "Sao chép link",
+    "download": "Tải ảnh",
+    "close": "Đóng"
   }
-
-
- 
-  
 }

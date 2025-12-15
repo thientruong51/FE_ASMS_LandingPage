@@ -47,15 +47,12 @@ export const canonicalShelfKey = (s?: string | null) => {
   return snake;
 };
 
-const groupNoData = (t: TFunction) => {
-  const looked = t("shelfTypeNames.noData");
-  return looked !== "shelfTypeNames.noData" ? looked : "-";
-};
+
 
 
 export const translateShelfTypeName = (t: TFunction, raw?: string | null, alt?: string | null) => {
   const key = canonicalShelfKey(raw ?? alt);
-  if (!key) return groupNoData(t);
+ 
 
   const looked = t(`shelfTypeNames.${key}`);
   if (looked !== `shelfTypeNames.${key}`) return looked;
@@ -69,5 +66,5 @@ export const translateShelfTypeName = (t: TFunction, raw?: string | null, alt?: 
 
   if (r) return r;
   if (a) return a;
-  return key || groupNoData(t);
+  return key ;
 };

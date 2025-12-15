@@ -19,7 +19,10 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-
+import {
+  STORAGE_TYPE_ID_TO_CODE,
+  SHELF_TYPE_ID_TO_CODE,
+} from "../../../utils/typeIdBridge";
 import type { Order as UIOrder, Item as UIItem } from "../types";
 import { createPayLink } from "../../../api/payOs.api";
 import {
@@ -30,17 +33,16 @@ import {
 } from "../../../api/order.list";
 import {
   loadTypeLookup,
-  resolveStorageName,
-  resolveShelfName,
   resolveContainerName,
 } from "../../../api/typeLookup";
-import { useTranslation } from "react-i18next";
 
+import { useTranslation } from "react-i18next";
+import OrderQrDialog from "./OrderQrDialog";
 import ContactDialog from "./ContactDialog";
 import UpdatePasskeyDialog from "./UpdatePasskeyDialog";
-
+import { translateStorageTypeName } from "../../../utils/storageTypeNames";
 import { translateStatus } from "../../../utils/statusHelper";
-
+import { translateShelfTypeName } from "../../../utils/shelfTypeNames";
 const formatMoney = (n?: number) => {
   if (n == null) return "-";
   return n.toLocaleString("vi-VN") + " đ";
@@ -85,7 +87,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const pollingRef = useRef<number | null>(null);
   const pollStartRef = useRef<number | null>(null);
   const closedByUserRef = useRef(false);
-
+  const [qrOpen, setQrOpen] = useState(false);
   const orderCode = order?.orderCode ?? order?.code ?? order?.id;
 
   const chip = {
@@ -102,6 +104,17 @@ const OrderCard: React.FC<OrderCardProps> = ({
   /* ✅ Pending check raw status */
   const isPending =
     order?.status?.toString().toLowerCase() === "pending";
+  const isCheckout =
+    order?.status?.toString().toLowerCase() === "checkout";
+
+  const orderStatus = order?.status?.toString().toLowerCase();
+
+  const canUpdatePasskey =
+    orderStatus === "renting" || orderStatus === "processing";
+
+  const canShowPasskey =
+    orderStatus === "renting" || orderStatus === "processing";
+
 
   useEffect(() => {
     let mounted = true;
@@ -139,19 +152,23 @@ const OrderCard: React.FC<OrderCardProps> = ({
       raw: r,
     };
   });
+  const refundAmount =
+    typeof order?.refund === "number" ? order.refund : null;
 
+  const hasRefund =
+    typeof refundAmount === "number" && refundAmount > 0;
   const backendTotal =
     order?.rawSummary?.totalPrice ?? order?.totalPrice ?? null;
   const total =
     backendTotal != null
       ? backendTotal
       : items.reduce(
-          (s, it) =>
-            s +
-            (Number(it.price ?? 0) || 0) *
-              (Number(it.qty ?? 1) || 1),
-          0
-        );
+        (s, it) =>
+          s +
+          (Number(it.price ?? 0) || 0) *
+          (Number(it.qty ?? 1) || 1),
+        0
+      );
 
   useEffect(() => {
     if (!orderCode) return;
@@ -212,7 +229,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         setOrder((prev: any) => ({ ...prev, ...fresh }));
         return fresh;
       }
-    } catch {}
+    } catch { }
 
     try {
       const res = await fetchOrdersByCustomer(1, 100);
@@ -223,7 +240,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         setOrder((prev: any) => ({ ...prev, ...fresh }));
         return fresh;
       }
-    } catch {}
+    } catch { }
 
     return null;
   };
@@ -273,7 +290,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             message: t("snack.pollingTimeout"),
           });
         }
-      } catch {}
+      } catch { }
     };
 
     doPoll();
@@ -399,13 +416,22 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </Box>
             </Box>
 
-            {order?.passkey != null && (
+            {order?.passkey != null && canShowPasskey && (
               <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
                 <Typography variant="body2">
-                  {t("passkey")}: <strong>{showPasskey ? order.passkey : "••••••"}</strong>
+                  {t("passkey")}:{" "}
+                  <strong>{showPasskey ? order.passkey : "••••••"}</strong>
                 </Typography>
-                <IconButton size="small" onClick={() => setShowPasskey(v => !v)} sx={{ p: 0.5 }}>
-                  {showPasskey ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                <IconButton
+                  size="small"
+                  onClick={() => setShowPasskey(v => !v)}
+                  sx={{ p: 0.5 }}
+                >
+                  {showPasskey ? (
+                    <VisibilityOffIcon fontSize="small" />
+                  ) : (
+                    <VisibilityIcon fontSize="small" />
+                  )}
                 </IconButton>
               </Box>
             )}
@@ -416,6 +442,21 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <Typography variant="body2" color="text.secondary">{t("total")}</Typography>
                 <Typography variant="subtitle1" fontWeight={700}>{formatMoney(total)}</Typography>
               </Box>
+              {hasRefund && (
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mt={0.5}
+                >
+                  <Typography variant="body2" color="error">
+                    {t("refund")}
+                  </Typography>
+                  <Typography variant="body2" color="error" fontWeight={600}>
+                    {formatMoney(refundAmount)}
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Box>
 
@@ -426,27 +467,99 @@ const OrderCard: React.FC<OrderCardProps> = ({
               ) : (
                 items.slice(0, 3).map((it, idx) => {
                   const r: any = it.raw ?? {};
-                  const storageName = typesLoaded ? resolveStorageName(r.storageTypeId ?? null) : null;
-                  const shelfName = typesLoaded ? resolveShelfName(r.shelfTypeId ?? null) : null;
-                  const containerName = typesLoaded ? resolveContainerName(r.containerType ?? null) : null;
+
+                  const containerName = typesLoaded
+                    ? resolveContainerName(r.containerType ?? null)
+                    : null;
+
+                  const storageName = translateStorageTypeName(
+                    t,
+                    STORAGE_TYPE_ID_TO_CODE[r.storageTypeId],
+                    r.storageTypeName
+                  );
+
+                  const shelfName = translateShelfTypeName(
+                    t,
+                    SHELF_TYPE_ID_TO_CODE[r.shelfTypeId],
+                    r.shelfTypeName
+                  );
 
                   return (
                     <Box key={it.id ?? idx} display="flex" gap={2} alignItems="flex-start">
                       <Avatar
-                        src={it.img ?? undefined}
+                        src={
+
+                          "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762190192/LOGO-remove_1_1_wj05gw.png"
+                        }
                         variant="rounded"
                         sx={{ width: 56, height: 56, bgcolor: "#F5F5F5", flexShrink: 0 }}
-                      >
-                        {!it.img && String(idx + 1)}
-                      </Avatar>
+                      />
 
                       <Box sx={{ minWidth: 0, flex: 1 }}>
-                        <Typography variant="body2" fontWeight={700} noWrap>{it.name}</Typography>
-                        <Box mt={0.5} display="flex" gap={1} flexWrap="wrap">
-                          {containerName && <Typography variant="caption" sx={{ bgcolor: "#E5FFE9", px: 0.6, py: 0.3, borderRadius: 1 }}>{containerName}</Typography>}
-                          {storageName && <Typography variant="caption" sx={{ bgcolor: "#E5F3FF", px: 0.6, py: 0.3, borderRadius: 1 }}>{storageName}</Typography>}
-                          {shelfName && <Typography variant="caption" sx={{ bgcolor: "#FFF4E5", px: 0.6, py: 0.3, borderRadius: 1 }}>{shelfName}</Typography>}
-                        </Box>
+                        {/* OrderDetailID */}
+                        {r.orderDetailId ? (
+                          <Typography variant="body2" fontWeight={700} noWrap>
+                            {t("orderDetail.orderDetailId")}: {r.orderDetailId}
+                          </Typography>
+                        ) : null}
+
+                        {/* ContainerCode */}
+                        {r.containerCode ? (
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                          >
+                            {t("orderDetail.container")}: {r.containerCode}
+                          </Typography>
+                        ) : null}
+
+                        {/* Chips: chỉ render Box nếu có ít nhất 1 chip */}
+                        {(containerName || storageName || shelfName) ? (
+                          <Box mt={0.5} display="flex" gap={1} flexWrap="wrap">
+                            {containerName ? (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  bgcolor: "#E5FFE9",
+                                  px: 0.6,
+                                  py: 0.3,
+                                  borderRadius: 1,
+                                }}
+                              >
+                                {containerName}
+                              </Typography>
+                            ) : null}
+
+                            {storageName ? (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  bgcolor: "#E5F3FF",
+                                  px: 0.6,
+                                  py: 0.3,
+                                  borderRadius: 1,
+                                }}
+                              >
+                                {storageName}
+                              </Typography>
+                            ) : null}
+
+                            {shelfName ? (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  bgcolor: "#FFF4E5",
+                                  px: 0.6,
+                                  py: 0.3,
+                                  borderRadius: 1,
+                                }}
+                              >
+                                {shelfName}
+                              </Typography>
+                            ) : null}
+                          </Box>
+                        ) : null}
                       </Box>
 
                     </Box>
@@ -458,25 +571,35 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </Box>
 
         <Box display="flex" justifyContent="flex-end" mt={2} gap={1}>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => setQrOpen(true)}
+          >
+            {t("orderDetail.viewQr")}
+          </Button>
           <Button size="small" variant="outlined" onClick={() => onOpenDetail?.(order)}>{t("viewDetails")}</Button>
 
           <Button size="small" variant="outlined" onClick={() => setContactOpen(true)}>
             {t("orderDetail.contactStaff") ?? "Liên hệ"}
           </Button>
 
-          {order?.passkey != null && (
-            <Button size="small" variant="outlined" onClick={() => setUpdatePasskeyOpen(true)}>
-              {t("updatePasskey") ?? "Cập nhật passkey"}
+          {order?.passkey != null && canUpdatePasskey && (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setUpdatePasskeyOpen(true)}
+            >
+              {t("updatePasskey")}
             </Button>
           )}
-
           {isPending && (
             <Button size="small" variant="outlined" color="error" onClick={handleCancelOrder} disabled={cancelLoading}>
               {cancelLoading ? <CircularProgress size={18} /> : t("cancelOrder") ?? "Hủy đơn"}
             </Button>
           )}
 
-          {!isPaid && (
+          {isCheckout && !isPaid && (
             <Button size="small" variant="contained" onClick={handlePay} disabled={loadingPay}>
               {loadingPay ? <CircularProgress size={18} /> : t("pay")}
             </Button>
@@ -520,7 +643,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
         }}
         onError={(msg) => setSnack({ open: true, severity: "error", message: msg })}
       />
-
+      <OrderQrDialog
+        open={qrOpen}
+        onClose={() => setQrOpen(false)}
+        orderCode={String(orderCode)}
+      />
       <Snackbar open={snack.open} autoHideDuration={6000} onClose={() => setSnack(prev => ({ ...prev, open: false }))}>
         <Alert severity={snack.severity}>{snack.message}</Alert>
       </Snackbar>

@@ -1,25 +1,76 @@
 {
-  "title": "Contact Us",
-  "lead": "Do you have questions about self-storage, shared storage, or moving services? Our team is always ready to help. Feel free to reach out via email, phone, or WhatsApp!",
-  "location": {
-    "title": "Location",
-    "desc": "375 Vo Nguyen Giap, An Phu Ward, Thu Duc City, Ho Chi Minh City, Vietnam"
-  },
-  "hotline": { "title": "Hotline" },
-  "email": { "title": "Email" },
-  "hours": {
-    "title": "Working Hours",
-    "desc": "Monday - Saturday: 9AM – 6PM\nWe can also support remote customers on Sunday."
-  },
-  "form": {
-    "title": "Our team is always ready to answer your questions!",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "email": "Email",
-    "phone": "Phone Number",
-    "message": "Message",
-    "submit": "Send Message",
-    "sent": "Thank you! We’ll get back to you as soon as possible.",
-    "note": "ASMS usually responds within 2 hours."
-  }
+
+"page": {
+
+"title": "Contact",
+
+"myContacts": "Your contact history",
+
+"subtitle": "Your submitted support requests",
+
+"clickToView": "Click to view details"
+
+},
+
+"labels": {
+
+"order": "Order",
+
+"noOrder": "No order",
+
+"name": "Name",
+
+"email": "Email",
+
+"phone": "Phone number",
+
+"message": "Message",
+
+"images": "Images",
+
+"noImage": "No images",
+
+"active": "Processing",
+
+"processed": "Processed"
+
+},
+
+"status": {
+
+"active": "Processing",
+
+"processed": "Processed"
+
+},
+
+"actions": {
+
+"view": "View",
+
+"send": "Send",
+
+"sending": "Sending...",
+
+"cancel": "Cancel",
+
+"updateImages": "Update images"
+
+},
+
+"messages": {
+
+"sendSuccess": "Contact sent successfully",
+
+"sendFailed": "Contact sent failed"
+
+},
+
+"errors": {
+
+"fetchList": "Cannot load contact list",
+
+"fetchDetail": "Cannot load contact details"
+
+}
 }

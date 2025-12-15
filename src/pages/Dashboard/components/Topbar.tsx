@@ -10,14 +10,12 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Button,
   InputAdornment,
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import AddIcon from "@mui/icons-material/Add";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +59,7 @@ const makeInitials = (name?: string | null, email?: string | null) => {
   return "U";
 };
 
-const Topbar: React.FC<Props> = ({ onMenu, onNewOrder, searchPlaceholder }) => {
+const Topbar: React.FC<Props> = ({ onMenu, searchPlaceholder }) => {
   const { t } = useTranslation("dashboard");
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
@@ -186,22 +184,7 @@ const Topbar: React.FC<Props> = ({ onMenu, onNewOrder, searchPlaceholder }) => {
             </IconButton>
           </Tooltip>
 
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={onNewOrder}
-            sx={{
-              bgcolor: theme.palette.primary.main,
-              color: "#fff",
-              textTransform: "none",
-              px: { xs: 1.25, sm: 2 },
-              py: { xs: 0.6, sm: 0.7 },
-              fontSize: { xs: 13, sm: 14 },
-              boxShadow: "0 8px 20px rgba(60,189,150,0.14)",
-            }}
-          >
-            {isSmUp ? t("dashboardPage.newOrder") : t("dashboardPage.newOrderShort")}
-          </Button>
+         
 
           <IconButton onClick={(e) => setAnchor(e.currentTarget)} aria-label={t("userMenu.open")}>
             {user?.picture ? (

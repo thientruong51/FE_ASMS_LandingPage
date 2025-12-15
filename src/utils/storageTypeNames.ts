@@ -52,15 +52,10 @@ export const canonicalStorageKey = (s?: string | null) => {
   return snake; 
 };
 
-const noData = (t: TFunction) => {
-  const looked = t("storageTypeNames.noData");
-  return looked !== "storageTypeNames.noData" ? looked : "-";
-};
 
 
 export const translateStorageTypeName = (t: TFunction, raw?: string | null, alt?: string | null) => {
   const key = canonicalStorageKey(raw ?? alt);
-  if (!key) return noData(t);
 
   const looked = t(`storageTypeNames.${key}`);
   if (looked !== `storageTypeNames.${key}`) return looked;
@@ -74,5 +69,5 @@ export const translateStorageTypeName = (t: TFunction, raw?: string | null, alt?
 
   if (raw) return raw;
   if (alt) return alt;
-  return key || noData(t);
+  return key ;
 };
