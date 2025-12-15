@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchServices, type ServiceApi } from "../../api/service";
 import { calculateDistance, type DistanceResponse } from "../../api/distance";
+import { translateServiceName } from "../../utils/serviceNameHelper";
 
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -126,8 +127,13 @@ export default function Step3InfoForm({
       setForm((prev) => ({ ...prev, selectedDate: null }));
       return;
     }
-    const iso = d.toISOString().slice(0, 10);
-    setForm((prev) => ({ ...prev, selectedDate: iso }));
+
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+
+    const localIso = `${yyyy}-${mm}-${dd}`;
+    setForm((prev) => ({ ...prev, selectedDate: localIso }));
   };
 
   const handleRentalTypeChange = (value: "week" | "month" | "custom") => {
@@ -413,7 +419,8 @@ export default function Step3InfoForm({
                               onChange={() => toggleService(s.serviceId)}
                             />
                           }
-                          label={`${s.name} — ${s.price?.toLocaleString?.() ?? s.price}đ`}
+                          label={`${translateServiceName(t, s.name)} — ${s.price?.toLocaleString?.() ?? s.price
+                            }đ`}
                         />
                       ))}
                     </Stack>

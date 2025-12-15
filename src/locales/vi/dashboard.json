@@ -207,7 +207,30 @@
   "refund": "Hoàn tiền",
   "cancel":"Hủy",
   "update":"Cập nhật",
-  "cancelOrder": "Hủy đơn"
+  "cancelOrder": "Hủy đơn",
+   "statusNames": {
+    "processing": "Đang xử lý",
+    "retrieved": "Đã nhận lại",
+    "pending": "Đang chờ",
+    "wait_pick_up": "Chờ lấy hàng",
+    "verify": "Xác minh",
+    "checkout": "Hoàn tất thanh toán",
+    "pick_up": "Lấy hàng",
+    "renting": "Đang cho thuê",
+    "stored": "Đã lưu kho",
+    "overdue": "Quá hạn",
+    "store_in_expired_storage": "Lưu kho hết hạn",
+    "order_created": "Đơn vừa tạo",
+    "processing_order": "Đang xử lý đơn hàng",
+    "order_retrieved": "Đơn đã nhận lại",
+    "noData": "-",
+    "delivered": "Đã vận chuyển xong",
+    "completed": "Hoàn thành",
+     "waiting_refund":"Chờ hoàn tiền",
+  "cancelled":"Đã bị hủy"
+  }
+
+
  
   
 }
