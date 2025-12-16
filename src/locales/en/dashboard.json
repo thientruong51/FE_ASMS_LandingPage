@@ -1,5 +1,4 @@
 {
-  
   "orderLabel": "Order #{{code}}",
   "orderDate": "Order Date",
   "returnDate": "Return Date",
@@ -20,10 +19,18 @@
     "pollingTimeout": "Payment polling timed out.",
     "noOrderCodePayError": "No orderCode to create payment link.",
     "openCheckout": "Opening checkout page.",
-    "createPayLinkError": "Error creating payment link."
+    "createPayLinkError": "Error creating payment link.",
+    "updatePasskeySuccess": "Passkey updated successfully",
+    "updatePasskeyError": "Failed to update passkey",
+    "cancelSuccess": "Order cancelled successfully",
+    "cancelError": "Unable to cancel order"
   },
   "orderDetail": {
     "summary": "Order summary",
+    "orderDetailId": "Order Detail ID",
+    "viewQr": "View QR code",
+    "qrTitle": "Order QR code",
+    "container": "Container",
     "renewOrder": "Renew order",
     "contactStaff": "Contact staff",
     "tracking": "Tracking",
@@ -87,13 +94,13 @@
     "contactWarehouse": "Contact Warehouse",
     "paymentHistorys": "Payment Historys",
     "goHome": "Go back Home",
-    "copyright": "© {{year}} ASMS"
+    "copyright": "© {{year}} ASMS",
+    "contacts": "Contacts"
   },
   "notifications": {
     "tooltip": "Notifications",
     "aria": "notifications"
   },
-  
   "userMenu": {
     "profile": "Profile",
     "logout": "Logout",
@@ -109,7 +116,7 @@
   "ordersPage": {
     "searchOrder": "Search orders",
     "searchAria": "search orders",
-     "title": "Orders",
+    "title": "Orders",
     "filter": "Filter",
     "all": "All",
     "loadError": "Failed to load orders",
@@ -128,13 +135,13 @@
     "ExpiredStorage": "Stored in expired storage",
     "Retrieved": "Retrieved",
     "Delivered": "Delivered",
-    "Completed":"Completed"
+    "Completed": "Completed"
   },
   "tracking": {
     "noTracking": "No tracking",
     "payment": "Payment"
   },
-   "contact": {
+  "contact": {
     "title": "Contact",
     "formTitle": "Send us a message",
     "subject": "Subject",
@@ -195,8 +202,59 @@
     "errors": {
       "missingCustomerId": "Customer id missing. Cannot update."
     }
-  }
-   
- 
-  
+  },
+  "passkey": "Passkey",
+  "updatePasskey": "Update passkey",
+  "oldPasskey": "Current passkey",
+  "newPasskey": "New passkey",
+  "refund": "Refund",
+  "cancel": "Cancel",
+  "update": "Update",
+  "cancelOrder": "Cancel order",
+  "shelfTypeNames": {
+    "shelf_storage": "Self-storage shelving",
+    "shelf_logistics": "Service shelving",
+    "pallet_rack": "Pallet rack",
+    "cantilever": "Cantilever rack",
+    "mezzanine": "Mezzanine level"
+  },
+  "storageTypeNames": {
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "small_ac": "Small (with air conditioning)",
+    "medium_ac": "Medium (with air conditioning)",
+    "large_ac": "Large (with air conditioning)",
+    "warehouse": "Warehouse",
+    "warehouse_ac": "Warehouse (with air conditioning)",
+    "warehouse_expired": "Expired warehouse",
+    "warehouse_oversize": "Oversized warehouse"
+  },
+  "statusNames": {
+    "processing": "Processing",
+    "retrieved": "Received",
+    "pending": "Pending",
+    "wait_pick_up": "Waiting for pickup",
+    "verify": "Verify",
+    "checkout": "Checkout completed",
+    "pick_up": "Picked up",
+    "renting": "Renting",
+    "stored": "Stored",
+    "overdue": "Overdue",
+    "store_in_expired_storage": "Stored in expired storage",
+    "order_created": "Order created",
+    "processing_order": "Order processing",
+    "order_retrieved": "Order received",
+    "noData": "-",
+    "delivered": "Delivered",
+    "completed": "Completed",
+    "waiting_refund": "Waiting for refund money",
+    "cancelled": "Cancelled"
+  },
+  "actions": {
+    "copy": "Copy link",
+    "download": "Download image",
+    "close": "Close"
+  },
+  "payment": "Payment status"
 }

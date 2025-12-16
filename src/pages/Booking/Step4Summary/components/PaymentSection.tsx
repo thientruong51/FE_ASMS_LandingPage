@@ -3,8 +3,7 @@ import {
   Paper,
   Stack,
   Typography,
-  RadioGroup,
-  Radio,
+
   FormControlLabel,
   Checkbox,
   styled,
@@ -22,20 +21,10 @@ const PaymentWrapper = styled(Paper)(({ theme }) => ({
   background: theme.palette.background.paper,
 }));
 
-const PaymentOption = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(1.25),
-  borderRadius: 8,
-  border: `1px solid ${theme.palette.action.hover}`,
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing(1.5),
-}));
 
 export default function PaymentSection({
   agree,
   setAgree,
-  paymentMethod,
-  setPaymentMethod,
   onBack,
   onConfirm,
   loading = false,
@@ -53,36 +42,10 @@ export default function PaymentSection({
 
   return (
     <PaymentWrapper sx={{ maxWidth: 980, width: "100%" }}>
-      <Typography variant="h6" fontWeight={700} color="primary.main" mb={1}>
-        {t("step4_summary.payOptions")}
-      </Typography>
+     
 
       <Stack spacing={1}>
-        <RadioGroup value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} aria-label="payment">
-          <PaymentOption elevation={0}>
-            <Radio value="bank" checked={paymentMethod === "bank"} onChange={() => setPaymentMethod("bank")} sx={{ color: "primary.main" }} />
-            <Box>
-              <Typography variant="body1" fontWeight={700}>
-                {t("step4_summary.pay_bank")}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t("step4_summary.pay_bank_desc")}
-              </Typography>
-            </Box>
-          </PaymentOption>
-
-          <PaymentOption elevation={0}>
-            <Radio value="cash" checked={paymentMethod === "cash"} onChange={() => setPaymentMethod("cash")} sx={{ color: "primary.main" }} />
-            <Box>
-              <Typography variant="body1" fontWeight={700}>
-                {t("step4_summary.pay_cash")}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t("step4_summary.pay_cash_desc")}
-              </Typography>
-            </Box>
-          </PaymentOption>
-        </RadioGroup>
+       
 
         <FormControlLabel
           control={<Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} sx={{ color: "primary.main" }} />}

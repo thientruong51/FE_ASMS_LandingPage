@@ -10,11 +10,16 @@ export type ContainerTypeApi = {
   height: number;
   imageUrl: string | null;
   price: number | null;
+
+  availableQuantityInAc: number | null;
+  availableQuantityInNor: number | null;
 };
 
 export async function fetchContainerTypes(): Promise<ContainerTypeApi[]> {
   if (!BASE) throw new Error("VITE_API_BASE_URL not defined");
+
   const url = `${BASE}/api/ContainerType`;
   const res = await axios.get(url);
+
   return res.data ?? [];
 }

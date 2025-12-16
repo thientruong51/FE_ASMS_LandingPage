@@ -9,7 +9,6 @@ import type { BookingPayload } from "./components/types";
 
 import { buildOrderPayloadFromBooking, createOrderWithDetails } from "../../../api/order";
 
-// NEW imports to compute pricing
 import useServiceDetails from "./components/useServiceDetails";
 import { usePricing } from "./components/pricingUtils";
 

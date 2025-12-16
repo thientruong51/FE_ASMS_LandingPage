@@ -11,7 +11,14 @@ import { Suspense, useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { useTranslation } from "react-i18next";
 
-function ModelViewer({ url }: { url: string }) {
+
+function ModelViewer({
+  url,
+  controlsRef,
+}: {
+  url: string;
+  controlsRef: React.RefObject<any>;
+}) {
   const model = useGLTF(url);
   const { camera } = useThree();
 
@@ -21,6 +28,7 @@ function ModelViewer({ url }: { url: string }) {
     const box = new THREE.Box3().setFromObject(model.scene);
     const size = new THREE.Vector3();
     const center = new THREE.Vector3();
+
     box.getSize(size);
     box.getCenter(center);
 
@@ -29,17 +37,15 @@ function ModelViewer({ url }: { url: string }) {
     model.scene.position.z += -center.z;
 
     const camZ = Math.max(1, size.z * 1.6);
-    const camY = Math.max(0.5, size.y * 0.5);
+    const camY = Math.max(0.5, size.y * 0.5 - 1);
+
     camera.position.set(0, camY, camZ);
 
-    // @ts-ignore
-    if (camera.controls) {
-      // @ts-ignore
-      camera.controls.target.set(0, camY * 0.8, 0);
-      // @ts-ignore
-      camera.controls.update();
+    if (controlsRef.current) {
+      controlsRef.current.target.set(0, camY * 0.8, 0);
+      controlsRef.current.update();
     }
-  }, [model, camera]);
+  }, [model, camera, controlsRef]);
 
   return <primitive object={model.scene} />;
 }
@@ -68,14 +74,13 @@ export default function RoomCard({
   const { t } = useTranslation("storageSize");
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
-
   const controlsRef = useRef<any>(null);
 
   useEffect(() => {
     if (!ref.current) return;
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
+      ([entry]) => {
+        if (entry.isIntersecting) {
           setVisible(true);
           observer.disconnect();
         }
@@ -90,6 +95,7 @@ export default function RoomCard({
   const areaLabel = t("rooms.areaLabel");
   const priceLabel = t("rooms.priceLabel");
   const descLabel = t("rooms.decsLabel");
+
   return (
     <Paper
       ref={ref}
@@ -118,39 +124,25 @@ export default function RoomCard({
               justifyContent: "center",
             }}
           >
-            <CircularProgress size={30} color="primary" />
+            <CircularProgress size={30} />
           </Box>
         )}
 
         {visible && (
-          <Canvas
-            camera={{ position: [2, 1, 3], fov: 60 }}
-            onCreated={(state) => {
-              (state.camera as any).controls = controlsRef.current;
-            }}
-          >
+          <Canvas camera={{ position: [2, 1, 3], fov: 60 }}>
             <ambientLight intensity={1.2} />
             <directionalLight position={[3, 5, 2]} intensity={1.5} />
 
-            <Suspense
-              fallback={
-                <Box
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CircularProgress size={30} />
-                </Box>
-              }
-            >
-              <ModelViewer url={model} />
+            <Suspense fallback={null}>
+              <ModelViewer url={model} controlsRef={controlsRef} />
             </Suspense>
 
-            <OrbitControls ref={controlsRef} enablePan={false} enableZoom={false} makeDefault />
+            <OrbitControls
+              ref={controlsRef}
+              enablePan={false}
+              enableZoom={false}
+            />
+
             <Environment preset="warehouse" />
           </Canvas>
         )}
@@ -161,10 +153,9 @@ export default function RoomCard({
           {name}
         </Typography>
 
-        {/* <-- added description display (if provided) --> */}
         {desc && (
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-           {descLabel}: {desc}
+          <Typography variant="body2" color="text.secondary">
+            {descLabel}: {desc}
           </Typography>
         )}
 
@@ -176,14 +167,13 @@ export default function RoomCard({
           {areaLabel}: {area}
         </Typography>
 
-        <Typography variant="h6" fontWeight={700} color="text.primary" sx={{ mt: 1 }}>
+        <Typography variant="h6" fontWeight={700} sx={{ mt: 1 }}>
           {price} / {priceLabel}
         </Typography>
 
         {typeof available === "number" && (
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t("priceTable.title", { mode: "" })}
-            Sẵn sàng: {available} {available > 1 ? "phòng" : "phòng"}
+          <Typography variant="caption" color="text.secondary">
+            Sẵn sàng: {available} phòng
           </Typography>
         )}
       </Stack>

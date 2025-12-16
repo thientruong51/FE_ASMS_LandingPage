@@ -112,7 +112,7 @@
   "goods": {
     "fragile": "Hàng dễ vỡ",
     "electronics": "Thiết bị điện tử",
-    "cold": "Hàng lạnh",
+    "cold": "Hàng cần phòng nhiệt độ",
     "heavy": "Hàng nặng"
   },
   "quantityLabel": "Số lượng",
@@ -223,7 +223,8 @@
   },
   "startDate": {
     "title": "Ngày Bắt Đầu Lưu Trữ",
-    "desc": "Ngày nào tiện để chuyển đồ vào nhất?"
+    "desc": "Ngày nào tiện để chuyển đồ vào nhất?",
+    "chooseDate":"Chọn ngày"
   },
   "endDate": {
     "title": "Ngày Kết Thúc Lưu Trữ",
@@ -260,5 +261,18 @@
   "oversizeDimensionR": "R",
   "oversizeDimensionC": "C",
   "oversizeVolume": "Thể tích",
-  "oversizePrice": "Giá"
+  "oversizePrice": "Giá",
+  
+  "serviceNames": {
+    "from_shipping_to_warehouse": "Gửi hàng đến kho",
+    "protecting": "Bảo hiểm hàng hóa",
+    "product_packaging": "Đóng gói sản phẩm",
+    "delivery": "Giao hàng",
+    "basic": "Gói Basic",
+    "basic_ac": "Gói Basic AC",
+    "business": "Gói Business",
+    "business_ac": "Gói Business AC",
+    "premium": "Gói Premium",
+    "premium_ac": "Gói Premium AC"
+  }
 }

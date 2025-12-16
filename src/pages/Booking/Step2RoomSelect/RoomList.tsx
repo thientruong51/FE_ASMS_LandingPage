@@ -3,24 +3,39 @@ import RoomCard from "./RoomCard";
 import { useEffect, useState } from "react";
 import { fetchStorageTypes } from "../../../api/storageType";
 import { fetchStorages, type StorageApi } from "../../../api/storage";
-import { useGLTF } from "@react-three/drei";
 import { useTranslation } from "react-i18next";
 
+const LOCAL_TEST_IMAGE = "/placeholder-room.glb";
 
-const LOCAL_TEST_IMAGE = "/mnt/data/97afeeea-4814-4a56-80b1-9d5b4ee6a4b6.png";
-
-function mapApiNameToI18nKey(name: string): "small" | "medium" | "large" | null {
+function mapApiNameToI18nKey(
+  name: string
+): "small" | "medium" | "large" | null {
   const n = name.toLowerCase();
   if (n.includes("small")) return "small";
   if (n.includes("medium")) return "medium";
   if (n.includes("large")) return "large";
-  return null; 
+  return null;
 }
 
 function isAC(name: string) {
   const n = name.toLowerCase();
   return n.includes("ac") || n.includes("may_lanh");
 }
+
+const BUILDING_CODE_BY_MODE = {
+  normal: "BLD002",
+  ac: "BLD003",
+};
+
+type RoomUI = {
+  id: string;
+  type: "small" | "medium" | "large";
+  area: string;
+  dimension: string;
+  price: string;
+  model: string;
+  available: number;
+};
 
 export default function RoomList({
   hasAC,
@@ -32,17 +47,7 @@ export default function RoomList({
   onSelect: (id: string, type: string) => void;
 }) {
   const { i18n } = useTranslation();
-  const [rooms, setRooms] = useState<
-    {
-      id: string;
-      type: "small" | "medium" | "large";
-      area: string;
-      dimension: string;
-      price: string;
-      model: string;
-      available: number;
-    }[]
-  >([]);
+  const [rooms, setRooms] = useState<RoomUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,88 +56,76 @@ export default function RoomList({
     setLoading(true);
     setError(null);
 
+    const buildingCode = hasAC
+      ? BUILDING_CODE_BY_MODE.ac
+      : BUILDING_CODE_BY_MODE.normal;
+
     Promise.all([
       fetchStorageTypes(),
-      fetchStorages("BLD002", 1, 1000),
-      fetchStorages("BLD003", 1, 1000),
+      fetchStorages(buildingCode, 1, 1000),
     ])
-      .then(([typesData, storagesBld2, storagesBld3]) => {
+      .then(([typesData, storages]) => {
         if (!mounted) return;
 
-        const combined: StorageApi[] = [...storagesBld2, ...storagesBld3].filter(
-          (s) => s && s.status === "Ready" && s.isActive === true
+
+        const readyStorages = storages.filter(
+          (s: StorageApi) =>
+            s.status === "Ready" && s.isActive === true
         );
 
-        const countsByTypeName = combined.reduce<Record<string, number>>((acc, cur) => {
-          const name = (cur.storageTypeName ?? "").toString().toLowerCase();
-          if (!name) return acc;
-          acc[name] = (acc[name] ?? 0) + 1;
-          return acc;
-        }, {});
 
-        const sizeFiltered = typesData.filter((d) => {
+        const countsByTypeName = readyStorages.reduce<Record<string, number>>(
+          (acc, cur) => {
+            const key = cur.storageTypeName.toLowerCase();
+            acc[key] = (acc[key] ?? 0) + 1;
+            return acc;
+          },
+          {}
+        );
+
+        const validTypes = typesData.filter((d) => {
           const lower = d.name.toLowerCase();
-          if (/warehouse|ware ?house|oversize|nha_kho|nha ?kho/i.test(lower)) return false;
+
+          if (/warehouse|nha_kho|kho_lon/i.test(lower)) return false;
           if (!/small|medium|large/i.test(lower)) return false;
           if (!d.imageUrl) return false;
-          return true;
-        });
 
-        let finalList = sizeFiltered.filter((d) => {
-          const ac = isAC(d.name);
-          return hasAC ? ac : !ac;
+          return hasAC ? isAC(d.name) : !isAC(d.name);
         });
-
-        if (finalList.length === 0) finalList = sizeFiltered;
 
         const locale = i18n.language === "vi" ? "vi-VN" : "en-US";
 
-        const mapped = finalList
-          .map((d) => {
-            const i18nKey = mapApiNameToI18nKey(d.name);
-            if (!i18nKey) return null;
 
-            const exactKey = d.name.toLowerCase(); 
-            const baseKey = i18nKey;
-            const variantKey = `${baseKey}ac`;
+        const mapped: RoomUI[] = validTypes
+          .map((d) => {
+            const typeKey = mapApiNameToI18nKey(d.name);
+            if (!typeKey) return null;
 
             const available =
-              (countsByTypeName[exactKey] ?? 0) +
-              (countsByTypeName[baseKey] ?? 0) +
-              (countsByTypeName[variantKey] ?? 0);
+              countsByTypeName[d.name.toLowerCase()] ?? 0;
 
             if (available <= 0) return null;
 
-            const price = d.price == null ? "—" : `${d.price.toLocaleString(locale)} đ`;
-
-            try {
-              useGLTF.preload(d.imageUrl as string);
-            } catch {}
-
             return {
               id: d.storageTypeId.toString(),
-              type: i18nKey,
+              type: typeKey,
               area: `${(d.area ?? d.length * d.width).toFixed(2)} m²`,
               dimension: `${d.length} x ${d.width} x ${d.height} m`,
-              price,
-              model: (d.imageUrl as string) ?? LOCAL_TEST_IMAGE,
+              price:
+                d.price == null
+                  ? "—"
+                  : `${d.price.toLocaleString(locale)} đ`,
+              model: d.imageUrl ?? LOCAL_TEST_IMAGE,
               available,
             };
           })
-          .filter(Boolean) as {
-            id: string;
-            type: "small" | "medium" | "large";
-            area: string;
-            dimension: string;
-            price: string;
-            model: string;
-            available: number;
-          }[];
+          .filter(Boolean) as RoomUI[];
 
         setRooms(mapped);
         setLoading(false);
       })
       .catch((err) => {
+        if (!mounted) return;
         setError(err?.message ?? "Unknown error");
         setLoading(false);
       });
@@ -142,19 +135,21 @@ export default function RoomList({
     };
   }, [hasAC, i18n.language]);
 
-  if (loading)
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" py={6}>
         <CircularProgress />
       </Box>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <Typography color="error" textAlign="center">
         Lỗi tải dữ liệu: {error}
       </Typography>
     );
+  }
 
   return (
     <Stack

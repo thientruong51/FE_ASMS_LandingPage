@@ -13,46 +13,44 @@ export interface StorageApi {
   length: number;
   width: number;
   height: number;
-  status: string; 
+  status: string;
   isActive: boolean;
 }
-
 
 export async function fetchStorages(
   buildingCode: string,
   pageNumber = 1,
-  pageSize = 1000,
-  status?: string
+  pageSize = 1000
 ): Promise<StorageApi[]> {
   const url = `${BASE}/api/Storage?pageNumber=${pageNumber}&pageSize=${pageSize}&buildingCode=${encodeURIComponent(
     buildingCode
-  )}${status ? `&status=${encodeURIComponent(status)}` : ""}`;
+  )}`;
 
   const res = await axios.get(url);
   return res.data?.data ?? [];
 }
 
-export async function fetchReadyStorages(
-  buildingCode: string,
-  pageNumber = 1,
-  pageSize = 1000
-): Promise<StorageApi[]> {
-  return fetchStorages(buildingCode, pageNumber, pageSize, "Ready");
-}
-
-
 export async function pickStorageForOrder(
   buildingCode: string,
   storageTypeId?: number
 ): Promise<StorageApi | null> {
-  const list = await fetchReadyStorages(buildingCode);
+  const list = await fetchStorages(buildingCode, 1, 1000);
+
+  const readyList = list.filter(
+    (s) =>
+      s &&
+      s.status === "Ready" &&
+      s.isActive === true
+  );
 
   const filtered =
     storageTypeId != null
-      ? list.filter((s) => Number(s.storageTypeId) === Number(storageTypeId))
-      : list;
+      ? readyList.filter(
+          (s) => Number(s.storageTypeId) === Number(storageTypeId)
+        )
+      : readyList;
 
   if (filtered.length === 0) return null;
 
-  return filtered[0]; 
+  return filtered[0];
 }

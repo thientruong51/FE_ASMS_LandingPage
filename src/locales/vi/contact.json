@@ -1,25 +1,44 @@
 {
-  "title": "Liên hệ",
-  "lead": "Bạn có câu hỏi về thuê kho tự quản, kho chung, chuyển nhà? Hãy liên hệ với chúng tôi qua email, điện thoại hoặc Zalo!",
-  "location": {
-    "title": "Địa chỉ",
-    "desc": "375 Võ Nguyên Giáp, An Phú, Quận 2, TP. Hồ Chí Minh, Việt Nam"
+  "page": {
+    "title": "Liên hệ",
+    "myContacts": "Lịch sử liên hệ của bạn",
+    "subtitle": "Các yêu cầu hỗ trợ bạn đã gửi",
+    "clickToView": "Bấm để xem chi tiết"
   },
-  "hotline": { "title": "Hotline" },
-  "email": { "title": "Email" },
-  "hours": {
-    "title": "Giờ làm việc",
-    "desc": "Thứ Hai - Thứ Bảy: 9AM – 6PM\nHỗ trợ từ xa vào Chủ Nhật."
-  },
-  "form": {
-    "title": "Đội ngũ của chúng tôi luôn sẵn sàng hỗ trợ bạn!",
-    "firstName": "Họ",
-    "lastName": "Tên",
+
+  "labels": {
+    "order": "Đơn hàng",
+    "noOrder": "Không có đơn",
+    "name": "Tên",
     "email": "Email",
     "phone": "Số điện thoại",
-    "message": "Tin nhắn",
-    "submit": "Gửi",
-    "sent": "Cảm ơn! Chúng tôi sẽ phản hồi sớm nhất.",
-    "note": "ASMS thường phản hồi trong vòng 2 tiếng."
+    "message": "Nội dung",
+    "images": "Hình ảnh",
+    "noImage": "Không có hình ảnh",
+    "active": "Đang xử lí",
+    "processed": "Đã xử lí"
+  },
+
+  "status": {
+    "active": "Đang xử lí",
+    "processed": "Đã xử lí"
+  },
+
+  "actions": {
+    "view": "Xem",
+    "send": "Gửi",
+    "sending": "Đang gửi...",
+    "cancel": "Hủy",
+    "updateImages": "Cập nhật hình ảnh"
+  },
+
+  "messages": {
+    "sendSuccess": "Gửi liên hệ thành công",
+    "sendFailed": "Gửi liên hệ thất bại"
+  },
+
+  "errors": {
+    "fetchList": "Không thể tải danh sách liên hệ",
+    "fetchDetail": "Không thể tải chi tiết liên hệ"
   }
 }

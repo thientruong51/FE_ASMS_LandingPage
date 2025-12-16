@@ -26,6 +26,19 @@ import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import { fetchOrderDetails } from "../../../api/order.list";
 import { loadTypeLookup, resolveStorageName, resolveShelfName, resolveContainerName } from "../../../api/typeLookup";
+import { getTrackingByOrder } from "../../../api/trackingHistoryApi";
+import type { TrackingHistoryItem } from "../../../api/trackingHistoryApi";
+import {
+  translateStorageTypeName,
+} from "../../../utils/storageTypeNames";
+
+import {
+  translateShelfTypeName,
+} from "../../../utils/shelfTypeNames";
+
+import {
+  translateServiceName,
+} from "../../../utils/serviceNameUtils";
 
 type Props = {
   open: boolean;
@@ -100,6 +113,9 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [fetchedDetails, setFetchedDetails] = useState<any[] | null>(null);
   const [typesLoaded, setTypesLoaded] = useState(false);
+  const [tracking, setTracking] = useState<TrackingHistoryItem[]>([]);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<string | null>(null);
 
   // load type lookup once
   useEffect(() => {
@@ -126,6 +142,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
       setFetchedDetails(null);
       return;
     }
+
 
     const rawItemsCandidates: any[] = (() => {
       if (Array.isArray(order.items) && order.items.length > 0) return order.items;
@@ -160,6 +177,44 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
 
     return () => { mounted = false; };
   }, [orderCode, order]);
+
+  useEffect(() => {
+    if (!open || !orderCode) {
+      setTracking([]);
+      setCurrentStatus(null);
+      return;
+    }
+
+    let mounted = true;
+    setTrackingLoading(true);
+
+    getTrackingByOrder(String(orderCode))
+      .then((res) => {
+        if (!mounted) return;
+
+        console.log("[Tracking] full response =", res);
+        console.log("[Tracking] trackingFlow =", res.data.trackingFlow);
+        console.log("[Tracking] currentStatus =", res.data.currentStatus);
+
+        setTracking(res.data.trackingFlow ?? []);
+        setCurrentStatus(res.data.currentStatus ?? null);
+      })
+      .catch((err) => {
+        console.error("[Tracking] error", err);
+        if (mounted) {
+          setTracking([]);
+          setCurrentStatus(null);
+        }
+      })
+      .finally(() => {
+        if (mounted) setTrackingLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [open, orderCode]);
+
 
 
   // ---------- NEW: always refresh details when parent passes a new `order` prop ----------
@@ -281,12 +336,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
           </Box>
 
           <Box display="flex" alignItems="center" gap={1}>
-            <Button variant="outlined" size="small" onClick={() => { }}>
-              {t("orderDetail.renewOrder")}
-            </Button>
-            <Button variant="contained" size="small">
-              {t("orderDetail.contactStaff")}
-            </Button>
+
             <IconButton aria-label="close" onClick={onClose}>
               <CloseIcon />
             </IconButton>
@@ -300,7 +350,22 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
             {t("orderDetail.tracking")}
           </Typography>
           <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-            <TrackingTimeline tracking={order.tracking ?? []} order={{ ...order, items }} />
+            {trackingLoading ? (
+              <Typography variant="body2" color="text.secondary">
+                {t("loading")}
+              </Typography>
+            ) : (
+              <>
+                {console.log("[Render] tracking =", tracking)}
+                {console.log("[Render] currentStatus =", currentStatus)}
+
+                <TrackingTimeline
+                  tracking={tracking}
+                  currentStatus={currentStatus}
+                />
+              </>
+            )}
+
           </Paper>
         </Box>
 
@@ -337,7 +402,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
                 </Box>
                 <Box sx={{ mt: 1 }}>
                   <Typography variant="caption" color="text.secondary">{t("orderDetail.dropoffLocation")}</Typography>
-                  <Typography variant="body2" fontWeight={600}>—</Typography>
+                  <Typography variant="body2" fontWeight={600}>{pickupAddress ?? "-"}</Typography>
                 </Box>
               </Stack>
             </Paper>
@@ -386,9 +451,17 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
                   const qty = Number(it.qty ?? it.raw?.quantity ?? 1) || 1;
                   const lineTotal = Number(it.subTotal ?? it.raw?.subTotal ?? it.raw?.subtotal ?? price * qty) || price * qty;
 
-                  // resolve type names (only if types loaded)
-                  const storageName = typesLoaded ? resolveStorageName(it.storageTypeId) : null;
-                  const shelfName = typesLoaded ? resolveShelfName(it.shelfTypeId) : null;
+                  const storageName = translateStorageTypeName(
+                    t,
+                    it.raw?.storageTypeName,
+                    typesLoaded ? resolveStorageName(it.storageTypeId) : undefined
+                  );
+
+                  const shelfName = translateShelfTypeName(
+                    t,
+                    it.raw?.shelfTypeName,
+                    typesLoaded ? resolveShelfName(it.shelfTypeId) : undefined
+                  );
                   const containerName = typesLoaded ? resolveContainerName(it.containerTypeId) : null;
 
                   return (
@@ -413,8 +486,16 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
                               {shelfName && <Chip label={shelfName + (it.shelfQuantity ? ` ×${it.shelfQuantity}` : "")} size="small" variant="outlined" sx={{ height: 22 }} />}
                               {it.floorNumber != null && <Chip label={t("floorLabel", { number: it.floorNumber })} size="small" variant="outlined" sx={{ height: 22 }} />}
                               {it.productTypeNames && it.productTypeNames.map((p: string, i: number) => <Chip key={`pt-${i}`} label={p} size="small" variant="outlined" sx={{ height: 22 }} />)}
-                              {it.serviceNames && it.serviceNames.map((s: string, i: number) => <Chip key={`svc-${i}`} label={s} size="small" color="primary" variant="outlined" sx={{ height: 22 }} />)}
-                            </Stack>
+                              {it.serviceNames.map((s: string, i: number) => (
+                                <Chip
+                                  key={`svc-${i}`}
+                                  label={translateServiceName(t, s)}
+                                  size="small"
+                                  color="primary"
+                                  variant="outlined"
+                                  sx={{ height: 22 }}
+                                />
+                              ))}                            </Stack>
                           </Box>
                         </Stack>
                       </TableCell>
@@ -444,7 +525,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose}>{t("orderDetail.cancel")}</Button>
-        <Button variant="contained" onClick={onClose}>{t("orderDetail.send")}</Button>
+
       </DialogActions>
     </Dialog>
   );

@@ -260,5 +260,18 @@
   "oversizeDimensionR": "W",
   "oversizeDimensionC": "H",
   "oversizeVolume": "Volume",
-  "oversizePrice": "Price"
+  "oversizePrice": "Price",
+  
+  "serviceNames": {
+    "from_shipping_to_warehouse": "Shipping to Warehouse",
+    "protecting": "Goods Insurance",
+    "product_packaging": "Product Packaging",
+    "delivery": "Delivery",
+    "basic": "Basic Package",
+    "basic_ac": "Basic AC Package",
+    "business": "Business Package",
+    "business_ac": "Business AC Package",
+    "premium": "Premium Package",
+    "premium_ac": "Premium AC Package"
+  }
 }

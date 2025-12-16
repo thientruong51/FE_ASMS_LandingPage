@@ -18,6 +18,7 @@ import vibooking from "./locales/vi/booking.json";
 import viauth from "./locales/vi/auth.json";
 import vidashboard from "./locales/vi/dashboard.json";
 import vipaymentHistory from "./locales/vi/paymentHistory.json";
+import orderVI from "./locales/vi/order.json";
 
 // English
 import enLanding from "./locales/en/translation.json";
@@ -36,7 +37,7 @@ import enbooking from "./locales/en/booking.json";
 import enauth from "./locales/en/auth.json";
 import endashboard from "./locales/en/dashboard.json";
 import enpaymentHistory from "./locales/en/paymentHistory.json";
-
+import orderEN from "./locales/en/order.json";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -56,7 +57,8 @@ i18n.use(initReactI18next).init({
       booking:vibooking,
       auth:viauth,
       dashboard:vidashboard,
-      paymentHistory:vipaymentHistory
+      paymentHistory:vipaymentHistory,
+      order: orderVI
     },
     en: {
       translation: enLanding,
@@ -74,7 +76,8 @@ i18n.use(initReactI18next).init({
       booking:enbooking,
       auth:enauth,
       dashboard:endashboard,
-      paymentHistory:enpaymentHistory
+      paymentHistory:enpaymentHistory,
+      order: orderEN
     },
   },
   lng: "vi",

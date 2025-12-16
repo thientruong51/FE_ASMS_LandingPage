@@ -20,10 +20,18 @@
     "pollingTimeout": "Polling thanh toán đã hết thời gian.",
     "noOrderCodePayError": "Không có orderCode để tạo link thanh toán.",
     "openCheckout": "Mở trang thanh toán trong app.",
-    "createPayLinkError": "Lỗi khi tạo link thanh toán."
+    "createPayLinkError": "Lỗi khi tạo link thanh toán.",
+    "updatePasskeySuccess": "Cập nhật mất khẩu phòng thành công",
+    "updatePasskeyError": "Cập nhật mất khẩu phòng thất bại",
+    "cancelSuccess": "Hủy đơn hàng thành công",
+    "cancelError": "Không thể hủy đơn hàng"
   },
    "orderDetail": {
     "summary": "Tổng quan đơn hàng",
+    "orderDetailId": "Mã chi tiết đơn",
+    "viewQr": "Xem mã QR",
+    "qrTitle": "Mã QR đơn hàng",
+    "container": "Container",
     "renewOrder": "Gia hạn đơn",
     "contactStaff": "Liên hệ nhân viên",
     "tracking": "Theo dõi",
@@ -87,7 +95,8 @@
     "contactWarehouse": "Liên hệ kho",
     "paymentHistorys": "Lịch sử thanh toán",
     "goHome": "Về trang chủ",
-    "copyright": "© {{year}} ASMS"
+    "copyright": "© {{year}} ASMS",
+    "contacts": "Liên hệ"
   },
    "notifications": {
     "tooltip": "Thông báo",
@@ -195,5 +204,96 @@
     "errors": {
       "missingCustomerId": "Thiếu mã khách hàng. Không thể cập nhật."
     }
+  },
+  "passkey": "Mất khẩu phòng",
+  "updatePasskey": "Cập nhật mất khẩu phòng",
+  "oldPasskey": "Mất khẩu phòng hiện tại",
+  "newPasskey": "Mất khẩu phòng mới",
+  "refund": "Hoàn tiền",
+  "cancel":"Hủy",
+  "update":"Cập nhật",
+  "cancelOrder": "Hủy đơn",
+   "statusNames": {
+    "processing": "Đang xử lý",
+    "retrieved": "Đã nhận lại",
+    "pending": "Đang chờ",
+    "wait_pick_up": "Chờ lấy hàng",
+    "verify": "Xác minh",
+    "checkout": "Hoàn tất thanh toán",
+    "pick_up": "Lấy hàng",
+    "renting": "Đang cho thuê",
+    "stored": "Đã lưu kho",
+    "overdue": "Quá hạn",
+    "store_in_expired_storage": "Lưu kho hết hạn",
+    "order_created": "Đơn vừa tạo",
+    "processing_order": "Đang xử lý đơn hàng",
+    "order_retrieved": "Đơn đã nhận lại",
+    "noData": "-",
+    "delivered": "Đã vận chuyển xong",
+    "completed": "Hoàn thành",
+     "waiting_refund":"Chờ hoàn tiền",
+  "cancelled":"Đã bị hủy"
+  },
+  "shelfTypeNames": {
+    "shelf_storage": "Kệ kho tự quản",
+    "shelf_logistics": "Kệ kho dịch vụ",
+    "pallet_rack": "Kệ pallet",
+    "cantilever": "Kệ cantilever",
+    "mezzanine": "Tầng mezzanine"
+  },
+   "storageTypeNames": {
+    "small": "Phòng Nhỏ",
+    "medium": "Phòng Vừa",
+    "large": "Phòng Lớn",
+    "small_ac": "Phòng Nhỏ (Có điều hòa)",
+    "medium_ac": "Phòng Vừa (Có điều hòa)",
+    "large_ac": "Phòng Lớn (Có điều hòa)" ,
+    "warehouse": "Kho",
+    "warehouse_ac": "Kho (Có điều hòa)",
+    "warehouse_expired": "Kho hết hạn",
+    "warehouse_oversize": "Kho quá cỡ"
+   
+  },
+  "actions": {
+    "copy": "Sao chép link",
+    "download": "Tải ảnh",
+    "close": "Đóng"
+  },
+  "payment": "Trạng thái thanh toán",
+  "actionTypeNames": {
+  "order_retrieved": "Đơn đã nhận lại",
+  "order_created": "Đơn vừa tạo",
+  "processing_order": "Đang xử lý đơn hàng",
+  "stored_in_warehouse": "Đã lưu kho",
+  "picked_up": "Đã lấy hàng",
+  "checkout_completed": "Hoàn tất thanh toán đơn hàng",
+  "verification": "Xác minh",
+  "ready_for_pickup": "Sẵn sàng để lấy",
+  "customer_retrieved_from_expired-storage":"Đã lấy lại từ kho lưu trữ đã hết hạn",
+  "renting_active":"Đang cho thuê",
+  "noData": "-",
+  "order_overdue":"Đơn hàng quá hạn",
+  "delivered_to_warehouse/customer":"Đã giao đến Kho/Khách hàng",
+  "order_completed":"Đơn hàng đã hoàn tất",
+  "auto_update_overdue_detected":"Đơn hàng quá hạn tự động cập nhật",
+  "refund_completed":"Hoàn tiền đã hoàn tất",
+  "resume_workflow_after_refund":"Tiếp tục quy trình sau hoàn tiền",
+  "order_extended": "Gia hạn đơn hàng",
+  "waiting_refund": "Đang chờ hoàn tiền",
+  "order_cancelled_after_refund": "Hủy đơn sau khi hoàn tiền",
+   "order_cancelled": "Hủy đơn hàng",
+    "auto_update": "Cập nhật tự động"
+},
+ "serviceNames": {
+    "from_shipping_to_warehouse": "Gửi hàng đến kho",
+    "protecting": "Bảo hiểm hàng hóa",
+    "product_packaging": "Đóng gói sản phẩm",
+    "delivery": "Giao hàng",
+    "basic": "Gói Basic",
+    "basic_ac": "Gói Basic AC",
+    "business": "Gói Business",
+    "business_ac": "Gói Business AC",
+    "premium": "Gói Premium",
+    "premium_ac": "Gói Premium AC"
   }
 }

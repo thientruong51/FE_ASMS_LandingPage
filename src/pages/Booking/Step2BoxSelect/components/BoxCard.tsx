@@ -1,4 +1,3 @@
-// BoxCard.tsx
 import { Suspense, useEffect, useRef, useState } from "react";
 import {
   Paper,
@@ -72,6 +71,9 @@ export default function BoxCard({
   selected,
   onSelect,
   modelUrl,
+
+  qtyAc,
+  qtyNor,
 }: {
   label: string;
   size: string;
@@ -81,6 +83,10 @@ export default function BoxCard({
   onSelect: () => void;
   id?: string;
   modelUrl?: string;
+
+  // 👉 thêm mới
+  qtyAc?: number | null;
+  qtyNor?: number | null;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -120,7 +126,9 @@ export default function BoxCard({
         borderRadius: 4,
         textAlign: "center",
         border: selected ? "2px solid #3CBD96" : "1px solid #eee",
-        boxShadow: selected ? "0 0 0 2px rgba(60,189,150,0.08)" : "0 4px 18px rgba(0,0,0,0.03)",
+        boxShadow: selected
+          ? "0 0 0 2px rgba(60,189,150,0.08)"
+          : "0 4px 18px rgba(0,0,0,0.03)",
         cursor: "pointer",
         transition: "transform .16s ease, box-shadow .16s ease",
         "&:hover": { transform: "translateY(-6px)" },
@@ -150,15 +158,35 @@ export default function BoxCard({
           }}
         >
           {!visible && (
-            <MuiBox sx={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <MuiBox
+              sx={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <CircularProgress size={20} />
             </MuiBox>
           )}
 
           {visible && modelUrl && isImageUrl(modelUrl) ? (
-            <img src={modelUrl} alt={label} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+            <img
+              src={modelUrl}
+              alt={label}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+              }}
+            />
           ) : visible && modelUrl && !isImageUrl(modelUrl) ? (
-            <Canvas camera={{ position: [2, 2, 3], fov: 45 }} style={{ width: "100%", height: "100%" }} gl={{ toneMappingExposure: 0.3 }}>
+            <Canvas
+              camera={{ position: [2, 2, 3], fov: 45 }}
+              style={{ width: "100%", height: "100%" }}
+              gl={{ toneMappingExposure: 0.3 }}
+            >
               <Suspense fallback={null}>
                 <ModelViewer url={modelUrl} />
               </Suspense>
@@ -171,10 +199,29 @@ export default function BoxCard({
           ) : null}
         </MuiBox>
 
+        {/* size */}
         <Typography variant="caption" color="text.secondary">
           {size}
         </Typography>
 
+        {/* 👉 Hiển thị số lượng tại đây */}
+        {(qtyAc != null || qtyNor != null) && (
+          <Stack spacing={0.3} sx={{ mt: 0.5 }}>
+            {qtyAc != null && (
+              <Typography variant="caption" color="primary.main" fontWeight={600}>
+                AC: {qtyAc}
+              </Typography>
+            )}
+
+            {qtyNor != null && (
+              <Typography variant="caption" color="secondary.main" fontWeight={600}>
+                NOR: {qtyNor}
+              </Typography>
+            )}
+          </Stack>
+        )}
+
+        {/* price */}
         <Stack spacing={0.3}>
           <Typography variant="h6" fontWeight={700} color="text.primary">
             {renderPrice(priceMonth)}
