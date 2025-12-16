@@ -48,22 +48,39 @@ const OrdersPage: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    (async () => {
-      setLoading(true);
+    const loadOrders = async () => {
       try {
         const data = await fetchOrdersWithDetails(1, 20);
-        if (mounted) setOrders(data);
+        if (mounted) {
+          setOrders(data);
+          setError(null);
+        }
       } catch (err: any) {
-        if (mounted) setError(err?.message ?? t("ordersPage.loadError"));
+        if (mounted) {
+          setError(err?.message ?? t("ordersPage.loadError"));
+        }
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
-    })();
+    };
+
+    setLoading(true);
+    loadOrders();
+
+    const intervalId = setInterval(() => {
+      if (!open) {
+        loadOrders();
+      }
+    }, 5000);
 
     return () => {
       mounted = false;
+      clearInterval(intervalId);
     };
-  }, [t]);
+  }, [t, open]);
+
 
   const filtered = orders.filter((o) => {
     if (filter === "All") return true;

@@ -72,5 +72,37 @@
 
 "fetchDetail": "Cannot load contact details"
 
-}
+},
+"title": "Contact Us",
+  "lead": "Leave your information and the ASMS team will get back to you as soon as possible.",
+
+  "location": {
+    "title": "Address",
+    "desc": "ASMS Building\nThu Duc intersection, Ho Chi Minh City"
+  },
+
+  "hotline": {
+    "title": "Hotline"
+  },
+
+  "email": {
+    "title": "Email"
+  },
+
+  "hours": {
+    "title": "Working Hours",
+    "desc": "Monday – Friday: 08:00 – 18:00\nSaturday: 08:00 – 12:00"
+  },
+
+  "form": {
+    "title": "Send us a message",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone number",
+    "message": "Message",
+    "submit": "Submit",
+    "sent": "Your message has been sent successfully",
+    "note": "We will contact you within 24 business hours."
+  }
 }

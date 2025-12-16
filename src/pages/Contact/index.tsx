@@ -15,15 +15,64 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../../components/Header";
 import Footer from "../Home/Footer";
+import { createContact } from "../../api/contactApi";
 
 export default function Contact() {
   const { t } = useTranslation("contact");
-  const [sent, setSent] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChange =
+    (field: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const payload: any = {
+        message: form.message,
+      };
+
+      // chỉ gắn field nếu có dữ liệu
+      if (form.firstName || form.lastName) {
+        payload.name = `${form.firstName} ${form.lastName}`.trim();
+      }
+      if (form.phone) payload.phoneContact = form.phone;
+      if (form.email) payload.email = form.email;
+
+      await createContact(payload);
+
+      setSent(true);
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+
+      setTimeout(() => setSent(false), 3000);
+    } catch (err) {
+      console.error(err);
+      setError(t("form.error"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,7 +111,6 @@ export default function Contact() {
               right: { xs: -40, md: 80 },
               bottom: { xs: -40, md: 0 },
               width: { xs: 180, md: 360 },
-              opacity: 1,
             }}
           />
         </Container>
@@ -91,7 +139,7 @@ export default function Contact() {
               <ContactItem
                 icon={<EmailOutlinedIcon sx={{ fontSize: 36, color: "primary.main" }} />}
                 title={t("email.title")}
-                desc="hello@asms.vn"
+                desc="asms.dev.service@gmail.com"
               />
               <ContactItem
                 icon={<AccessTimeOutlinedIcon sx={{ fontSize: 36, color: "primary.main" }} />}
@@ -109,12 +157,7 @@ export default function Contact() {
                 boxShadow: "0 8px 25px rgba(60,189,150,0.15)",
               }}
             >
-              <Typography
-                variant="h6"
-                fontWeight={700}
-                color="primary.main"
-                mb={3}
-              >
+              <Typography variant="h6" fontWeight={700} color="primary.main" mb={3}>
                 {t("form.title")}
               </Typography>
 
@@ -126,12 +169,16 @@ export default function Contact() {
                       variant="standard"
                       fullWidth
                       required
+                      value={form.firstName}
+                      onChange={handleChange("firstName")}
                     />
                     <TextField
                       label={t("form.lastName")}
                       variant="standard"
                       fullWidth
                       required
+                      value={form.lastName}
+                      onChange={handleChange("lastName")}
                     />
                   </Stack>
 
@@ -141,13 +188,15 @@ export default function Contact() {
                       variant="standard"
                       fullWidth
                       type="email"
-                      required
+                      value={form.email}
+                      onChange={handleChange("email")}
                     />
                     <TextField
                       label={t("form.phone")}
                       variant="standard"
                       fullWidth
-                      required
+                      value={form.phone}
+                      onChange={handleChange("phone")}
                     />
                   </Stack>
 
@@ -158,41 +207,40 @@ export default function Contact() {
                     multiline
                     rows={4}
                     required
+                    value={form.message}
+                    onChange={handleChange("message")}
                   />
 
                   <Button
                     type="submit"
                     variant="contained"
+                    disabled={loading}
                     sx={{
                       mt: 2,
                       bgcolor: "primary.main",
-                      "&:hover": { bgcolor: "#2EA67E" },
                       px: 5,
                       borderRadius: 10,
                       fontWeight: 600,
                       alignSelf: "flex-start",
-                      color:"#fff"
+                      color: "#fff",
                     }}
                   >
-                    {t("form.submit")}
+                    {loading ? t("form.sending") : t("form.submit")}
                   </Button>
 
                   {sent && (
-                    <Typography
-                      mt={2}
-                      color="primary.main"
-                      fontWeight={500}
-                      variant="body2"
-                    >
-                      ✅ {t("form.sent")}
+                    <Typography mt={2} color="primary.main" fontWeight={500} variant="body2">
+                      {t("form.sent")}
                     </Typography>
                   )}
 
-                  <Typography
-                    variant="caption"
-                    display="block"
-                    sx={{ mt: 3, color: "text.secondary" }}
-                  >
+                  {error && (
+                    <Typography mt={2} color="error" variant="body2">
+                      {error}
+                    </Typography>
+                  )}
+
+                  <Typography variant="caption" sx={{ mt: 3, color: "text.secondary" }}>
                     {t("form.note")}
                   </Typography>
                 </Stack>
@@ -201,12 +249,13 @@ export default function Contact() {
           </Stack>
         </Container>
       </Box>
-      <Footer/>
+
+      <Footer />
     </>
   );
 }
 
-/* ===== Component con: Thông tin liên hệ ===== */
+/* ===== Component con ===== */
 function ContactItem({
   icon,
   title,
@@ -221,10 +270,7 @@ function ContactItem({
       direction="row"
       spacing={2}
       alignItems="flex-start"
-      sx={{
-        p: 1,
-        borderBottom: "1px solid rgba(60,189,150,0.15)",
-      }}
+      sx={{ p: 1, borderBottom: "1px solid rgba(60,189,150,0.15)" }}
     >
       {icon}
       <Stack>
@@ -236,6 +282,5 @@ function ContactItem({
         </Typography>
       </Stack>
     </Stack>
-    
   );
 }

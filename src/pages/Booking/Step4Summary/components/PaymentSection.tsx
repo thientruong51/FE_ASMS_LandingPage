@@ -42,27 +42,56 @@ export default function PaymentSection({
 
   return (
     <PaymentWrapper sx={{ maxWidth: 980, width: "100%" }}>
-     
+
 
       <Stack spacing={1}>
-       
+
 
         <FormControlLabel
-          control={<Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} sx={{ color: "primary.main" }} />}
+          control={
+            <Checkbox
+              checked={agree}
+              onChange={(e) => setAgree(e.target.checked)}
+              sx={{ color: "primary.main" }}
+            />
+          }
           label={
             <Typography variant="caption">
               {t("step4_summary.agree1")}{" "}
-              <Box component="span" sx={{ color: "primary.main", textDecoration: "underline", cursor: "pointer" }}>
+              <Box
+                component="span"
+                sx={{
+                  color: "primary.main",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open("/terms", "_blank");
+                }}
+              >
                 {t("step4_summary.terms")}
               </Box>{" "}
               {t("step4_summary.and")}{" "}
-              <Box component="span" sx={{ color: "primary.main", textDecoration: "underline", cursor: "pointer" }}>
+              <Box
+                component="span"
+                sx={{
+                  color: "primary.main",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open("/terms", "_blank");
+                }}
+              >
                 {t("step4_summary.privacy")}
               </Box>
             </Typography>
           }
           sx={{ mt: 1 }}
         />
+
 
         <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
           <Button variant="outlined" onClick={onBack} disabled={loading}>

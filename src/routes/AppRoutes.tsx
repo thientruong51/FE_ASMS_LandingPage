@@ -17,6 +17,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import PaymentHistoryPage from "../pages/Dashboard/PaymentHistoryPage";
 import OrderScanPage from "../pages/Dashboard/components/OrderScanPage";
 import CustomerContactsPage from "../pages/Dashboard/CustomerContactsPage";
+import { TermsPage } from "../pages/TermsPage";
+import { WarehouseContractPage } from "../pages/Contract";
 
 export default function AppRoutes() {
   return (
@@ -34,6 +36,8 @@ export default function AppRoutes() {
       <Route path="/partner" element={<PartnerPage />} />
       <Route path="/3d-tour" element={<ThreeDTour />} />
       <Route path="/booking" element={<Booking />} />
+      <Route path="/terms" element={<TermsPage  />} />
+      <Route path="/contract/warehouse/:orderCode" element={<WarehouseContractPage  />} />
       <Route path="/orders/scan/:orderCode" element={<OrderScanPage />}/>
       <Route
         path="/dashboard"
