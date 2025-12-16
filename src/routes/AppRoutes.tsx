@@ -12,7 +12,7 @@ import ProcessPage from "../pages/Process";
 import PartnerPage from "../pages/Partner";
 import ThreeDTour from "../pages/3DTour";
 import Booking from "../pages/Booking";
-import { ContactPage, DashboardPage, Layout, OrderDetailPage, OrdersPage, SettingsPage, UserInfoPage } from "../pages/Dashboard";
+import { ContactPage, DashboardPage, Layout,  OrdersPage, SettingsPage, UserInfoPage } from "../pages/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
 import PaymentHistoryPage from "../pages/Dashboard/PaymentHistoryPage";
 import OrderScanPage from "../pages/Dashboard/components/OrderScanPage";
@@ -40,7 +40,6 @@ export default function AppRoutes() {
         element={<ProtectedRoute><Layout /></ProtectedRoute> }>
         <Route index element={<DashboardPage />} />
         <Route path="orders" element={<OrdersPage />} />
-        <Route path="orders/:id" element={<OrderDetailPage />} />
         <Route path="userinfo" element={<UserInfoPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="contact" element={<ContactPage />} />

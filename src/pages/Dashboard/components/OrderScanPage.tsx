@@ -131,7 +131,7 @@ export default function OrderScanPage() {
 
           setOrder(o);
           setDetails(toArray(d));
-          setTracking(toArray(tkg?.data));
+          setTracking(toArray(tkg?.data?.trackingFlow));
           return;
         }
 
