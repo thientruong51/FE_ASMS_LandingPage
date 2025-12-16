@@ -58,15 +58,24 @@ export async function getTrackingHistories(
   return res.data
 }
 
+export interface TrackingByOrderData {
+  orderCode: string;
+  currentStatus: string | null;
+  trackingFlow: TrackingHistoryItem[];
+  totalSteps?: number;
+}
 
+export interface TrackingByOrderResponse {
+  success: boolean;
+  message?: string;
+  data: TrackingByOrderData;
+}
 export async function getTrackingByOrder(
   orderCode: string
-): Promise<TrackingHistoryListResponse> {
-  const url = `${BASE}/api/TrackingHistory/order/${encodeURIComponent(
-    orderCode
-  )}`;
+): Promise<TrackingByOrderResponse> {
+  const url = `${BASE}/api/TrackingHistory/order/${encodeURIComponent(orderCode)}`;
   const res = await axios.get(url);
-    return res.data
+  return res.data;
 }
 
 

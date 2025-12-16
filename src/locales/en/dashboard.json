@@ -255,5 +255,6 @@
     "copy": "Copy link",
     "download": "Download image",
     "close": "Close"
-  }
+  },
+  "payment": "Payment status"
 }

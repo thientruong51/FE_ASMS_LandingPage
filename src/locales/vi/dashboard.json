@@ -258,5 +258,42 @@
     "copy": "Sao chép link",
     "download": "Tải ảnh",
     "close": "Đóng"
+  },
+  "payment": "Trạng thái thanh toán",
+  "actionTypeNames": {
+  "order_retrieved": "Đơn đã nhận lại",
+  "order_created": "Đơn vừa tạo",
+  "processing_order": "Đang xử lý đơn hàng",
+  "stored_in_warehouse": "Đã lưu kho",
+  "picked_up": "Đã lấy hàng",
+  "checkout_completed": "Hoàn tất thanh toán đơn hàng",
+  "verification": "Xác minh",
+  "ready_for_pickup": "Sẵn sàng để lấy",
+  "customer_retrieved_from_expired-storage":"Đã lấy lại từ kho lưu trữ đã hết hạn",
+  "renting_active":"Đang cho thuê",
+  "noData": "-",
+  "order_overdue":"Đơn hàng quá hạn",
+  "delivered_to_warehouse/customer":"Đã giao đến Kho/Khách hàng",
+  "order_completed":"Đơn hàng đã hoàn tất",
+  "auto_update_overdue_detected":"Đơn hàng quá hạn tự động cập nhật",
+  "refund_completed":"Hoàn tiền đã hoàn tất",
+  "resume_workflow_after_refund":"Tiếp tục quy trình sau hoàn tiền",
+  "order_extended": "Gia hạn đơn hàng",
+  "waiting_refund": "Đang chờ hoàn tiền",
+  "order_cancelled_after_refund": "Hủy đơn sau khi hoàn tiền",
+   "order_cancelled": "Hủy đơn hàng",
+    "auto_update": "Cập nhật tự động"
+},
+ "serviceNames": {
+    "from_shipping_to_warehouse": "Gửi hàng đến kho",
+    "protecting": "Bảo hiểm hàng hóa",
+    "product_packaging": "Đóng gói sản phẩm",
+    "delivery": "Giao hàng",
+    "basic": "Gói Basic",
+    "basic_ac": "Gói Basic AC",
+    "business": "Gói Business",
+    "business_ac": "Gói Business AC",
+    "premium": "Gói Premium",
+    "premium_ac": "Gói Premium AC"
   }
 }

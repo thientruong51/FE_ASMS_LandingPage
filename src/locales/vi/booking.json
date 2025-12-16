@@ -112,7 +112,7 @@
   "goods": {
     "fragile": "Hàng dễ vỡ",
     "electronics": "Thiết bị điện tử",
-    "cold": "Hàng lạnh",
+    "cold": "Hàng cần phòng nhiệt độ",
     "heavy": "Hàng nặng"
   },
   "quantityLabel": "Số lượng",

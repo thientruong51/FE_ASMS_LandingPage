@@ -100,7 +100,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
     order?.paymentStatus ?? order?.payment?.paymentStatus ?? null;
   const isPaid =
     paymentStatusRaw?.toString().toUpperCase() === "PAID";
-
+  const paymentStatus = paymentStatusRaw
+    ?.toString()
+    .toUpperCase();
   /* ✅ Pending check raw status */
   const isPending =
     order?.status?.toString().toLowerCase() === "pending";
@@ -169,7 +171,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
           (Number(it.qty ?? 1) || 1),
         0
       );
-
+  const paymentChip = paymentStatus
+    ? {
+      label:
+        paymentStatus === "PAID"
+          ? t("paymentStatus.paid", "Đã thanh toán")
+          : t("paymentStatus.unpaid", "Chưa thanh toán"),
+      color:
+        paymentStatus === "PAID"
+          ? "#16A34A"
+          : "#DC2626",
+    }
+    : null;
   useEffect(() => {
     if (!orderCode) return;
 
@@ -379,10 +392,50 @@ const OrderCard: React.FC<OrderCardProps> = ({
       <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 0, border: "1px solid", borderColor: "divider" }}>
         <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 2, alignItems: "flex-start" }}>
           <Box sx={{ flex: { md: "0 0 45%" }, minWidth: 0 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: chip.color }} />
-              <Typography variant="caption" sx={{ color: chip.color, fontWeight: 600 }}>{chip.label}</Typography>
+            <Box
+              mb={0.5}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {/* Order Status – Left */}
+              <Box display="flex" alignItems="center" gap={1}>
+                <Box
+                  sx={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    bgcolor: chip.color,
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  sx={{ color: chip.color, fontWeight: 600 }}
+                >
+                  {chip.label}
+                </Typography>
+              </Box>
+
+              {/* Payment Status – Right */}
+              {paymentChip && (
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{ color: paymentChip.color, fontWeight: 500 }}
+                  >
+                    {t("payment")}: {paymentChip.label}
+                  </Typography>
+                </Box>
+              )}
             </Box>
+
 
             <Typography variant="subtitle2" fontWeight={700}>
               {t("orderLabel", { code: order?.orderCode ?? order?.id ?? "-" })}

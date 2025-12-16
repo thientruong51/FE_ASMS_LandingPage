@@ -1,32 +1,54 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState, useMemo } from "react";
 import {
-  Box, Paper, Typography, Stack, Button,
+  Box,
+  Paper,
+  Typography,
+  Stack,
+ 
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { useTheme } from "@mui/material/styles";
+
 import { useTranslation } from "react-i18next";
+
 import type { Order } from "./types";
 import OrderCard from "./components/OrderCard";
 import OrderDetailModal from "./components/OrderDetailModal";
 import { fetchOrdersWithDetails } from "./components/api.helpers";
 
+
+
+const PROCESSING_STATUSES = [
+  "pending",
+  "processing",
+  "wait pick up",
+  "verify",
+  "checkout",
+  "pick up",
+  "delivered",
+  "waiting refund",
+  "reserved",
+];
+
+const ACTIVE_STATUSES = ["renting", "stored"];
+
 export default function DashboardPage() {
-  const theme = useTheme();
+
   const { t } = useTranslation("dashboard");
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [open, setOpen] = useState(false);
 
+ 
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       setLoading(true);
       try {
-        const data = await fetchOrdersWithDetails(1, 50); 
+        const data = await fetchOrdersWithDetails(1, 50);
         if (!mounted) return;
         setOrders(data);
       } catch (err: any) {
@@ -36,74 +58,212 @@ export default function DashboardPage() {
         if (mounted) setLoading(false);
       }
     })();
-    return () => { mounted = false; };
+
+    return () => {
+      mounted = false;
+    };
   }, [t]);
 
-  const activeOrders = orders.filter((o) => !["delivered", "expired", "cancelled"].includes(o.status ?? ""));
-  const ordersInProgress = orders.filter((o) => ["pickup_scheduled", "picked", "in_warehouse", "out_for_delivery"].includes(o.status ?? ""));
-  const nextExpiry = [...orders].filter(o => o.endDate).sort((a, b) => new Date(a.endDate!).getTime() - new Date(b.endDate!).getTime())[0];
 
-  const handleOpen = (o: Order) => { setSelectedOrder(o); setOpen(true); };
-  const handleClose = () => { setOpen(false); setSelectedOrder(null); };
+  const processingOrders = useMemo(
+    () =>
+      orders.filter(o =>
+        PROCESSING_STATUSES.includes(
+          (o.status ?? "").toLowerCase()
+        )
+      ),
+    [orders]
+  );
+
+  const activeOrders = useMemo(
+    () =>
+      orders.filter(o =>
+        ACTIVE_STATUSES.includes(
+          (o.status ?? "").toLowerCase()
+        )
+      ),
+    [orders]
+  );
+
+  const recentOrders = useMemo(
+    () =>
+      [...orders]
+        .filter(o => o.startDate)
+        .sort(
+          (a, b) =>
+            new Date(b.startDate!).getTime() -
+            new Date(a.startDate!).getTime()
+        )
+        .slice(0, 3),
+    [orders]
+  );
+
+ const expiringOrders = useMemo(
+  () =>
+    [...orders]
+      .filter(o => o.endDate && !isNaN(new Date(o.endDate).getTime()))
+      .sort(
+        (a, b) =>
+          new Date(a.endDate!).getTime() -
+          new Date(b.endDate!).getTime()
+      )
+      .slice(0, 3),
+  [orders]
+);
+
+
+ 
+  const handleOpen = (o: Order) => {
+    setSelectedOrder(o);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedOrder(null);
+  };
+
 
   return (
     <Stack spacing={3}>
-      {loading ? (
-        <Box textAlign="center" py={6}><Typography>{t("dashboardPage.loading")}</Typography></Box>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
-      ) : null}
+      {/* Loading / Error */}
+      {loading && (
+        <Box textAlign="center" py={6}>
+          <Typography>{t("dashboardPage.loading")}</Typography>
+        </Box>
+      )}
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2,1fr)", md: "repeat(3,1fr)" }, gap: 2 }}>
-        <Paper sx={{ p: 2, borderRadius: 2 }}>
-          <Typography variant="caption" color="text.secondary">{t("dashboardPage.activeOrders")}</Typography>
-          <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>{activeOrders.length}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{t("dashboardPage.activeOrdersDesc")}</Typography>
-        </Paper>
+      {error && (
+        <Typography color="error">
+          {error}
+        </Typography>
+      )}
 
-        <Paper sx={{ p: 2, borderRadius: 2 }}>
-          <Typography variant="caption" color="text.secondary">{t("dashboardPage.ordersInProgress")}</Typography>
-          <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>{ordersInProgress.length}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {t("dashboardPage.processingLabel")}: {ordersInProgress.map((o) => o.id).slice(0, 3).join(", ")}
-            {ordersInProgress.length > 3 ? ` +${ordersInProgress.length - 3}` : ""}
-          </Typography>
-        </Paper>
+      {/* KPI CARDS */}
+      {!loading && !error && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2,1fr)",
+              md: "repeat(3,1fr)",
+            },
+            gap: 2,
+          }}
+        >
+          {/* Active Orders */}
+          <Paper sx={{ p: 2, borderRadius: 2 }}>
+            <Typography variant="caption" color="text.secondary">
+              {t("dashboardPage.activeOrders")}
+            </Typography>
+            <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
+              {activeOrders.length}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              {t("dashboardPage.activeOrdersDesc")}
+            </Typography>
+          </Paper>
 
-        <Paper sx={{ p: 2, borderRadius: 2 }}>
-          <Typography variant="caption" color="text.secondary">{t("dashboardPage.nextExpiry")}</Typography>
-          <Typography variant="body1" fontWeight={700} sx={{ mt: 1 }}>{nextExpiry ? `${nextExpiry.id}` : "—"}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-            {nextExpiry ? `${t("dashboardPage.expiresOn")} ${new Date(nextExpiry.endDate ?? "").toLocaleDateString()}` : ""}
-          </Typography>
+          {/* Processing Orders */}
+          <Paper sx={{ p: 2, borderRadius: 2 }}>
+            <Typography variant="caption" color="text.secondary">
+              {t("dashboardPage.ordersInProgress")}
+            </Typography>
+            <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
+              {processingOrders.length}
+            </Typography>
+           
+          </Paper>
 
-          <Button startIcon={<AddIcon />} variant="text" sx={{ mt: 1, color: theme.palette.primary.main }}>{t("dashboardPage.renew")}</Button>
-        </Paper>
-      </Box>
+          {/* Expiring Orders */}
+          <Paper sx={{ p: 2, borderRadius: 2 }}>
+            <Typography variant="caption" color="text.secondary">
+              {t("dashboardPage.nextExpiry")}
+            </Typography>
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" }, gap: 2 }}>
-        <Paper sx={{ p: 2.5, borderRadius: 2 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexDirection={{ xs: "column", sm: "row" }} gap={1}>
-            <Typography variant="h6" fontWeight={700}>{t("dashboardPage.recentOrders")}</Typography>
-            <Button size="small" variant="outlined" onClick={() => {}}>{t("dashboardPage.viewAll")}</Button>
-          </Box>
+            {expiringOrders.length === 0 ? (
+              <Typography sx={{ mt: 1 }}>—</Typography>
+            ) : (
+              <Stack spacing={0.75} sx={{ mt: 1 }}>
+                {expiringOrders.map(o => (
+                  <Box key={o.id}>
+                    <Typography fontWeight={600}>
+                      {o.id}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                    >
+                      {t("dashboardPage.expiresOn")}{" "}
+                      {new Date(o.endDate!).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+            )}
 
-          <Stack spacing={2}>
-            {orders.slice(0, 6).map((o) => (
-              <Box key={o.id} sx={{ width: "100%" }}>
-                <OrderCard order={o} onOpenDetail={handleOpen} />
-              </Box>
-            ))}
-            {orders.length === 0 && !loading && <Typography color="text.secondary">{t("dashboardPage.noOrders")}</Typography>}
-          </Stack>
-        </Paper>
+           
+          </Paper>
+        </Box>
+      )}
 
-        <Paper sx={{ p: 2.5, borderRadius: 2 }}>
-          <Typography variant="h6" fontWeight={700} mb={1}>{t("dashboardPage.quickSummary")}</Typography>
-        </Paper>
-      </Box>
+      {/* CONTENT */}
+      {!loading && !error && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "2fr 1fr",
+            },
+            gap: 2,
+          }}
+        >
+          {/* Recent Orders */}
+          <Paper sx={{ p: 2.5, borderRadius: 2 }}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+              flexDirection={{ xs: "column", sm: "row" }}
+              gap={1}
+            >
+              <Typography variant="h6" fontWeight={700}>
+                {t("dashboardPage.recentOrders")}
+              </Typography>
+             
+            </Box>
 
-      <OrderDetailModal open={open} order={selectedOrder ?? undefined} onClose={handleClose} />
+            <Stack spacing={2}>
+              {recentOrders.map(o => (
+                <Box key={o.id}>
+                  <OrderCard
+                    order={o}
+                    onOpenDetail={handleOpen}
+                  />
+                </Box>
+              ))}
+
+              {recentOrders.length === 0 && (
+                <Typography color="text.secondary">
+                  {t("dashboardPage.noOrders")}
+                </Typography>
+              )}
+            </Stack>
+          </Paper>
+
+       
+        </Box>
+      )}
+
+      {/* MODAL */}
+      <OrderDetailModal
+        open={open}
+        order={selectedOrder ?? undefined}
+        onClose={handleClose}
+      />
     </Stack>
   );
 }
