@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { customerLogin } from "../../api/auth";
 import { motion } from "framer-motion";
+import ForgotPasswordDialog from "./ForgotPasswordDialog";
 
 const BG_WAVE =
   "https://res.cloudinary.com/dkfykdjlm/image/upload/v1762962577/wave-haikei_skn4to.svg";
@@ -40,7 +41,7 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [openForgot, setOpenForgot] = useState(false);
   const [err, setErr] = useState("");
 
   const [emailErr, setEmailErr] = useState("");
@@ -385,10 +386,17 @@ export default function LoginDialog({ open, onClose, onSuccess }: Props) {
 
                 {/* Links + footer */}
                 <Box display="flex" justifyContent="space-between" sx={{ color: "#fff" }}>
-                  <Link underline="hover" sx={{ color: "#fff", cursor: "pointer" }}>
+                  <Link
+                    underline="hover"
+                    sx={{ color: "#fff", cursor: "pointer" }}
+                    onClick={() => setOpenForgot(true)}
+                  >
                     {t("forgot") ?? "Quên mật khẩu?"}
                   </Link>
-                  
+                  <ForgotPasswordDialog
+                    open={openForgot}
+                    onClose={() => setOpenForgot(false)}
+                  />
                 </Box>
 
                 <Typography variant="caption" textAlign="center" sx={{ color: "rgba(255,255,255,0.7)", mt: 1 }}>

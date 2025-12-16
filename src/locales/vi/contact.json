@@ -40,5 +40,37 @@
   "errors": {
     "fetchList": "Không thể tải danh sách liên hệ",
     "fetchDetail": "Không thể tải chi tiết liên hệ"
+  },
+   "title": "Liên hệ với chúng tôi",
+  "lead": "Hãy để lại thông tin, đội ngũ ASMS sẽ liên hệ và hỗ trợ bạn trong thời gian sớm nhất.",
+
+  "location": {
+    "title": "Địa chỉ",
+    "desc": "Tòa nhà ASMS\nNgã tư Thủ Đức, TP. Hồ Chí Minh"
+  },
+
+  "hotline": {
+    "title": "Hotline"
+  },
+
+  "email": {
+    "title": "Email"
+  },
+
+  "hours": {
+    "title": "Giờ làm việc",
+    "desc": "Thứ 2 – Thứ 6: 08:00 – 18:00\nThứ 7: 08:00 – 12:00"
+  },
+
+  "form": {
+    "title": "Gửi yêu cầu liên hệ",
+    "firstName": "Họ",
+    "lastName": "Tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "message": "Nội dung",
+    "submit": "Gửi liên hệ",
+    "sent": "Gửi liên hệ thành công",
+    "note": "Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ làm việc."
   }
 }

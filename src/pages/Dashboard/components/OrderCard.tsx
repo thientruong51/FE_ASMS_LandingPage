@@ -43,6 +43,8 @@ import UpdatePasskeyDialog from "./UpdatePasskeyDialog";
 import { translateStorageTypeName } from "../../../utils/storageTypeNames";
 import { translateStatus } from "../../../utils/statusHelper";
 import { translateShelfTypeName } from "../../../utils/shelfTypeNames";
+import { useNavigate } from "react-router-dom";
+
 const formatMoney = (n?: number) => {
   if (n == null) return "-";
   return n.toLocaleString("vi-VN") + " đ";
@@ -77,7 +79,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [updatePasskeyOpen, setUpdatePasskeyOpen] = useState(false);
   const [showPasskey, setShowPasskey] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
-
+  const navigate = useNavigate();
   const [snack, setSnack] = useState<{
     open: boolean;
     severity?: "success" | "error" | "info";
@@ -657,6 +659,21 @@ const OrderCard: React.FC<OrderCardProps> = ({
               {loadingPay ? <CircularProgress size={18} /> : t("pay")}
             </Button>
           )}
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => {
+              if (!orderCode) return;
+              navigate(`/contract/warehouse/${orderCode}`, {
+                state: {
+                  order, // optional – dùng để render nhanh
+                  customer: order?.customer ?? null,
+                },
+              });
+            }}
+          >
+            {t("viewContract", "Xem hợp đồng")}
+          </Button>
         </Box>
       </Paper>
 

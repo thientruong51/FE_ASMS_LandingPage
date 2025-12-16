@@ -1,0 +1,25 @@
+@page {
+  size: A4;
+  margin: 25mm 20mm 25mm 20mm;
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-container {
+    width: 100%;
+    background: white;
+  }
+
+  .contract-section {
+    page-break-inside: avoid;
+  }
+}

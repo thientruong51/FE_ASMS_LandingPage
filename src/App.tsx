@@ -5,6 +5,7 @@ import AppRoutes from "./routes/AppRoutes";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalLoader from "./components/GlobalLoader";
 import "./i18n";
+import "./styles/print.css";
 
 function App() {
   return (
