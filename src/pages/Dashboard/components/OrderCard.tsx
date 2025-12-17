@@ -323,6 +323,33 @@ const OrderCard: React.FC<OrderCardProps> = ({
       void reloadOrder();
     }
   }, [checkoutUrl]);
+  useEffect(() => {
+  if (!orderCode) return;
+
+  let cancelled = false;
+  let timer: number | null = null;
+
+  const tick = async () => {
+    if (cancelled) return;
+
+    if (checkoutUrl) {
+      timer = window.setTimeout(tick, 5000);
+      return;
+    }
+
+    await reloadOrder();
+
+    timer = window.setTimeout(tick, 5000);
+  };
+
+  timer = window.setTimeout(tick, 5000);
+
+  return () => {
+    cancelled = true;
+    if (timer) window.clearTimeout(timer);
+  };
+}, [orderCode, checkoutUrl]);
+
 
   const handlePay = async () => {
     if (!orderCode) {
