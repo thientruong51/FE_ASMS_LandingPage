@@ -45,6 +45,9 @@ export const mapOrder = async (summary: any): Promise<Order> => {
     startDate: summary.depositDate ?? summary.orderDate ?? null,
     endDate: summary.returnDate ?? null,
     status: summary.status,
+    paymentStatus:
+    summary.paymentStatus ??
+    summary.payment?.paymentStatus,
     displayStatus,
     kind,
     staff: undefined,
