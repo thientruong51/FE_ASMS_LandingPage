@@ -46,40 +46,34 @@ const OrdersPage: React.FC = () => {
   const [filter, setFilter] = useState<string>("All");
 
   useEffect(() => {
-    let mounted = true;
+  let mounted = true;
 
-    const loadOrders = async () => {
-      try {
-        const data = await fetchOrdersWithDetails(1, 20);
-        if (mounted) {
-          setOrders(data);
-          setError(null);
-        }
-      } catch (err: any) {
-        if (mounted) {
-          setError(err?.message ?? t("ordersPage.loadError"));
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+  const loadOrders = async () => {
+    try {
+      const data = await fetchOrdersWithDetails(1, 20);
+      if (mounted) {
+        setOrders(data);
+        setError(null);
       }
-    };
-
-    setLoading(true);
-    loadOrders();
-
-    const intervalId = setInterval(() => {
-      if (!open) {
-        loadOrders();
+    } catch (err: any) {
+      if (mounted) {
+        setError(err?.message ?? t("ordersPage.loadError"));
       }
-    }, 5000);
+    } finally {
+      if (mounted) {
+        setLoading(false);
+      }
+    }
+  };
 
-    return () => {
-      mounted = false;
-      clearInterval(intervalId);
-    };
-  }, [t, open]);
+  setLoading(true);
+  loadOrders();
+
+  return () => {
+    mounted = false;
+  };
+}, [t]);
+
 
 
   const filtered = orders.filter((o) => {

@@ -85,6 +85,7 @@ export type Item = {
 // ==============================
 
 export type Order = {
+  paymentStatus: any;
   orderCode: any;
   id: string;
   kind: WarehouseType;
