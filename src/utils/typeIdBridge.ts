@@ -1,14 +1,14 @@
 
 export const STORAGE_TYPE_ID_TO_CODE: Record<number, string> = {
   1: "small",
-  2: "small_ac",
-  3: "medium",
-  4: "medium_ac",
-  5: "large",
-  6: "large_ac",
-  7: "warehouse",
-  8: "warehouse_ac",
-  9: "warehouse_expired",
+  6: "small_ac",
+  2: "medium",
+  7: "medium_ac",
+  3: "large",
+  8: "large_ac",
+  4: "warehouse",
+  9: "warehouse_ac",
+  5: "warehouse_expired",
   10: "warehouse_oversize",
 };
 

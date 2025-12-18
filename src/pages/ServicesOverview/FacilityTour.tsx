@@ -78,7 +78,7 @@ const { t } = useTranslation("servicesOverview");
             enableZoom={false}
             enableRotate={true}
             minPolarAngle={Math.PI / 3.5}
-            maxPolarAngle={Math.PI / 1.8}
+            maxPolarAngle={Math.PI / 1}
           />
 
           <Environment preset="warehouse" />
@@ -151,7 +151,7 @@ function FacilityScene({
 
       newPos.z = THREE.MathUtils.clamp(newPos.z, minZ, maxZ);
       newPos.y = THREE.MathUtils.clamp(newPos.y, minY, maxY);
-      newTarget.z = THREE.MathUtils.clamp(newTarget.z, minZ - 5, maxZ - 5);
+      newTarget.z = THREE.MathUtils.clamp(newTarget.z, minZ - 0.5, maxZ - 0.5);
 
       gsap.to(camera.position, {
         x: center.x,

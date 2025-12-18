@@ -15,10 +15,17 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import VpnKeyIcon from "@mui/icons-material/VpnKey";
+import CancelIcon from "@mui/icons-material/Cancel";
+import PaymentIcon from "@mui/icons-material/Payment";
+import DescriptionIcon from "@mui/icons-material/Description";
 import {
   STORAGE_TYPE_ID_TO_CODE,
   SHELF_TYPE_ID_TO_CODE,
@@ -35,7 +42,7 @@ import {
   loadTypeLookup,
   resolveContainerName,
 } from "../../../api/typeLookup";
-
+import ViewStorageMapButton from "./ViewStorageMapButton";
 import { useTranslation } from "react-i18next";
 import OrderQrDialog from "./OrderQrDialog";
 import ContactDialog from "./ContactDialog";
@@ -324,31 +331,31 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   }, [checkoutUrl]);
   useEffect(() => {
-  if (!orderCode) return;
+    if (!orderCode) return;
 
-  let cancelled = false;
-  let timer: number | null = null;
+    let cancelled = false;
+    let timer: number | null = null;
 
-  const tick = async () => {
-    if (cancelled) return;
+    const tick = async () => {
+      if (cancelled) return;
 
-    if (checkoutUrl) {
+      if (checkoutUrl) {
+        timer = window.setTimeout(tick, 5000);
+        return;
+      }
+
+      await reloadOrder();
+
       timer = window.setTimeout(tick, 5000);
-      return;
-    }
-
-    await reloadOrder();
+    };
 
     timer = window.setTimeout(tick, 5000);
-  };
 
-  timer = window.setTimeout(tick, 5000);
-
-  return () => {
-    cancelled = true;
-    if (timer) window.clearTimeout(timer);
-  };
-}, [orderCode, checkoutUrl]);
+    return () => {
+      cancelled = true;
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [orderCode, checkoutUrl]);
 
 
   const handlePay = async () => {
@@ -652,56 +659,101 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </Box>
         </Box>
 
-        <Box display="flex" justifyContent="flex-end" mt={2} gap={1}>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => setQrOpen(true)}
-          >
-            {t("orderDetail.viewQr")}
-          </Button>
-          <Button size="small" variant="outlined" onClick={() => onOpenDetail?.(order)}>{t("viewDetails")}</Button>
+        <Box display="flex" justifyContent="flex-end" mt={2} gap={0.5}>
+          {/* QR */}
+          <Tooltip title={t("orderDetail.viewQr")}>
+            <IconButton size="small" onClick={() => setQrOpen(true)}>
+              <QrCode2Icon fontSize="small" />
+            </IconButton>
+          </Tooltip>
 
-          <Button size="small" variant="outlined" onClick={() => setContactOpen(true)}>
-            {t("orderDetail.contactStaff") ?? "Liên hệ"}
-          </Button>
+          {/* Chi tiết */}
+          <Tooltip title={t("viewDetails")}>
+            <IconButton size="small" onClick={() => onOpenDetail?.(order)}>
+              <VisibilityIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
 
+          {/* Liên hệ */}
+          <Tooltip title={t("orderDetail.contactStaff") ?? "Liên hệ"}>
+            <IconButton size="small" onClick={() => setContactOpen(true)}>
+              <SupportAgentIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          {/* Update passkey */}
           {order?.passkey != null && canUpdatePasskey && (
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => setUpdatePasskeyOpen(true)}
-            >
-              {t("updatePasskey")}
-            </Button>
-          )}
-          {isPending && (
-            <Button size="small" variant="outlined" color="error" onClick={handleCancelOrder} disabled={cancelLoading}>
-              {cancelLoading ? <CircularProgress size={18} /> : t("cancelOrder") ?? "Hủy đơn"}
-            </Button>
+            <Tooltip title={t("updatePasskey")}>
+              <IconButton size="small" onClick={() => setUpdatePasskeyOpen(true)}>
+                <VpnKeyIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
           )}
 
-          {isCheckout && !isPaid && (
-            <Button size="small" variant="contained" onClick={handlePay} disabled={loadingPay}>
-              {loadingPay ? <CircularProgress size={18} /> : t("pay")}
-            </Button>
+          {/* Hủy đơn */}
+          {isPending && (
+            <Tooltip title={t("cancelOrder") ?? "Hủy đơn"}>
+              <span>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={handleCancelOrder}
+                  disabled={cancelLoading}
+                >
+                  {cancelLoading ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <CancelIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </span>
+            </Tooltip>
           )}
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => {
-              if (!orderCode) return;
-              navigate(`/contract/warehouse/${orderCode}`, {
-                state: {
-                  order, // optional – dùng để render nhanh
-                  customer: order?.customer ?? null,
-                },
-              });
-            }}
-          >
-            {t("viewContract", "Xem hợp đồng")}
-          </Button>
+
+          {/* Thanh toán */}
+          {isCheckout && !isPaid && (
+            <Tooltip title={t("pay")}>
+              <span>
+                <IconButton
+                  size="small"
+                  color="primary"
+                  onClick={handlePay}
+                  disabled={loadingPay}
+                >
+                  {loadingPay ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <PaymentIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
+
+          {/* Hợp đồng */}
+          <Tooltip title={t("viewContract", "Xem hợp đồng")}>
+            <IconButton
+              size="small"
+              onClick={() => {
+                if (!orderCode) return;
+                navigate(`/contract/warehouse/${orderCode}`, {
+                  state: {
+                    order,
+                    customer: order?.customer ?? null,
+                  },
+                });
+              }}
+            >
+              <DescriptionIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          {/* Vị trí kho */}
+          <Tooltip title="Xem vị trí kho">
+            <ViewStorageMapButton order={order} />
+          </Tooltip>
         </Box>
+
       </Paper>
 
       <Dialog open={Boolean(checkoutUrl)} onClose={() => setCheckoutUrl(null)} fullWidth maxWidth="md">
