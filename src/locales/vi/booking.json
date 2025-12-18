@@ -274,5 +274,18 @@
     "business_ac": "Gói Business AC",
     "premium": "Gói Premium",
     "premium_ac": "Gói Premium AC"
+  },
+  "storageTypeNames": {
+    "small": "Phòng Nhỏ",
+    "medium": "Phòng Vừa",
+    "large": "Phòng Lớn",
+    "small_ac": "Phòng Nhỏ (Có điều hòa)",
+    "medium_ac": "Phòng Vừa (Có điều hòa)",
+    "large_ac": "Phòng Lớn (Có điều hòa)" ,
+    "warehouse": "Kho",
+    "warehouse_ac": "Kho (Có điều hòa)",
+    "warehouse_expired": "Kho hết hạn",
+    "warehouse_oversize": "Kho quá cỡ",
+    "noData": "-"
   }
 }

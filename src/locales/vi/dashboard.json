@@ -78,7 +78,9 @@
     "phone": "Số điện thoại",
     "sending": "Đang gửi...",
     "contactSentSuccess": "Gửi liên hệ thành công. Nhân viên sẽ liên hệ lại sớm.",
-    "contactSentFailed": "Gửi liên hệ thất bại. Vui lòng thử lại sau."
+    "contactSentFailed": "Gửi liên hệ thất bại. Vui lòng thử lại sau.",
+     "images": "Hình ảnh",
+    "retrievedDate": "Ngày lấy hàng"
   },
   "table": {
     "no": "STT",

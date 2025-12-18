@@ -128,7 +128,7 @@ export default function Step3Custom3D({ room, onBack, onNext }: Step3Custom3DPro
       if (r) return r;
     }
     if (room.id === "small" || room.id === "medium" || room.id === "large") return room.id;
-    const mapped = mapNameToType(room.id);
+    const mapped = mapNameToType((room as any).name ?? room.id);
     if (mapped) return mapped;
     return "small";
   }, [room]);

@@ -13,7 +13,8 @@ import Step3Custom3D from "./Step3Custom3D";
 import Step3InfoForm from "./Step3InfoForm";
 import Step4Summary from "./Step4Summary/Step4Summary";
 import Step5Success from "./Step5Success";
-
+import { useEffect } from "react";
+import { fetchStorageTypes, type StorageTypeApi } from "../../api/storageType";
 import Header from "../../components/Header";
 import Footer from "../Home/Footer";
 import React from "react";
@@ -79,7 +80,7 @@ export type BookingData = {
 
   productTypes?: ProductTypeSelection[] | null;
 
-  package?: { id: string; name: string; price: number | string; rawPrice?: number;shelves?: number; boxes?: number; desc?: string;} | null;
+  package?: { id: string; name: string; price: number | string; rawPrice?: number; shelves?: number; boxes?: number; desc?: string; } | null;
 
   customItems?: any[] | { items: any[]; counts?: Record<string, number> } | null;
   counts?: Record<string, number> | null;
@@ -121,6 +122,7 @@ export default function BookingPage() {
   const labelsSelf = t("stepsSelf", { returnObjects: true }) as string[];
   const labelsBox = t("stepsBox", { returnObjects: true }) as string[];
   const currentLabels = data.style === "full" ? labelsBox : labelsSelf || labelsSelf;
+  const [storageTypes, setStorageTypes] = useState<StorageTypeApi[]>([]);
 
   const handlers = useMemo(() => {
     const next = (currentStep?: number) => {
@@ -136,6 +138,21 @@ export default function BookingPage() {
       setData((prev) => ({ ...prev, ...patch }));
 
     return { next, back, goTo, save };
+  }, []);
+  useEffect(() => {
+    let mounted = true;
+
+    fetchStorageTypes()
+      .then((list) => {
+        if (mounted) setStorageTypes(list);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch storage types", err);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -173,11 +190,39 @@ export default function BookingPage() {
                     selected={data.room || null}
                     onBack={handlers.back}
                     onNext={(room) => {
-                      handlers.save({ room });
+                      // Step2RoomSelect chỉ biết phòng nào (id)
+                      const storageTypeId =
+                        (room as any)?.storageTypeId ??
+                        (room as any)?.id ??
+                        null;
+
+                      const st = storageTypes.find(
+                        (x) => x.storageTypeId === Number(storageTypeId)
+                      );
+
+                      if (!st) {
+                        console.error("StorageType not found for room selection:", room);
+                        return;
+                      }
+
+                      handlers.save({
+                        room: {
+                          id: String(st.storageTypeId),
+                          name: st.name,
+                          width: st.width,
+                          depth: st.length,
+                          hasAC: /AC/i.test(st.name),
+
+                          // 🔑 GIÁ CHUẨN TỪ BACKEND
+                          price: st.price ?? undefined,
+                        },
+                      });
+
                       handlers.next();
                     }}
                   />
                 )}
+
 
                 {/* STEP 3: Package vs Custom */}
                 {active === 2 && data.room && (
@@ -343,13 +388,13 @@ export default function BookingPage() {
                             imageUrl: b.imageUrl ?? b.modelUrl ?? null,
                             productTypes: Array.isArray(b.productTypes)
                               ? b.productTypes.map((pt: any) => ({
-                                  id: Number(pt.id ?? pt.productTypeId),
-                                  name:
-                                    pt.name ?? pt.title ?? String(pt.id ?? pt.productTypeId),
-                                  isFragile: pt.isFragile,
-                                  canStack: pt.canStack,
-                                  description: pt.description ?? null,
-                                }))
+                                id: Number(pt.id ?? pt.productTypeId),
+                                name:
+                                  pt.name ?? pt.title ?? String(pt.id ?? pt.productTypeId),
+                                isFragile: pt.isFragile,
+                                canStack: pt.canStack,
+                                description: pt.description ?? null,
+                              }))
                               : undefined,
                             productTypeIds: ids ?? [],
                           };
@@ -367,12 +412,12 @@ export default function BookingPage() {
                       const masterProductTypes =
                         Array.isArray(payload?.productTypes)
                           ? payload.productTypes.map((pt: any) => ({
-                              id: Number(pt.productTypeId ?? pt.id),
-                              name: pt.name,
-                              isFragile: pt.isFragile,
-                              canStack: pt.canStack,
-                              description: pt.description ?? null,
-                            }))
+                            id: Number(pt.productTypeId ?? pt.id),
+                            name: pt.name,
+                            isFragile: pt.isFragile,
+                            canStack: pt.canStack,
+                            description: pt.description ?? null,
+                          }))
                           : Array.isArray(payload?.productTypesList)
                             ? payload.productTypesList
                             : undefined;
@@ -380,11 +425,11 @@ export default function BookingPage() {
                       const firstBox =
                         normalizedBoxes.length > 0
                           ? {
-                              id: normalizedBoxes[0].id,
-                              label: normalizedBoxes[0].label,
-                              price: normalizedBoxes[0].price,
-                              quantity: normalizedBoxes[0].quantity,
-                            }
+                            id: normalizedBoxes[0].id,
+                            label: normalizedBoxes[0].label,
+                            price: normalizedBoxes[0].price,
+                            quantity: normalizedBoxes[0].quantity,
+                          }
                           : null;
 
                       handlers.save({

@@ -32,7 +32,9 @@
 
 "active": "Processing",
 
-"processed": "Processed"
+"processed": "Processed",
+"retrievedDate": "Retrieved Date",
+"contactDate": "Contact Date"
 
 },
 

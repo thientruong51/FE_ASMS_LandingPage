@@ -1,8 +1,6 @@
-// pricingUtils.ts
 import { useMemo } from "react";
 import type { BookingPayload, ServiceSelection } from "./types";
 
-/* ---------- helpers ---------- */
 export const toNumber = (v: unknown): number | undefined => {
   if (v === null || v === undefined) return undefined;
   if (typeof v === "number" && Number.isFinite(v)) return v;
@@ -30,7 +28,6 @@ function inferSurchargePercentFromName(name?: string) {
   return undefined;
 }
 
-/* ---------- shipping table ---------- */
 const SHIPPING_TABLE = {
   fixed: [
     [60000, 100000, 120000],
@@ -55,32 +52,28 @@ function distanceBucket(distanceInKm?: number) {
   return 3;
 }
 
-/* ---------- main hook ---------- */
 export function usePricing(data: BookingPayload, serviceDetails: ServiceSelection[] | null) {
   return useMemo(() => {
-    // items compatibility
     const itemsArray =
       Array.isArray((data as any).items)
         ? (data as any).items
         : Array.isArray((data as any).customItems)
-        ? (data as any).customItems
-        : Array.isArray(((data as any).customItems as any)?.items)
-        ? ((data as any).customItems as any).items
-        : [];
+          ? (data as any).customItems
+          : Array.isArray(((data as any).customItems as any)?.items)
+            ? ((data as any).customItems as any).items
+            : [];
 
     const serviceExtras = (serviceDetails ?? []).reduce((s, sv) => s + (sv.price ?? 0), 0);
 
-    // basePrice fallback (will be ignored for full-service)
     const rawBase =
       toNumber((data as any).pricing?.basePrice) ??
       toNumber((data as any).room?.price) ??
       toNumber((data as any).box?.price) ??
       (typeof (data as any).room?.name === "string" &&
-      (data as any).room.name.toLowerCase().includes("medium")
+        (data as any).room.name.toLowerCase().includes("medium")
         ? 1485000
         : 1200000);
 
-    // rental multiplier
     const rt = (data as any).rentalType ?? data.rentalType;
     const weeks = Number((data as any).rentalWeeks ?? data.rentalWeeks ?? 0);
     const months = Number((data as any).rentalMonths ?? data.rentalMonths ?? 0);
@@ -99,39 +92,56 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
       rentalMultiplier = months > 0 ? months : 1;
     }
 
-    // Decide whether this booking is full-service (box flow) or self-storage
     const style =
       (data as any).style ??
       data.style ??
       (Array.isArray((data as any).boxes) && (data as any).boxes.length > 0 ? "full" : (data as any).room ? "self" : undefined);
     const isFull = style === "full";
-
-    // For self-storage, base applies; for full-service, basePrice is effectively 0 (avoid double-count)
+const isSelf = style === "self";
     const basePrice = isFull ? 0 : rawBase;
     const rentalAdjustedBase = isFull ? 0 : Math.round((Number(basePrice) || 0) * rentalMultiplier);
-
-    // boxes / boxCount
+const boxPricesMap = normalizeMap(
+  ((data as any).counts as any)?.pricingInfo?.boxPricesMap ??
+  (data as any).pricing?.boxPrices ??
+  {}
+);
     let boxCount = 0;
-    let boxesList: any[] = [];
+let boxesList: any[] = [];
 
-    if (Array.isArray((data as any).boxes) && (data as any).boxes.length > 0) {
-      boxesList = (data as any).boxes as any[];
-      boxCount = boxesList.reduce((s, b) => s + (Number(b.quantity ?? b.qty ?? 1) || 0), 0);
-    } else if (Array.isArray(itemsArray) && itemsArray.length > 0) {
-      const inferredBoxes = itemsArray.filter((it: any) => {
-        const t = ((it?.type ?? it?.label ?? it?.name) ?? "").toString();
-        return /^[ABCD]$/i.test(t) || /box|container|crate/i.test(t);
-      });
-      boxCount = inferredBoxes.length;
-      boxesList = inferredBoxes;
-    } else if ((data as any).counts && typeof (data as any).counts.boxes === "number") {
-      boxCount = Number((data as any).counts.boxes) || 0;
-    } else {
-      boxCount = 0;
-    }
+// 1️ FULL mode: 
+if (Array.isArray((data as any).boxes) && (data as any).boxes.length > 0) {
+  boxesList = (data as any).boxes;
+  boxCount = boxesList.reduce(
+    (s, b) => s + (Number(b.quantity ?? b.qty ?? 1) || 0),
+    0
+  );
+}
 
-    // ---------- explicit items (exclude box-like items so we don't double count) ----------
-    // build set of identifiers from boxesList for robust matching
+// 2️ SELF mode: 
+else if (
+  isSelf &&
+  (data as any).counts?.byType &&
+  typeof (data as any).counts.byType === "object"
+) {
+  const byType = (data as any).counts.byType;
+
+  for (const [type, qtyRaw] of Object.entries(byType)) {
+    const qty = Number(qtyRaw) || 0;
+    if (qty <= 0) continue;
+
+    if (!/^[ABCD]$/i.test(type)) continue;
+
+    boxesList.push({
+      label: type.toUpperCase(),
+      quantity: qty,
+      unitPrice: boxPricesMap[type.toUpperCase()] ?? 0,
+    });
+
+    boxCount += qty;
+  }
+}
+
+
     const boxIdentifiers = new Set<string>();
     for (const b of boxesList) {
       if (b == null) continue;
@@ -160,7 +170,6 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
       .filter((it) => !looksLikeBoxItem(it))
       .reduce((s: number, it: { price: unknown }) => s + (toNumber(it?.price) ?? 0), 0);
 
-    // surcharge map & product types
     const surchargeMapFromPayload = normalizeMap((data as any).pricing?.productTypeSurcharges ?? {});
     const productTypesById = new Map<number, any>();
     if (Array.isArray((data as any).productTypes)) {
@@ -182,8 +191,8 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
         Array.isArray(box.productTypeIds) && box.productTypeIds.length > 0
           ? box.productTypeIds.map((x: any) => Number(x)).filter((n: unknown) => !Number.isNaN(n))
           : Array.isArray(box.productTypes) && box.productTypes.length > 0
-          ? box.productTypes.map((pt: any) => Number(pt?.id ?? pt?.productTypeId)).filter((n: unknown) => !Number.isNaN(n))
-          : [];
+            ? box.productTypes.map((pt: any) => Number(pt?.id ?? pt?.productTypeId)).filter((n: unknown) => !Number.isNaN(n))
+            : [];
 
       let best = 0;
       for (const id of productTypeIds) {
@@ -219,15 +228,23 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
 
       return best;
     }
+const hasTypedBoxes =
+  Array.isArray((data as any).counts?.byType) ||
+  (data as any).counts?.byType &&
+  Object.keys((data as any).counts.byType).some(k =>
+    /^[ABCD]$/i.test(k)
+  );
 
-    // compute boxes price + surcharges
     let boxesPriceRaw = 0;
     let totalSurchargesAmount = 0;
 
     if (boxesList && boxesList.length > 0) {
       for (const b of boxesList) {
         const qty = Number(b.quantity ?? b.qty ?? 1) || 1;
-        const unit = toNumber(b.price ?? b.unitPrice ?? 0) ?? 0;
+        const unit =
+  hasTypedBoxes
+    ? toNumber(b.unitPrice ?? 0) ?? 0   
+    : toNumber(b.price ?? b.unitPrice ?? 0) ?? 0;
         const base = unit * qty;
         boxesPriceRaw += base;
 
@@ -273,21 +290,35 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
       shippingFee = 0;
     }
 
-    // totals
-    const itemsTotal = explicitItemPriceSum + boxesPriceRaw + totalSurchargesAmount;
+    const monthlyItemsRaw = boxesPriceRaw;
 
-    // subtotal rules:
-    // - full-service: don't include rentalAdjustedBase (basePrice) because item prices already represent box prices
-    // - self-storage: include rentalAdjustedBase
+    const rentalAdjustedItems = monthlyItemsRaw;
+
+    const oneTimeItems = explicitItemPriceSum + totalSurchargesAmount;
+
+    const itemsTotal = rentalAdjustedItems + oneTimeItems;
+
+
+
     let computedSubtotal: number;
     if (isFull) {
-      computedSubtotal = Math.round(itemsTotal + serviceExtras + shippingFee);
+      computedSubtotal = Math.round(
+        itemsTotal * rentalMultiplier +
+        serviceExtras +
+        shippingFee
+      );
     } else {
-      computedSubtotal = Math.round(rentalAdjustedBase + serviceExtras + itemsTotal + shippingFee);
+      computedSubtotal =
+        rentalAdjustedBase +
+        serviceExtras +
+       Math.round(
+  (monthlyItemsRaw + oneTimeItems) * rentalMultiplier
+) +
+        shippingFee;
     }
 
     const subtotal = toNumber((data as any).pricing?.subtotal) ?? computedSubtotal;
-    const total = subtotal; // VAT removed
+    const total = subtotal; 
 
     return {
       basePrice,
@@ -308,6 +339,7 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
         itemsTotal,
         shippingFee,
         boxCount,
+        boxesList,
       },
 
       shipping: {

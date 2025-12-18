@@ -284,7 +284,7 @@ export async function buildOrderPayloadFromBooking(
     // shelf lines (if any) — containerCode null
     const shelfTypeId = 1;
     if (shelfQuantity && shelfQuantity > 0) {
-      const shelfTotalPrice = Number((perShelfPrice ?? 0) * shelfQuantity);
+      const shelfTotalPrice = Number((perShelfPrice ?? 0));
       orderDetails.push({
         storageCode: null,
         containerCode: null, // always null

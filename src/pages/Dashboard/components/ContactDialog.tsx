@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import{ useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,6 +15,12 @@ import {
 import { useTranslation } from "react-i18next";
 import { createContact } from "../../../api/contactApi";
 
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { vi, enUS } from "date-fns/locale";
+
+/* ================= JWT HELPERS ================= */
 const parseJwt = (token: string | null): any | null => {
   if (!token) return null;
   try {
@@ -62,18 +68,20 @@ type Props = {
   onSent?: () => void;
 };
 
-const ContactDialog: React.FC<Props> = ({
+export default function ContactDialog({
   open,
   onClose,
   orderCode,
   onSent,
-}) => {
-  const { t } = useTranslation("dashboard");
+}: Props) {
+  const { t, i18n } = useTranslation("dashboard");
   const customer = getCustomerFromAccessToken();
+  const currentLang = i18n.language ?? "vi";
 
   const [message, setMessage] = useState("");
-  const [sending, setSending] = useState(false);
+  const [retrievedDate, setRetrievedDate] = useState<string | null>(null);
 
+  const [sending, setSending] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] =
@@ -84,6 +92,26 @@ const ContactDialog: React.FC<Props> = ({
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [imgUploading, setImgUploading] = useState(false);
 
+  /* ================= DatePicker config (GIỐNG STEP3) ================= */
+  const localeToUse = currentLang.startsWith("vi") ? vi : enUS;
+  const inputFormat = currentLang.startsWith("vi")
+    ? "dd/MM/yyyy"
+    : "MM/dd/yyyy";
+
+  const handleRetrievedDateSelect = (d: Date | null) => {
+    if (!d) {
+      setRetrievedDate(null);
+      return;
+    }
+
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+
+    setRetrievedDate(`${yyyy}-${mm}-${dd}`);
+  };
+
+  /* ================= Cloudinary ================= */
   const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME ?? "";
   const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET ?? "";
   const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
@@ -128,8 +156,9 @@ const ContactDialog: React.FC<Props> = ({
     }
   };
 
+  /* ================= SEND ================= */
   const handleSend = async () => {
-    if (!orderCode) return;
+    if (!orderCode || !message.trim()) return;
 
     setSending(true);
     try {
@@ -144,13 +173,16 @@ const ContactDialog: React.FC<Props> = ({
 
       const payload = {
         customerCode: customer.customerCode ?? "",
-        employeeCode: "",
         orderCode,
+
         name: customer.name ?? "",
         phoneContact: customer.phone ?? "",
         email: customer.email ?? "",
+
         message,
         image: finalImages,
+
+         ...(retrievedDate ? { retrievedDate } : {}),
       };
 
       const token =
@@ -184,6 +216,7 @@ const ContactDialog: React.FC<Props> = ({
     }
   };
 
+  /* ================= UI ================= */
   return (
     <>
       <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -199,7 +232,7 @@ const ContactDialog: React.FC<Props> = ({
 
           <TextField
             fullWidth
-            label={t("orderDetail.customerCode") ?? "Customer code"}
+            label="Customer code"
             value={customer.customerCode ?? ""}
             margin="dense"
             InputProps={{ readOnly: true }}
@@ -207,7 +240,7 @@ const ContactDialog: React.FC<Props> = ({
 
           <TextField
             fullWidth
-            label={t("orderDetail.name") ?? "Name"}
+            label="Name"
             value={customer.name ?? ""}
             margin="dense"
             InputProps={{ readOnly: true }}
@@ -215,7 +248,7 @@ const ContactDialog: React.FC<Props> = ({
 
           <TextField
             fullWidth
-            label={t("orderDetail.phone") ?? "Phone"}
+            label="Phone"
             value={customer.phone ?? ""}
             margin="dense"
             InputProps={{ readOnly: true }}
@@ -223,11 +256,30 @@ const ContactDialog: React.FC<Props> = ({
 
           <TextField
             fullWidth
-            label={t("orderDetail.email") ?? "Email"}
+            label="Email"
             value={customer.email ?? ""}
             margin="dense"
             InputProps={{ readOnly: true }}
           />
+
+          {/* ===== DATE PICKER (GIỐNG STEP3) ===== */}
+          <Box mt={1}>
+            <LocalizationProvider
+              dateAdapter={AdapterDateFns}
+              adapterLocale={localeToUse}
+            >
+              <DatePicker
+                label={t("orderDetail.retrievedDate") ?? "Retrieved date"}
+                value={retrievedDate ? new Date(retrievedDate) : null}
+                onChange={handleRetrievedDateSelect}
+                disablePast
+                format={inputFormat}
+                slotProps={{
+                  textField: { fullWidth: true, margin: "dense" },
+                }}
+              />
+            </LocalizationProvider>
+          </Box>
 
           <TextField
             multiline
@@ -257,11 +309,7 @@ const ContactDialog: React.FC<Props> = ({
                 <img
                   key={i}
                   src={u}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    objectFit: "cover",
-                  }}
+                  style={{ width: 80, height: 80, objectFit: "cover" }}
                 />
               ))}
             </Box>
@@ -275,29 +323,9 @@ const ContactDialog: React.FC<Props> = ({
               onClick={handleUploadImages}
               disabled={imgUploading}
             >
-              {imgUploading ? (
-                <CircularProgress size={16} />
-              ) : (
-                t("actions.upload") ?? "Upload"
-              )}
+              {imgUploading ? <CircularProgress size={16} /> : "Upload"}
             </Button>
           ) : null}
-
-          {images.length > 0 && (
-            <Box sx={{ display: "flex", gap: 1, mt: 1, flexWrap: "wrap" }}>
-              {images.map((src, idx) => (
-                <img
-                  key={idx}
-                  src={src}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    objectFit: "cover",
-                  }}
-                />
-              ))}
-            </Box>
-          )}
         </DialogContent>
 
         <DialogActions>
@@ -309,9 +337,7 @@ const ContactDialog: React.FC<Props> = ({
             onClick={handleSend}
             disabled={sending || message.trim() === ""}
           >
-            {sending
-              ? t("orderDetail.sending") ?? "Đang gửi..."
-              : t("orderDetail.send") ?? "Gửi"}
+            {sending ? "Đang gửi..." : "Gửi"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -320,18 +346,14 @@ const ContactDialog: React.FC<Props> = ({
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
-          onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+          onClose={() => setSnackbarOpen(false)}
         >
           {snackbarMsg}
         </Alert>
       </Snackbar>
     </>
   );
-};
-
-export default ContactDialog;
+}
