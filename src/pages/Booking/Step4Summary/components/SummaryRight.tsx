@@ -40,13 +40,11 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
   };
 const boxPricesMap =
   pricing.effectivePricingInfo?.boxPricesMap ?? {};
-  // --- ưu tiên lấy giá gói numeric & counts từ data.package nếu có ---
   const packageRawPrice: number | undefined = (data as any)?.package?.rawPrice ?? undefined;
   const packageDisplayPrice: string | undefined = (data as any)?.package?.price ?? undefined;
   const packageName: string | undefined = (data as any)?.package?.name ?? undefined;
   const packageShelves: number | undefined = (data as any)?.package?.shelves ?? undefined;
   const packageBoxes: number | undefined = (data as any)?.package?.boxes ?? undefined;
-  // --- end ---
  const storageDisplayName = useMemo(() => {
   if (packageName) return packageName;
 
@@ -56,7 +54,6 @@ const boxPricesMap =
     (data.room as any)?.type
   );
 }, [t, packageName, data.room]);
-  // per-box details (if boxes available)
   const boxDetails = useMemo(() => {
     const boxes =
   (pricing as any).breakdown?.boxesList ?? [];
@@ -68,9 +65,12 @@ const boxPricesMap =
       const labelKey = String(b.label ?? b.type ?? b.name ?? "").toUpperCase();
 
 const unit =
-  Number(boxPricesMap[labelKey]) ??
-  Number(b.unitPrice) ??
+  Number(b.unitPrice) ||
+  Number(b.price) ||
+  boxPricesMap[labelKey] ||
   0;
+
+
       const base = unit * qty;
 
       let pct = 0;

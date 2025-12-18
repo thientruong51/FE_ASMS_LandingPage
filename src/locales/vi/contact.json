@@ -16,7 +16,9 @@
     "images": "Hình ảnh",
     "noImage": "Không có hình ảnh",
     "active": "Đang xử lí",
-    "processed": "Đã xử lí"
+    "processed": "Đã xử lí",
+    "retrievedDate": "Ngày lấy hàng",
+    "contactDate": "Ngày liên hệ"
   },
 
   "status": {

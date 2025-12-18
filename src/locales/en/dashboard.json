@@ -77,7 +77,9 @@
     "phone": "Phone",
     "sending": "Sending...",
     "contactSentSuccess": "Contact request sent. Staff will get back to you shortly.",
-    "contactSentFailed": "Failed to send contact. Please try again later."
+    "contactSentFailed": "Failed to send contact. Please try again later.",
+    "images": "Images",
+"retrievedDate": "RetrievedDate"
   },
   "table": {
     "no": "No",

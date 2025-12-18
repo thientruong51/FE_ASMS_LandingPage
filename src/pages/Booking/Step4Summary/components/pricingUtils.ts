@@ -1,8 +1,6 @@
-// pricingUtils.ts
 import { useMemo } from "react";
 import type { BookingPayload, ServiceSelection } from "./types";
 
-/* ---------- helpers ---------- */
 export const toNumber = (v: unknown): number | undefined => {
   if (v === null || v === undefined) return undefined;
   if (typeof v === "number" && Number.isFinite(v)) return v;
@@ -30,7 +28,6 @@ function inferSurchargePercentFromName(name?: string) {
   return undefined;
 }
 
-/* ---------- shipping table ---------- */
 const SHIPPING_TABLE = {
   fixed: [
     [60000, 100000, 120000],
@@ -55,10 +52,8 @@ function distanceBucket(distanceInKm?: number) {
   return 3;
 }
 
-/* ---------- main hook ---------- */
 export function usePricing(data: BookingPayload, serviceDetails: ServiceSelection[] | null) {
   return useMemo(() => {
-    // items compatibility
     const itemsArray =
       Array.isArray((data as any).items)
         ? (data as any).items
@@ -70,7 +65,6 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
 
     const serviceExtras = (serviceDetails ?? []).reduce((s, sv) => s + (sv.price ?? 0), 0);
 
-    // basePrice fallback (will be ignored for full-service)
     const rawBase =
       toNumber((data as any).pricing?.basePrice) ??
       toNumber((data as any).room?.price) ??
@@ -80,7 +74,6 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
         ? 1485000
         : 1200000);
 
-    // rental multiplier
     const rt = (data as any).rentalType ?? data.rentalType;
     const weeks = Number((data as any).rentalWeeks ?? data.rentalWeeks ?? 0);
     const months = Number((data as any).rentalMonths ?? data.rentalMonths ?? 0);
@@ -99,14 +92,12 @@ export function usePricing(data: BookingPayload, serviceDetails: ServiceSelectio
       rentalMultiplier = months > 0 ? months : 1;
     }
 
-    // Decide whether this booking is full-service (box flow) or self-storage
     const style =
       (data as any).style ??
       data.style ??
       (Array.isArray((data as any).boxes) && (data as any).boxes.length > 0 ? "full" : (data as any).room ? "self" : undefined);
     const isFull = style === "full";
 const isSelf = style === "self";
-    // For self-storage, base applies; for full-service, basePrice is effectively 0 (avoid double-count)
     const basePrice = isFull ? 0 : rawBase;
     const rentalAdjustedBase = isFull ? 0 : Math.round((Number(basePrice) || 0) * rentalMultiplier);
 const boxPricesMap = normalizeMap(
@@ -114,11 +105,10 @@ const boxPricesMap = normalizeMap(
   (data as any).pricing?.boxPrices ??
   {}
 );
-    // boxes / boxCount
     let boxCount = 0;
 let boxesList: any[] = [];
 
-// 1️⃣ FULL mode: dùng boxes thật
+// 1️ FULL mode: 
 if (Array.isArray((data as any).boxes) && (data as any).boxes.length > 0) {
   boxesList = (data as any).boxes;
   boxCount = boxesList.reduce(
@@ -127,7 +117,7 @@ if (Array.isArray((data as any).boxes) && (data as any).boxes.length > 0) {
   );
 }
 
-// 2️⃣ SELF mode: build boxes từ counts.byType
+// 2️ SELF mode: 
 else if (
   isSelf &&
   (data as any).counts?.byType &&
@@ -139,7 +129,6 @@ else if (
     const qty = Number(qtyRaw) || 0;
     if (qty <= 0) continue;
 
-    // chỉ nhận box A/B/C/D
     if (!/^[ABCD]$/i.test(type)) continue;
 
     boxesList.push({
@@ -152,8 +141,7 @@ else if (
   }
 }
 
-    // ---------- explicit items (exclude box-like items so we don't double count) ----------
-    // build set of identifiers from boxesList for robust matching
+
     const boxIdentifiers = new Set<string>();
     for (const b of boxesList) {
       if (b == null) continue;
@@ -182,7 +170,6 @@ else if (
       .filter((it) => !looksLikeBoxItem(it))
       .reduce((s: number, it: { price: unknown }) => s + (toNumber(it?.price) ?? 0), 0);
 
-    // surcharge map & product types
     const surchargeMapFromPayload = normalizeMap((data as any).pricing?.productTypeSurcharges ?? {});
     const productTypesById = new Map<number, any>();
     if (Array.isArray((data as any).productTypes)) {
@@ -248,7 +235,6 @@ const hasTypedBoxes =
     /^[ABCD]$/i.test(k)
   );
 
-    // compute boxes price + surcharges
     let boxesPriceRaw = 0;
     let totalSurchargesAmount = 0;
 
@@ -304,22 +290,16 @@ const hasTypedBoxes =
       shippingFee = 0;
     }
 
-    // monthly-priced items (kệ + thùng)
     const monthlyItemsRaw = boxesPriceRaw;
 
-    // nhân số tháng thuê cho kệ + thùng
     const rentalAdjustedItems = monthlyItemsRaw;
 
-    // one-time items (KHÔNG nhân tháng)
     const oneTimeItems = explicitItemPriceSum + totalSurchargesAmount;
 
-    // tổng items cuối cùng
     const itemsTotal = rentalAdjustedItems + oneTimeItems;
 
 
-    // subtotal rules:
-    // - full-service: don't include rentalAdjustedBase (basePrice) because item prices already represent box prices
-    // - self-storage: include rentalAdjustedBase
+
     let computedSubtotal: number;
     if (isFull) {
       computedSubtotal = Math.round(
@@ -338,7 +318,7 @@ const hasTypedBoxes =
     }
 
     const subtotal = toNumber((data as any).pricing?.subtotal) ?? computedSubtotal;
-    const total = subtotal; // VAT removed
+    const total = subtotal; 
 
     return {
       basePrice,

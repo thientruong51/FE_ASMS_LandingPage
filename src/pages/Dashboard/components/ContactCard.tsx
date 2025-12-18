@@ -9,6 +9,9 @@ import {
   Divider,
 } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
+import EventIcon from "@mui/icons-material/Event";
+import PhoneIcon from "@mui/icons-material/Phone";
+import PersonIcon from "@mui/icons-material/Person";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -18,6 +21,14 @@ type Props = {
 export default function ContactCard({ contact }: Props) {
   const { t } = useTranslation("contact");
   const isActive = contact?.isActive !== false;
+
+  const displayName =
+    contact.customerName ||
+    contact.name ||
+    t("labels.name");
+
+  const displayPhone =
+    contact.phoneContact || t("labels.phone");
 
   return (
     <Card
@@ -35,21 +46,38 @@ export default function ContactCard({ contact }: Props) {
     >
       <CardContent>
         <Stack spacing={1.5}>
-          {/* Header */}
+          {/* ================= Header ================= */}
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box display="flex" gap={1.5} alignItems="center">
               <Avatar sx={{ bgcolor: "primary.main", width: 40, height: 40 }}>
-                {(contact.customerName ?? contact.name ?? "CT")
-                  .slice(0, 2)
-                  .toUpperCase()}
+                {displayName.slice(0, 2).toUpperCase()}
               </Avatar>
 
               <Box>
                 <Typography fontWeight={600}>
                   {contact.orderCode ?? t("labels.noOrder")}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {contact.email ?? contact.phoneContact ?? ""}
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="flex"
+                  alignItems="center"
+                  gap={0.5}
+                >
+                  <PersonIcon fontSize="inherit" />
+                  {displayName}
+                </Typography>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="flex"
+                  alignItems="center"
+                  gap={0.5}
+                >
+                  <PhoneIcon fontSize="inherit" />
+                  {displayPhone}
                 </Typography>
               </Box>
             </Box>
@@ -68,7 +96,7 @@ export default function ContactCard({ contact }: Props) {
 
           <Divider />
 
-          {/* Message */}
+          {/* ================= Message ================= */}
           <Typography
             variant="body2"
             color="text.secondary"
@@ -83,8 +111,39 @@ export default function ContactCard({ contact }: Props) {
             {contact.message}
           </Typography>
 
-          {/* Image gallery */}
-          {contact.image?.length > 0 && (
+          {/* ================= Dates ================= */}
+          <Stack spacing={0.5}>
+            {contact.contactDate && (
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={0.5}
+                color="text.secondary"
+              >
+                <EventIcon fontSize="small" />
+                <Typography variant="caption">
+                  {t("labels.contactDate")}: {contact.contactDate}
+                </Typography>
+              </Box>
+            )}
+
+            {contact.retrievedDate && (
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={0.5}
+                color="text.secondary"
+              >
+                <EventIcon fontSize="small" />
+                <Typography variant="caption">
+                  {t("labels.retrievedDate")}: {contact.retrievedDate}
+                </Typography>
+              </Box>
+            )}
+          </Stack>
+
+          {/* ================= Image gallery ================= */}
+          {contact.image?.length > 0 ? (
             <Box>
               <Box
                 display="flex"
@@ -152,6 +211,10 @@ export default function ContactCard({ contact }: Props) {
                 )}
               </Box>
             </Box>
+          ) : (
+            <Typography variant="caption" color="text.secondary">
+              {t("labels.noImage")}
+            </Typography>
           )}
         </Stack>
       </CardContent>
