@@ -1,5 +1,6 @@
 // components/ViewStorageMapButton.tsx
-import { Button } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useState, useMemo } from "react";
 import StorageMapDialog from "./StorageMapDialog";
 import {
@@ -29,18 +30,19 @@ export default function ViewStorageMapButton({ order }: Props) {
     return storageCodeToStepConfig(storageCode);
   }, [order]);
 
-  // Không có step config thì không render nút
+  // Không có step config thì không render icon
   if (!stepConfig) return null;
 
   return (
     <>
-      <Button
-        size="small"
-        variant="outlined"
-        onClick={() => setOpen(true)}
-      >
-        Xem vị trí kho
-      </Button>
+      <Tooltip title="Xem vị trí kho">
+        <IconButton
+          size="small"
+          onClick={() => setOpen(true)}
+        >
+          <LocationOnIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
 
       <StorageMapDialog
         open={open}
