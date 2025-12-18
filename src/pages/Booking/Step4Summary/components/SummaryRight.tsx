@@ -3,6 +3,7 @@ import type { BookingPayload } from "./types";
 import useServiceDetails from "./useServiceDetails";
 import { usePricing } from "./pricingUtils";
 import { useTranslation } from "react-i18next";
+import { translateStorageTypeName } from "../../../../utils/storageTypeNames";
 import { useMemo, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from "react";
 
 const RightCard = styled(Paper)(({ theme }) => ({
@@ -29,6 +30,7 @@ function inferSurchargePercentFromName(name?: string) {
 
 export default function SummaryRight({ data }: { data: BookingPayload }) {
   const { t } = useTranslation("booking");
+ 
   const serviceDetails = useServiceDetails(data.services);
   const pricing = usePricing(data, serviceDetails);
 
@@ -36,7 +38,8 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
     if (n === undefined || n === null) return "-";
     return n.toLocaleString("vi-VN") + " đ";
   };
-
+const boxPricesMap =
+  pricing.effectivePricingInfo?.boxPricesMap ?? {};
   // --- ưu tiên lấy giá gói numeric & counts từ data.package nếu có ---
   const packageRawPrice: number | undefined = (data as any)?.package?.rawPrice ?? undefined;
   const packageDisplayPrice: string | undefined = (data as any)?.package?.price ?? undefined;
@@ -44,16 +47,30 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
   const packageShelves: number | undefined = (data as any)?.package?.shelves ?? undefined;
   const packageBoxes: number | undefined = (data as any)?.package?.boxes ?? undefined;
   // --- end ---
+ const storageDisplayName = useMemo(() => {
+  if (packageName) return packageName;
 
+  return translateStorageTypeName(
+    t,
+    data.room?.name,
+    (data.room as any)?.type
+  );
+}, [t, packageName, data.room]);
   // per-box details (if boxes available)
   const boxDetails = useMemo(() => {
-    const boxes = Array.isArray((data as any).boxes) ? (data as any).boxes : [];
+    const boxes =
+  (pricing as any).breakdown?.boxesList ?? [];
     const productTypeSurcharges: Record<string, number> =
       (pricing as any).effectivePricingInfo?.productTypeSurcharges ?? {};
 
     return boxes.map((b: any, idx: number) => {
       const qty = Number(b.quantity ?? b.qty ?? 1) || 1;
-      const unit = Number(b.price ?? b.unitPrice ?? 0) || 0;
+      const labelKey = String(b.label ?? b.type ?? b.name ?? "").toUpperCase();
+
+const unit =
+  Number(boxPricesMap[labelKey]) ??
+  Number(b.unitPrice) ??
+  0;
       const base = unit * qty;
 
       let pct = 0;
@@ -128,8 +145,8 @@ export default function SummaryRight({ data }: { data: BookingPayload }) {
           <Box>
             <Typography variant="body2">{t("step4_summary.packageLabel", "Gói")}</Typography>
             <Typography variant="subtitle1" fontWeight={700}>
-              {packageName ?? (data.room?.name ?? t("summary.service"))}
-            </Typography>
+  {storageDisplayName ?? t("summary.service")}
+</Typography>
             {packageShelves !== undefined || packageBoxes !== undefined ? (
               <Typography variant="caption" color="text.secondary" display="block">
                 {packageShelves !== undefined ? `${packageShelves} kệ` : ""}{" "}

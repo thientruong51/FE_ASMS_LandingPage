@@ -2,9 +2,9 @@ import { useMemo, useEffect } from "react";
 import { Box, Avatar, Divider, Paper, Stack, Typography, styled, Chip } from "@mui/material";
 import type { BookingPayload } from "./types";
 import useServiceDetails from "./useServiceDetails";
-import { usePricing } from "./pricingUtils"; 
+import { usePricing } from "./pricingUtils";
 import { useTranslation } from "react-i18next";
-
+import { translateStorageTypeName } from "../../../../utils/storageTypeNames";
 const TwoColWrap = styled(Box)(({ theme }) => ({
   display: "flex",
   gap: theme.spacing(2),
@@ -42,18 +42,18 @@ export default function SummaryLeft({
     (data.style as any) === "full"
       ? "full"
       : (data.style as any) === "self"
-      ? "self"
-      : Array.isArray((data as any).boxes) && (data as any).boxes.length > 0
-      ? "full"
-      : data.room
-      ? "self"
-      : "self";
+        ? "self"
+        : Array.isArray((data as any).boxes) && (data as any).boxes.length > 0
+          ? "full"
+          : data.room
+            ? "self"
+            : "self";
 
   const boxes: any[] = Array.isArray((data as any).boxes)
     ? (data as any).boxes
     : (data as any).box
-    ? [(data as any).box]
-    : [];
+      ? [(data as any).box]
+      : [];
 
   const itemsArray = useMemo<any[]>(() => {
     if (Array.isArray(data.items)) return data.items;
@@ -96,7 +96,7 @@ export default function SummaryLeft({
     if (!pkg) return null;
     const shelves = typeof pkg.shelves === "number" ? pkg.shelves : undefined;
     const boxes = typeof pkg.boxes === "number" ? pkg.boxes : undefined;
-    const byType = undefined; 
+    const byType = undefined;
     if (shelves === undefined && boxes === undefined) return null;
     return {
       shelves: shelves ?? 0,
@@ -237,7 +237,13 @@ export default function SummaryLeft({
       .filter(Boolean) as { id: number; name: string }[];
     return normalized;
   }
-
+  const roomDisplayName = useMemo(() => {
+    return translateStorageTypeName(
+      t,
+      data.room?.name,
+      (data.room as any)?.type
+    );
+  }, [t, data.room]);
   useEffect(() => {
     if (typeof onPayloadChange !== "function") return;
 
@@ -287,7 +293,7 @@ export default function SummaryLeft({
               ) : null}
               <Box>
                 <Typography variant="subtitle1" fontWeight={700}>
-                  {data.room?.name ?? t("summary.service")}
+                  {roomDisplayName ?? t("summary.service")}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {data.room?.width && data.room?.depth ? `${data.room.width} x ${data.room.depth} m` : ""}
@@ -301,7 +307,7 @@ export default function SummaryLeft({
           {serviceStyle === "self" && (
             <Stack spacing={1}>
               <Typography variant="body2">
-                <strong>{t("summary.room")}:</strong> {data.room?.name ?? t("step4_summary.noRoom", "")}
+               <strong>{t("summary.room")}:</strong> {roomDisplayName ?? t("step4_summary.noRoom", "")}
               </Typography>
 
               <Typography variant="body2">
@@ -481,7 +487,7 @@ export default function SummaryLeft({
               <strong>{t("step3_info.fields.note")}:</strong> {data.info?.note ?? "-"}
             </Typography>
           </Stack>
-       
+
         </Stack>
       </LeftCard>
     </TwoColWrap>
