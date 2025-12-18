@@ -35,7 +35,7 @@ import {
   loadTypeLookup,
   resolveContainerName,
 } from "../../../api/typeLookup";
-
+import ViewStorageMapButton from "./ViewStorageMapButton";
 import { useTranslation } from "react-i18next";
 import OrderQrDialog from "./OrderQrDialog";
 import ContactDialog from "./ContactDialog";
@@ -701,6 +701,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           >
             {t("viewContract", "Xem hợp đồng")}
           </Button>
+          <ViewStorageMapButton order={order} />
         </Box>
       </Paper>
 
