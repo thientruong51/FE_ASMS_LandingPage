@@ -101,7 +101,9 @@
   },
   "notifications": {
     "tooltip": "Notifications",
-    "aria": "notifications"
+    "aria": "notifications",
+    "title": "Notifications",
+    "empty": "No notifications"
   },
   "userMenu": {
     "profile": "Profile",

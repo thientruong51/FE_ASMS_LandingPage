@@ -81,7 +81,7 @@ export type OrderSummary = {
   email?: string | null;
   note?: string | null;
   address?: string | null;
-  passkey?: number | null;
+  passkey?: string | null;
   refund?: number | null;
   imageUrls?: string[];
 
@@ -244,8 +244,8 @@ export const fetchOrderDetails = async (
 
 export const updateOrderPasskey = async (payload: {
   orderCode: string;
-  oldPassKey: number;
-  newPassKey: number;
+  oldPasskey: string;
+  newPasskey: string;
 }) => {
   const res = await api.put(
     "/api/OrderStatus/update-passkey",

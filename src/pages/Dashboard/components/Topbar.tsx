@@ -11,7 +11,9 @@ import {
   MenuItem,
   Tooltip,
   InputAdornment,
-  useMediaQuery,
+  Badge,
+  Divider,
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -19,7 +21,11 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { getAccessToken, logoutApi, clearTokens } from "../../../api/auth"; 
+import { getAccessToken, logoutApi, clearTokens } from "../../../api/auth";
+
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../../../store";
+import { markAsRead, markAllAsRead } from "../../../store/notificationSlice";
 
 type Props = {
   onMenu: () => void;
@@ -36,14 +42,8 @@ type UserInfo = {
 const parseJwtPayload = (token: string | null): any | null => {
   if (!token) return null;
   try {
-    const parts = token.split(".");
-    if (parts.length < 2) return null;
-    const payload = parts[1];
-    const b64 = payload.replace(/-/g, "+").replace(/_/g, "/");
-    const pad = b64.length % 4;
-    const padded = pad ? b64 + "=".repeat(4 - pad) : b64;
-    const json = atob(padded);
-    return JSON.parse(json);
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload));
   } catch {
     return null;
   }
@@ -52,8 +52,9 @@ const parseJwtPayload = (token: string | null): any | null => {
 const makeInitials = (name?: string | null, email?: string | null) => {
   if (name) {
     const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return parts.length === 1
+      ? parts[0].slice(0, 2).toUpperCase()
+      : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
   if (email) return email.slice(0, 2).toUpperCase();
   return "U";
@@ -62,55 +63,36 @@ const makeInitials = (name?: string | null, email?: string | null) => {
 const Topbar: React.FC<Props> = ({ onMenu, searchPlaceholder }) => {
   const { t } = useTranslation("dashboard");
   const theme = useTheme();
-  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
+
+  const [notiAnchor, setNotiAnchor] = React.useState<null | HTMLElement>(null);
+
   const [user, setUser] = React.useState<UserInfo | null>(null);
   const [loadingLogout, setLoadingLogout] = React.useState(false);
 
+  const notifications = useSelector(
+    (state: RootState) => state.notification.items
+  );
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   React.useEffect(() => {
-    const token = getAccessToken();
-    const payload = parseJwtPayload(token);
-    if (payload) {
-      const name =
-        payload.name ??
-        payload.fullname ??
-        payload.preferred_username ??
-        payload.preferredName ??
-        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ??
-        null;
+    const payload = parseJwtPayload(getAccessToken());
+    if (!payload) return;
 
-      const email =
-        payload.email ??
-        payload.upn ??
-        payload.preferred_username ??
-        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] ??
-        null;
-
-      const picture =
-        payload.picture ??
-        payload.avatar ??
-        payload.photo ??
-        payload.profile_picture ??
-        null;
-
-      setUser({
-        name: typeof name === "string" ? name : null,
-        email: typeof email === "string" ? email : null,
-        picture: typeof picture === "string" ? picture : null,
-      });
-    } else {
-      setUser(null);
-    }
+    setUser({
+      name: payload.name ?? payload.fullname ?? null,
+      email: payload.email ?? payload.upn ?? null,
+      picture: payload.picture ?? null,
+    });
   }, []);
 
   const handleLogout = async () => {
     setLoadingLogout(true);
     try {
       await logoutApi();
-    } catch (err) {
-      console.error("logoutApi error:", err);
     } finally {
       clearTokens();
       setLoadingLogout(false);
@@ -118,104 +100,111 @@ const Topbar: React.FC<Props> = ({ onMenu, searchPlaceholder }) => {
     }
   };
 
-  const handleProfile = () => {
-    setAnchor(null);
-    navigate("/dashboard/userinfo");
-  };
-
-  const handleSettings = () => {
-    setAnchor(null);
-    navigate("/dashboard/settings");
-  };
-
   const initials = makeInitials(user?.name, user?.email);
 
   return (
-    <AppBar
-      position="sticky"
-      color="transparent"
-      elevation={0}
-      sx={{ backdropFilter: "saturate(120%) blur(6px)", mb: 2 }}
-    >
-      <Toolbar
-        sx={{
-          display: "flex",
-          gap: 2,
-          px: { xs: 1, md: 3 },
-          py: { xs: 1, md: 1.25 },
-          alignItems: "center",
-        }}
-      >
-        <IconButton onClick={onMenu} edge="start" size={isSmUp ? "medium" : "small"}>
+    <AppBar position="sticky" color="transparent" elevation={0}>
+      <Toolbar sx={{ display: "flex", gap: 2 }}>
+        <IconButton onClick={onMenu}>
           <MenuIcon />
         </IconButton>
 
-        <Paper
-          component="form"
-          elevation={0}
-          onSubmit={(e) => e.preventDefault()}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            px: 1,
-            py: 0.5,
-            width: { xs: "100%", sm: 320, md: 420 },
-            borderRadius: 2,
-            bgcolor: "background.paper",
-          }}
-        >
+        <Paper sx={{ display: "flex", alignItems: "center", px: 1 }}>
           <InputAdornment position="start">
-            <SearchIcon color="action" />
+            <SearchIcon />
           </InputAdornment>
-
           <InputBase
             placeholder={searchPlaceholder ?? t("ordersPage.searchOrder")}
-            sx={{ ml: 1, flex: 1, fontSize: { xs: 13, sm: 14 } }}
-            inputProps={{ "aria-label": t("ordersPage.searchAria") }}
+            sx={{ ml: 1 }}
           />
         </Paper>
 
         <Box sx={{ flex: 1 }} />
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Tooltip title={t("notifications.tooltip")}>
-            <IconButton size={isSmUp ? "medium" : "small"} aria-label={t("notifications.aria")}>
-              <NotificationsNoneIcon />
-            </IconButton>
-          </Tooltip>
-
-         
-
-          <IconButton onClick={(e) => setAnchor(e.currentTarget)} aria-label={t("userMenu.open")}>
-            {user?.picture ? (
-              <Avatar src={user.picture} alt={user.name ?? user.email ?? "User"} sx={{ width: 40, height: 40 }} />
-            ) : (
-              <Avatar sx={{ bgcolor: theme.palette.primary.main, color: "#fff", width: 40, height: 40 }}>
-                {initials}
-              </Avatar>
-            )}
-          </IconButton>
-
-          <Menu
-            anchorEl={anchor}
-            open={Boolean(anchor)}
-            onClose={() => setAnchor(null)}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        {/* 🔔 NOTIFICATION */}
+        <Tooltip title={t("notifications.tooltip")}>
+          <IconButton
+            onClick={(e) => {
+              setNotiAnchor(e.currentTarget);
+              dispatch(markAllAsRead());
+            }}
           >
-            <MenuItem onClick={handleProfile}>{user?.name ?? user?.email ?? t("userMenu.profile")}</MenuItem>
-            <MenuItem onClick={handleSettings}>{t("settings.title")}</MenuItem>
-            <MenuItem
-              onClick={() => {
-                setAnchor(null);
-                handleLogout();
-              }}
-              disabled={loadingLogout}
-            >
-              {t("userMenu.logout")}
+            <Badge color="error" variant="dot" invisible={unreadCount === 0}>
+              <NotificationsNoneIcon />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+
+        <Menu
+          anchorEl={notiAnchor}
+          open={Boolean(notiAnchor)}
+          onClose={() => setNotiAnchor(null)}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          PaperProps={{ sx: { width: 360, maxHeight: 400 } }}
+        >
+          <Typography sx={{ px: 2, py: 1, fontWeight: 600 }}>
+            {t("notifications.title")}
+          </Typography>
+
+          <Divider />
+
+          {notifications.length === 0 ? (
+            <MenuItem disabled>
+              {t("notifications.empty")}
             </MenuItem>
-          </Menu>
-        </Box>
+          ) : (
+            notifications.map(n => (
+              <MenuItem
+                key={n.id}
+                onClick={() => {
+                  dispatch(markAsRead(n.id));
+                  setNotiAnchor(null);
+                  navigate(`/dashboard/orders`);
+                }}
+                sx={{
+                  alignItems: "flex-start",
+                  whiteSpace: "normal",
+                  bgcolor: n.read ? "transparent" : "action.hover",
+                }}
+              >
+                <Box>
+                  <Typography fontWeight={600}>{n.title}</Typography>
+                  <Typography fontSize={13} color="text.secondary">
+                    {n.message}
+                  </Typography>
+                </Box>
+              </MenuItem>
+            ))
+          )}
+        </Menu>
+
+        {/* 👤 USER */}
+        <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
+          {user?.picture ? (
+            <Avatar src={user.picture} />
+          ) : (
+            <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+              {initials}
+            </Avatar>
+          )}
+        </IconButton>
+
+        <Menu
+          anchorEl={anchor}
+          open={Boolean(anchor)}
+          onClose={() => setAnchor(null)}
+        >
+          <MenuItem onClick={() => navigate("/dashboard/userinfo")}>
+            {user?.name ?? user?.email}
+          </MenuItem>
+          <MenuItem onClick={() => navigate("/dashboard/settings")}>
+            {t("settings.title")}
+          </MenuItem>
+          <MenuItem onClick={handleLogout} disabled={loadingLogout}>
+            {t("userMenu.logout")}
+          </MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );

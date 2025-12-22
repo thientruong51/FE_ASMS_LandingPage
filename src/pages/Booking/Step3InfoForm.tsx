@@ -63,14 +63,17 @@ export default function Step3InfoForm({
 }: Props) {
   const { t, i18n } = useTranslation("booking");
   const currentLang = i18n.language ?? "vi";
-
+  const DELIVERY_ID = 4;
   const [form, setForm] = useState<FormState>({
     name: initial?.name ?? "",
     phone: initial?.phone ?? "",
     email: initial?.email ?? "",
     address: initial?.address ?? "",
     note: initial?.note,
-    services: initial?.services ?? [],
+    services:
+      initial?.services && initial.services.length > 0
+        ? initial.services
+        : [DELIVERY_ID],
     selectedDate: initial?.selectedDate ?? null,
     rentalType: initial?.rentalType ?? "month",
     rentalWeeks: initial?.rentalWeeks ?? 1,
@@ -83,7 +86,7 @@ export default function Step3InfoForm({
   const [error, setError] = useState<string | null>(null);
   const [loadingDistance, setLoadingDistance] = useState(false);
 
-  const ALLOWED_SERVICE_IDS = [2, 3, 4];
+  const ALLOWED_SERVICE_IDS = [4];
 
   useEffect(() => {
     let mounted = true;
@@ -158,7 +161,7 @@ export default function Step3InfoForm({
 
   const ORIGIN_PLACE = "Ngã tư Thủ Đức";
 
-  const DELIVERY_ID = 4;
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -419,8 +422,11 @@ export default function Step3InfoForm({
                               onChange={() => toggleService(s.serviceId)}
                             />
                           }
-                          label={`${translateServiceName(t, s.name)} — ${s.price?.toLocaleString?.() ?? s.price
-                            }đ`}
+                          label={
+                            s.serviceId === DELIVERY_ID
+                              ? translateServiceName(t, s.name) 
+                              : `${translateServiceName(t, s.name)} — ${s.price?.toLocaleString?.() ?? s.price}đ`
+                          }
                         />
                       ))}
                     </Stack>

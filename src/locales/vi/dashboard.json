@@ -102,7 +102,9 @@
   },
    "notifications": {
     "tooltip": "Thông báo",
-    "aria": "thông báo"
+    "aria": "thông báo",
+    "title": "Thông báo",
+    "empty": "Không có thông báo"
   },
  
   "userMenu": {
@@ -290,7 +292,7 @@
     "from_shipping_to_warehouse": "Gửi hàng đến kho",
     "protecting": "Bảo hiểm hàng hóa",
     "product_packaging": "Đóng gói sản phẩm",
-    "delivery": "Giao hàng",
+    "delivery": "Giao hàng và đóng gói sản phẩm",
     "basic": "Gói Basic",
     "basic_ac": "Gói Basic AC",
     "business": "Gói Business",
