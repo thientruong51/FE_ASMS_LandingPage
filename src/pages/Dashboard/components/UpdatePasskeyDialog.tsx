@@ -40,8 +40,8 @@ const UpdatePasskeyDialog: React.FC<UpdatePasskeyDialogProps> = ({
     try {
       await updateOrderPasskey({
         orderCode,
-        oldPassKey: Number(oldPasskey),
-        newPassKey: Number(newPasskey),
+        oldPasskey: String(oldPasskey),
+        newPasskey: String(newPasskey),
       });
 
       setOldPasskey("");

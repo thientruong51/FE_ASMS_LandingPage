@@ -51,7 +51,10 @@ import { translateStorageTypeName } from "../../../utils/storageTypeNames";
 import { translateStatus } from "../../../utils/statusHelper";
 import { translateShelfTypeName } from "../../../utils/shelfTypeNames";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { nanoid } from "@reduxjs/toolkit";
+import { canonicalStatusKey } from "../../../utils/statusHelper";
+import { addNotification } from "../../../store/notificationSlice";
 const formatMoney = (n?: number) => {
   if (n == null) return "-";
   return n.toLocaleString("vi-VN") + " đ";
@@ -73,6 +76,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const { t } = useTranslation("dashboard");
 
   const [order, setOrder] = useState<any>(initialOrder);
+
+
   useEffect(() => setOrder(initialOrder), [initialOrder]);
 
   const [loadingPay, setLoadingPay] = useState(false);
@@ -98,13 +103,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const closedByUserRef = useRef(false);
   const [qrOpen, setQrOpen] = useState(false);
   const orderCode = order?.orderCode ?? order?.code ?? order?.id;
-
+const dispatch = useDispatch();
+const prevStatusRef = useRef<string | null>(null);
   const chip = {
     color: "#6B7280",
     label: translateStatus(t, order?.status),
   };
 
-  /* ✅ PAYMENT – không fallback sang status */
   const paymentStatusRaw =
     order?.paymentStatus ?? order?.payment?.paymentStatus ?? null;
   const isPaid =
@@ -112,19 +117,19 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const paymentStatus = paymentStatusRaw
     ?.toString()
     .toUpperCase();
-  /* ✅ Pending check raw status */
   const isPending =
     order?.status?.toString().toLowerCase() === "pending";
-  const isCheckout =
-    order?.status?.toString().toLowerCase() === "checkout";
 
   const orderStatus = order?.status?.toString().toLowerCase();
+const canPay =
+  !isPaid &&
+  ["checkout", "stored", "renting"].includes(orderStatus);
 
   const canUpdatePasskey =
-    orderStatus === "renting" || orderStatus === "processing";
+    orderStatus === "renting" ;
 
   const canShowPasskey =
-    orderStatus === "renting" || orderStatus === "processing";
+    orderStatus === "renting" ;
 
 
   useEffect(() => {
@@ -423,6 +428,34 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   };
 
+useEffect(() => {
+  if (!order?.status || !orderCode) return;
+
+  const currentKey = canonicalStatusKey(order.status);
+
+  if (prevStatusRef.current === null) {
+    prevStatusRef.current = currentKey;
+    return;
+  }
+
+  if (prevStatusRef.current !== currentKey) {
+    dispatch(
+      addNotification({
+        id: nanoid(),
+        orderCode: String(orderCode),
+        status: currentKey,
+        title: t("orderLabel", { code: orderCode }),
+        message: translateStatus(t, order.status),
+        createdAt: Date.now(),
+        read: false,
+      })
+    );
+
+    prevStatusRef.current = currentKey;
+  }
+}, [order?.status]);
+
+
   return (
     <>
       <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 0, border: "1px solid", borderColor: "divider" }}>
@@ -682,7 +715,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </Tooltip>
 
           {/* Update passkey */}
-          {order?.passkey != null && canUpdatePasskey && (
+          {canUpdatePasskey && (
             <Tooltip title={t("updatePasskey")}>
               <IconButton size="small" onClick={() => setUpdatePasskeyOpen(true)}>
                 <VpnKeyIcon fontSize="small" />
@@ -711,24 +744,25 @@ const OrderCard: React.FC<OrderCardProps> = ({
           )}
 
           {/* Thanh toán */}
-          {isCheckout && !isPaid && (
-            <Tooltip title={t("pay")}>
-              <span>
-                <IconButton
-                  size="small"
-                  color="primary"
-                  onClick={handlePay}
-                  disabled={loadingPay}
-                >
-                  {loadingPay ? (
-                    <CircularProgress size={16} />
-                  ) : (
-                    <PaymentIcon fontSize="small" />
-                  )}
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
+          {canPay && (
+  <Tooltip title={t("pay")}>
+    <span>
+      <IconButton
+        size="small"
+        color="primary"
+        onClick={handlePay}
+        disabled={loadingPay}
+      >
+        {loadingPay ? (
+          <CircularProgress size={16} />
+        ) : (
+          <PaymentIcon fontSize="small" />
+        )}
+      </IconButton>
+    </span>
+  </Tooltip>
+)}
+
 
           {/* Hợp đồng */}
           <Tooltip title={t("viewContract", "Xem hợp đồng")}>

@@ -12,18 +12,18 @@ export type ContactPayload = {
 
   employeeCode?: string;
   orderCode?: string;
-
+  orderDetailId?: number;
   name?: string;
   phoneContact?: string;
   email?: string;
 
   message: string;
-
+  contactType?: string;
   isActive?: boolean;
   image?: string[];
 
-  contactDate?: string;   
-  retrievedDate?: string; 
+  contactDate?: string;
+  retrievedDate?: string;
 };
 
 
@@ -37,13 +37,13 @@ export type Contact = {
   employeeName?: string | null;
 
   orderCode?: string | null;
-
+ orderDetailId?: number | null;
   name?: string;
   phoneContact?: string;
   email?: string;
 
   message: string;
-
+contactType?: string; 
   isActive: boolean;
   image: string[];
 

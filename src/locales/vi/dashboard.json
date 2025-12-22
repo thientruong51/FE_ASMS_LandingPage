@@ -102,7 +102,9 @@
   },
    "notifications": {
     "tooltip": "Thông báo",
-    "aria": "thông báo"
+    "aria": "thông báo",
+    "title": "Thông báo",
+    "empty": "Không có thông báo"
   },
  
   "userMenu": {
@@ -284,13 +286,15 @@
   "waiting_refund": "Đang chờ hoàn tiền",
   "order_cancelled_after_refund": "Hủy đơn sau khi hoàn tiền",
    "order_cancelled": "Hủy đơn hàng",
-    "auto_update": "Cập nhật tự động"
+    "auto_update": "Cập nhật tự động",
+  "order_cancelled_from_pending": "Đơn bị hủy - Lý do: Khách hàng hủy",
+  "moved_to_expired_storage": "Chuyển đến kho hết hạn"
 },
  "serviceNames": {
     "from_shipping_to_warehouse": "Gửi hàng đến kho",
     "protecting": "Bảo hiểm hàng hóa",
     "product_packaging": "Đóng gói sản phẩm",
-    "delivery": "Giao hàng",
+    "delivery": "Giao hàng và đóng gói sản phẩm",
     "basic": "Gói Basic",
     "basic_ac": "Gói Basic AC",
     "business": "Gói Business",
