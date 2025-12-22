@@ -26,7 +26,7 @@ export default function Hero() {
   const slides = t("hero.slides", { returnObjects: true }) as Slide[];
 
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1); 
+  const [direction, setDirection] = useState(1);
 
   const total = slides.length;
 
@@ -78,8 +78,8 @@ export default function Hero() {
           justifyContent: "center",
           px: { xs: 3, md: 10 },
           pb: { xs: 6, md: 8 },
-          minHeight: { xs: "75vh", md: "85vh" },
-          backgroundColor: "#fff",
+          minHeight: { xs: "75vh", md: "90vh" },
+          backgroundColor: "#ccc",
         }}
       >
         {/* --- Liquid background: zIndex thấp, pointerEvents none --- */}
@@ -87,9 +87,8 @@ export default function Hero() {
           sx={{
             position: "absolute",
             inset: 0,
-            zIndex: 0, // nằm dưới nội dung
-            pointerEvents: "auto", // để không chặn click/hover nội dung khác
-            // nếu LiquidEther cần tương tác chuột, bạn có thể bật pointerEvents chỉ cho canvas trong LiquidEther
+            zIndex: 1,
+            pointerEvents: "auto",
           }}
         >
           <LiquidEther
@@ -116,16 +115,16 @@ export default function Hero() {
         <Box
           sx={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 1,
-            background:
-              "linear-gradient(180deg, rgba(191,227,198,0.8) 0%, rgba(248,252,250,0.8) 100%)",
+            inset: 0,
+            zIndex: 0,
+            backgroundImage: `url("https://res.cloudinary.com/dkfykdjlm/image/upload/v1766405842/content_zhwv2c.png") `,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
             pointerEvents: "none",
           }}
         />
+
 
         {/* Mũi tên trái (zIndex cao hơn nội dung) */}
         <IconButton
@@ -138,7 +137,7 @@ export default function Hero() {
             backgroundColor: "white",
             boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             "&:hover": { backgroundColor: "#3CBD96", color: "white" },
-            zIndex: 4, // cao nhất so với nội dung
+            zIndex: 4,
           }}
         >
           <ArrowBackIosNewIcon fontSize="small" />
@@ -154,7 +153,7 @@ export default function Hero() {
             width: "100%",
             margin: "0 auto",
             marginLeft: { xs: 0, md: 5 },
-            zIndex: 3, // trên LiquidEther và overlay
+            zIndex: 3,
             position: "relative",
           }}
         >
@@ -182,15 +181,15 @@ export default function Hero() {
                 >
                   <ShinyText
                     text={slide.title}
-                    disabled={false} 
-                    speed={1}        
+                    disabled={false}
+                    speed={1}
                     className="shiny-title"
                   />
                 </Typography>
 
                 <Typography
                   variant="body1"
-                  color="text.secondary"
+                  color="#fff"
                   sx={{ maxWidth: 480, mt: 2 }}
                 >
                   {slide.subtitle}
@@ -262,6 +261,8 @@ export default function Hero() {
                   width: "75%",
                   borderRadius: "12px",
                   overflow: "hidden",
+                  border: "5px solid #76af87ff",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
                 }}
               >
                 <GlareHover
