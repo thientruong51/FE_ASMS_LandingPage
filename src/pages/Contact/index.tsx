@@ -104,7 +104,7 @@ export default function Contact() {
 
           <Box
             component="img"
-            src="https://res.cloudinary.com/dkfykdjlm/image/upload/v1761756589/1761756460281_oyzou6.png"
+            src="https://res.cloudinary.com/dkfykdjlm/image/upload/v1766406841/ChatGPT_Image_19_28_07_22_thg_12_2025_uupgl9.jpg"
             alt="key shape"
             sx={{
               position: "absolute",
