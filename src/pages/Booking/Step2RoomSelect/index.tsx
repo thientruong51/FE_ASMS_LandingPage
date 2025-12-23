@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Container, Stack, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import RoomHeader from "./RoomHeader";
@@ -17,7 +17,12 @@ export default function Step2RoomSelect({
   onNext: (room: { id: string; name: string; hasAC: boolean; type?: string }) => void;
 }) {
   const { t } = useTranslation("storageSize");
-  const [hasAC, setHasAC] = useState(selected?.hasAC || false);
+ const [hasAC, setHasAC] = useState(selected?.hasAC ?? false);
+ useEffect(() => {
+    if (selected) {
+      setHasAC(!!selected.hasAC);
+    }
+  }, [selected]);
 
   function mapNameToType(name: string) {
     const n = (name ?? "").toLowerCase();
