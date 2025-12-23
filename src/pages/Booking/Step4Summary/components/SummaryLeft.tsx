@@ -35,7 +35,9 @@ export default function SummaryLeft({
 }) {
   const { t } = useTranslation("booking");
   const serviceDetails = useServiceDetails(data.services);
-
+  useEffect(() => {
+    console.log("serviceDetails", serviceDetails);
+  }, [serviceDetails]);
   const pricing = usePricing(data, serviceDetails);
 
   const serviceStyle: "self" | "full" =
@@ -307,12 +309,17 @@ export default function SummaryLeft({
           {serviceStyle === "self" && (
             <Stack spacing={1}>
               <Typography variant="body2">
-               <strong>{t("summary.room")}:</strong> {roomDisplayName ?? t("step4_summary.noRoom", "")}
+                <strong>{t("summary.room")}:</strong> {roomDisplayName ?? t("step4_summary.noRoom", "")}
               </Typography>
 
               <Typography variant="body2">
                 <strong>{t("step4_summary.extraServicesLabel")}:</strong>{" "}
-                {(serviceDetails ?? []).map((s) => `${s.name} (${fmtCurrency(s.price)})`).join(", ")}
+                {(serviceDetails ?? [])
+                  .map((s) => {
+                    const key = s.name?.toLowerCase();
+                    return `${t(`serviceNames.${key}`, s.name)}`;
+                  })
+                  .join(", ")}
               </Typography>
 
               <Typography variant="body2">
@@ -452,7 +459,12 @@ export default function SummaryLeft({
               {(serviceDetails ?? []).length > 0 && (
                 <Typography variant="body2">
                   <strong>{t("step4_summary.extraServicesLabel")}:</strong>{" "}
-                  {(serviceDetails ?? []).map((s) => `${s.name} (${fmtCurrency(s.price)})`).join(", ")}
+                  {(serviceDetails ?? [])
+                    .map((s) => {
+                      const key = s.name?.toLowerCase().trim();
+                      return `${t(`serviceNames.${key}`, s.name)} `;
+                    })
+                    .join(", ")}
                 </Typography>
               )}
               <Typography variant="body2">

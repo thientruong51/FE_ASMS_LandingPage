@@ -5,7 +5,13 @@ import RoomCard from "./Step2RoomSelect/RoomCard";
 import { fetchServices, type ServiceApi } from "../../api/service";
 
 type RoomId = "small" | "medium" | "large";
-
+function nameToRoomId(name: string): RoomId | null {
+  const n = name.toLowerCase();
+  if (n.includes("small")) return "small";
+  if (n.includes("medium")) return "medium";
+  if (n.includes("large")) return "large";
+  return null;
+}
 export default function Step2PackageSelect({
   room,
   onBack,
@@ -86,16 +92,10 @@ export default function Step2PackageSelect({
     };
   }
 
-  const roomId: RoomId | null = (() => {
-    if (room.type === "small" || room.type === "medium" || room.type === "large") {
-      return room.type as RoomId;
-    }
-    if (room.id === "small" || room.id === "medium" || room.id === "large") {
-      return room.id as RoomId;
-    }
-    const idMap: Record<string, RoomId> = { "1": "small", "2": "medium", "3": "large" };
-    return idMap[String(room.id)] ?? null;
-  })();
+const roomId: RoomId | null =
+  room.type && ["small", "medium", "large"].includes(room.type)
+    ? (room.type as RoomId)
+    : nameToRoomId(room.name);
 
   if (loading) {
     return (

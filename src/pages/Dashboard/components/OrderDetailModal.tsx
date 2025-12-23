@@ -46,38 +46,6 @@ type Props = {
   onClose: () => void;
 };
 
-const decodeJwtPayload = (token?: string | null): any | null => {
-  if (!token) return null;
-  try {
-    const parts = token.split(".");
-    if (parts.length < 2) return null;
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const padLength = (4 - (base64.length % 4)) % 4;
-    const padded = base64 + "=".repeat(padLength);
-    const jsonStr = atob(padded);
-    try {
-      return JSON.parse(jsonStr);
-    } catch {
-      try {
-        const decoded = decodeURIComponent(
-          jsonStr
-            .split("")
-            .map((c) => {
-              const hex = c.charCodeAt(0).toString(16).padStart(2, "0");
-              return "%" + hex;
-            })
-            .join("")
-        );
-        return JSON.parse(decoded);
-      } catch {
-        return null;
-      }
-    }
-  } catch {
-    return null;
-  }
-};
 
 const safeDate = (value?: string | null): Date | null => {
   if (!value) return null;
@@ -104,12 +72,7 @@ const toArrayStrings = (v: any) => {
 
 export default function OrderDetailModal({ open, order, onClose }: Props) {
   const { t } = useTranslation("dashboard");
-  const tokenPayload = useMemo(() => decodeJwtPayload(localStorage.getItem("accessToken")), []);
-  const customerName = tokenPayload?.Name ?? tokenPayload?.name ?? null;
-  const customerEmail = tokenPayload?.Email ?? tokenPayload?.email ?? null;
-  const customerPhone = tokenPayload?.Phone ?? tokenPayload?.phone ?? null;
-  const pickupAddress = tokenPayload?.Address ?? tokenPayload?.address ?? null;
-
+  
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [fetchedDetails, setFetchedDetails] = useState<any[] | null>(null);
   const [typesLoaded, setTypesLoaded] = useState(false);
@@ -117,7 +80,6 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
 
-  // load type lookup once
   useEffect(() => {
     let mounted = true;
     void loadTypeLookup()
@@ -130,13 +92,12 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
     return () => { mounted = false; };
   }, []);
 
-  // derive a best-effort orderCode (could be orderId, orderCode, id)
   const orderCode = useMemo(() => {
     if (!order) return null;
+
     return order.orderCode ?? order.orderId ?? order.id ?? null;
   }, [order]);
 
-  // If items look like summary, fetch details and override items (existing behavior)
   useEffect(() => {
     if (!orderCode) {
       setFetchedDetails(null);
@@ -239,7 +200,17 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
   }, [order]); // runs whenever `order` prop reference changes
 
   if (!order) return null;
+const customerName =
+  order.customerName ?? order.fullName ?? "-";
 
+const customerEmail =
+  order.email ?? "-";
+
+const customerPhone =
+  order.phoneContact ?? order.phone ?? "-";
+
+const pickupAddress =
+  order.address ?? "-";
   // Build canonical items array: prefer fetchedDetails, else use normalized raw candidates
   const rawItemsCandidates: any[] = (() => {
     if (Array.isArray(order.items) && order.items.length > 0) return order.items;
@@ -311,7 +282,6 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
 
   return (
     <Dialog
-      // NEW: force remount when a different orderCode is passed
       key={orderCode ?? "order-detail"}
       open={open}
       onClose={onClose}
@@ -398,7 +368,7 @@ export default function OrderDetailModal({ open, order, onClose }: Props) {
               <Stack spacing={1}>
                 <Box>
                   <Typography variant="caption" color="text.secondary">{t("orderDetail.pickupLocation")}</Typography>
-                  <Typography variant="body2" fontWeight={600}>{pickupAddress ?? "-"}</Typography>
+                  <Typography variant="body2" fontWeight={600}>{pickupAddress}</Typography>
                 </Box>
                 <Box sx={{ mt: 1 }}>
                   <Typography variant="caption" color="text.secondary">{t("orderDetail.dropoffLocation")}</Typography>
