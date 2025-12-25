@@ -374,7 +374,7 @@ export async function buildOrderPayloadFromBooking(
           quantity: "1",
           image: b.imageUrl ?? b.image ?? null,
           containerType: mapContainerTypeToId(label),
-          containerQuantity: null,
+          containerQuantity: 1,
           productTypeIds: ensureNumberArray(b.productTypeIds ?? b.productTypes ?? globalProductTypeIds),
           serviceIds: ensureNumberArray(bookingData.services ?? bookingData.serviceIds ?? globalServiceIds),
           storageTypeId: null,
